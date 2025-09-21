@@ -1,11 +1,15 @@
 @font-face{
   font-family: Urbanist;
-  src: url("../src/assets/fonts/Urbanist-Regular.ttf")
+  src: url("../src/assets/fonts/Urbanist-Regular.ttf");
+  font-family: Urbanist-bold;
+  src: url("../src/assets/fonts/Urbanist-Bold.ttf")
 }
 @import "tailwindcss";
 
 @theme{
+
   --font-body: Urbanist, "sans-serif";
+  --font-bold: Urbanist-bold, "sans-serif";
 
   /*Base*/
   --color-bg: #084579;       /* azul noche*/
