@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
+import { Button } from '@/components/atomic/Button'
 import './App.css'
 
 function App() {
@@ -17,6 +18,7 @@ function App() {
         </a>
       </div>
       <h1>Vite + React</h1>
+      <Button text='Volver' onClick={() => console.log('hello')} inverse/>
       <div className="card">
         <button onClick={() => setCount((count) => count + 1)}>
           count is {count}
