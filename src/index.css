@@ -1,4 +1,20 @@
+@font-face{
+  font-family: Urbanist;
+  src: url("../src/assets/fonts/Urbanist-Regular.ttf")
+}
 @import "tailwindcss";
+
+@theme{
+  --font-body: Urbanist, "sans-serif";
+
+  /*Base*/
+  --color-bg: #084579;       /* azul noche*/
+  --color-blue: #3174AE;     /* azul intermedio */
+  --color-gray: #8199B7;     /* gris azulado */
+  --color-yellow: #D7A217;   /* amarillo intenso */
+  --color-yellow2: #A6800B;  /* amarillo más oscuro */
+
+}
 
 :root {
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
