@@ -11,12 +11,17 @@
     font-size: 20px;
     letter-spacing: 0;
     text-align: center;
-    color: white;
 }
 
 @utility card-description {
     font-size: 15px;
     letter-spacing: 0;
     text-align: center;
-    color:white;
+}
+
+@utility previewCard-description {
+    font-size: 12px;
+    letter-spacing: 0;
+    text-align: center;
+    color: --color-bg;
 }
