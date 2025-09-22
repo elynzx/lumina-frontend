@@ -1,0 +1,6 @@
+@font-face{
+  font-family: Urbanist;
+  src: url("../../src/assets/fonts/Urbanist-Regular.ttf");
+  font-family: Urbanist-bold;
+  src: url("../../src/assets/fonts/Urbanist-Bold.ttf")
+}

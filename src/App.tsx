@@ -1,37 +1,25 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import { Button } from '@/components/atomic/Button'
-import './App.css'
+import { useRoutes } from "react-router-dom";
+import { Home } from "@/pages/Home";
+import { Login } from "@/pages/Login";
+import { Register } from "@/pages/Register";
+import { Catalog } from "@/pages/Catalog";
+import { ProductDetail } from "@/pages/ProductDetail";
+import { Payment } from "@/pages/Payment";
 
-function App() {
-  const [count, setCount] = useState(0)
+export default function App() {
+  const routes = useRoutes([
+    {
+      path: "/",
+      children: [
+        { path: "/", element: <Home /> },
+        { path: "/login", element: <Login /> },
+        { path: "/registro", element: <Register /> },
+        { path: "/catalogo", element: <Catalog /> },
+        { path: "/producto/:id", element: <ProductDetail /> },
+        { path: "/pago", element: <Payment /> },
+      ],
+    },
+  ]);
 
-  return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <Button text='Volver' onClick={() => console.log('hello')} inverse/>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+  return routes;
 }
-
-export default App
