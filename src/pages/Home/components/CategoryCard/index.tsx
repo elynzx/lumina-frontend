@@ -2,19 +2,21 @@ interface Props {
   title: string
   description: string
   imgUrl: string
+  onClick?: () => void
 }
 
 export const CategoryCard = ({
   title,
   description,
   imgUrl,
+  onClick
 }: Props) => {
 
   return (
     <div
       className="w-[260px] h-[345px] flex flex-col justify-end shadow-xl rounded-xl bg-cover bg-center relative overflow-hidden transition-transform duration-300 ease-in-out hover:scale-105"
-      style={{ backgroundImage: `url(${imgUrl})` }}
-    >
+      style={{ backgroundImage: `url(${imgUrl})` }} onClick={onClick}
+    > 
       <div
         className="absolute inset-0 z-0"
         style={{

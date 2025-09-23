@@ -3,10 +3,9 @@ interface Props {
   title: string
   address: string
   details: string
-
 }
 
-export const PreviewCard = ({
+export const VenuePreviewCard = ({
   imgUrl,
   title,
   address,
@@ -20,8 +19,8 @@ export const PreviewCard = ({
       </div>
       <div className="flex-grow h-[30%] px-4 py-2 flex flex-col justify-center">
         <h3 className="card-title">{title}</h3>
-        <p className="previewCard-description">{address}</p>
-        <p className="previewCard-description">{details}</p>
+        <p className="text-sm text-center">{address}</p>
+        <p className="text-sm text-center">{details}</p>
       </div>
     </div>
   )
