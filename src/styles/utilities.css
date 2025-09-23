@@ -1,3 +1,38 @@
+@layer utilities {
+    .section-container {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-top: 5rem;
+        margin-bottom: 5rem;
+        padding-left: 1rem;
+        padding-right: 1rem;
+        background-color: #f3f4f6;
+        padding-top: 6rem;
+        padding-bottom: 6rem;
+        gap: 2rem;
+    }
+
+    .section-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 2rem;
+    }
+
+    @media (min-width: 640px) {
+        .section-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+
+    @media (min-width: 1024px) {
+        .section-grid {
+            grid-template-columns: repeat(4, 1fr);
+        }
+    }
+}
+
 @utility text-title {
     font-family: var(--font-bold);
     font-size: 36px;
@@ -18,4 +53,3 @@
     letter-spacing: 0;
     text-align: center;
 }
-
