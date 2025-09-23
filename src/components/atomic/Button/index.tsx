@@ -3,13 +3,15 @@ import { clsx } from "clsx";
 interface Props {
     text: string
     onClick: () => void
-    inverse?: boolean    
+    inverse?: boolean  
+    fullWidth?: boolean  
 }
 
 export const Button = ({
     text,
     onClick,
-    inverse = false
+    inverse = false,
+    fullWidth
 }: Props) => {
 
     const handleClick = () => {
@@ -21,8 +23,9 @@ export const Button = ({
         <button
             onClick={handleClick}
             className={clsx(
-                "font-body h-[38px] py-4 px-9 flex items-center justify-center text-xs rounded-lg cursor-pointer",
-                inverse ? "bg-white text-black border border-black" : "bg-bg text-white"
+                "h-[40px] py-4 px-9 flex items-center justify-center rounded-lg cursor-pointer text-sm",
+                inverse ? "bg-white text-black border border-black" : "bg-black text-white",
+                fullWidth && "w-full"
             )}
         >
             {text}

@@ -34,7 +34,6 @@
 }
 
 @utility text-title {
-    font-family: var(--font-bold);
     font-size: 36px;
     line-height: 40px;
     font-weight: 700;
