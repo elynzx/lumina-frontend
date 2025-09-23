@@ -1,14 +1,20 @@
 import { CategoryCard } from '../CategoryCard'
+import { data } from '@/constants/data';
+
+const getDistrictImage = (id: number) => {
+  const local = data.locales.find(_ => _.idDistrito === id);
+  const fotosLocal = data.fotosLocales.filter(_ => _.idLocal === local?.idLocal);
+  return fotosLocal[0]?.urlFoto || '';
+};
 
 export const DistrictSection = () => {
   return (
     <div className="section-container">
       <h2 className="text-title">Descubre las zonas</h2>
       <div className="section-grid">
-        <CategoryCard title="Título" imgUrl="https://cdn0.matrimonio.com.pe/vendor/5326/3_2/1280/jpeg/whatsapp-image-2023-03-07-at-12-29-44-4_11_115326-167838324481472.jpeg" />
-        <CategoryCard title="Título" imgUrl="https://cdn0.matrimonio.com.pe/vendor/5326/3_2/1280/jpeg/whatsapp-image-2023-03-07-at-12-29-44-4_11_115326-167838324481472.jpeg" />
-        <CategoryCard title="Título" imgUrl="https://cdn0.matrimonio.com.pe/vendor/5326/3_2/1280/jpeg/whatsapp-image-2023-03-07-at-12-29-44-4_11_115326-167838324481472.jpeg" />
-        <CategoryCard title="Título" imgUrl="https://cdn0.matrimonio.com.pe/vendor/5326/3_2/1280/jpeg/whatsapp-image-2023-03-07-at-12-29-44-4_11_115326-167838324481472.jpeg" />
+        {data.distritos.map((item) => (
+          <CategoryCard key={item.idDistrito} title={item.nombreDistrito} imgUrl={getDistrictImage(item.idDistrito)} />
+        ))}
       </div>
     </div>
   )

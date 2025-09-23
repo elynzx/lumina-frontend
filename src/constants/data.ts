@@ -1,4 +1,127 @@
-const data = {
+export type EstadoLocal = "DISPONIBLE" | "NO_DISPONIBLE";
+export type EstadoReserva = "Confirmada" | "Pendiente" | "Cancelada";
+export type EstadoPago = "Pagado" | "Pendiente" | "Fallido";
+
+export interface Rol {
+  idRol: number;
+  nombreRol: string;
+  descripcion: string;
+}
+
+export interface Usuario {
+  idUsuario: number;
+  nombre: string;
+  apellido: string;
+  dni: string;
+  celular: string;
+  email: string;
+  contrasena: string;
+  idRol: number;
+}
+
+export interface Distrito {
+  idDistrito: number;
+  nombreDistrito: string;
+}
+
+export interface Local {
+  idLocal: number;
+  nombreLocal: string;
+  direccion: string;
+  idDistrito: number;
+  aforoMaximo: number;
+  precioHora: number;
+  descripcion: string;
+  estado: EstadoLocal;
+}
+
+export interface FotoLocal {
+  idFoto: number;
+  idLocal: number;
+  urlFoto: string;
+  descripcion: string;
+}
+
+export interface TipoEvento {
+  idTipoEvento: number;
+  nombreTipo: string;
+  descripcion: string;
+}
+
+export interface LocalTipoEvento {
+  idLocal: number;
+  idTipoEvento: number;
+}
+
+export interface Mobiliario {
+  idMobiliario: number;
+  nombre: string;
+  descripcion: string;
+  stockTotal: number;
+  precioUnitario: number;
+}
+
+export interface FotoMobiliario {
+  idFoto: number;
+  idMobiliario: number;
+  urlFoto: string;
+  descripcion: string;
+}
+
+export interface MetodoPago {
+  idMetodoPago: number;
+  nombreMetodo: string;
+  descripcion: string;
+}
+
+export interface Reserva {
+  idReserva: number;
+  idUsuario: number;
+  idLocal: number;
+  idTipoEvento: number;
+  fecha: string;
+  horaInicio: string;
+  horaFin: string;
+  cantidadPersonas: number;
+  costoLocal: number;
+  costoMobiliario: number;
+  estado: EstadoReserva;
+}
+
+export interface ReservaMobiliario {
+  idReserva: number;
+  idMobiliario: number;
+  cantidad: number;
+  precioUnitario: number;
+}
+
+export interface Pago {
+  idPago: number;
+  idReserva: number;
+  idMetodoPago: number;
+  monto: number;
+  estado: EstadoPago;
+  codigoConfirmacion: string | null;
+  comprobanteUrl: string | null;
+}
+
+export interface DatabaseData {
+  roles: Rol[];
+  usuarios: Usuario[];
+  distritos: Distrito[];
+  locales: Local[];
+  fotosLocales: FotoLocal[];
+  tiposEvento: TipoEvento[];
+  localTipoEvento: LocalTipoEvento[];
+  mobiliario: Mobiliario[];
+  fotosMobiliario: FotoMobiliario[];
+  metodosPago: MetodoPago[];
+  reservas: Reserva[];
+  reservaMobiliario: ReservaMobiliario[];
+  pagos: Pago[];
+}
+
+export const data: DatabaseData = {
   "roles": [
     { "idRol": 1, "nombreRol": "Administrador", "descripcion": "Gestiona el sistema" },
     { "idRol": 2, "nombreRol": "Cliente", "descripcion": "Realiza reservas" },
@@ -14,39 +137,35 @@ const data = {
     { "idUsuario": 5, "nombre": "Luis", "apellido": "Torres", "dni": "56789012", "celular": "976543210", "email": "luis@example.com", "contrasena": "hashedpass5", "idRol": 2 }
   ],
   "distritos": [
-    { "idDistrito": 1, "nombreDistrito": "Miraflores" },
-    { "idDistrito": 2, "nombreDistrito": "San Isidro" },
-    { "idDistrito": 3, "nombreDistrito": "Surco" },
-    { "idDistrito": 4, "nombreDistrito": "La Molina" },
-    { "idDistrito": 5, "nombreDistrito": "Barranco" }
+    { "idDistrito": 1, "nombreDistrito": "Miraflores"},
+    { "idDistrito": 2, "nombreDistrito": "San Isidro"},
+    { "idDistrito": 3, "nombreDistrito": "Surco"},
+    { "idDistrito": 4, "nombreDistrito": "La Molina"},
   ],
   "locales": [
     { "idLocal": 1, "nombreLocal": "Salon Real", "direccion": "Av. Pardo 123", "idDistrito": 1, "aforoMaximo": 200, "precioHora": 500.00, "descripcion": "Salón elegante para bodas", "estado": "DISPONIBLE" },
     { "idLocal": 2, "nombreLocal": "Terraza Verde", "direccion": "Jr. Olivos 456", "idDistrito": 2, "aforoMaximo": 100, "precioHora": 300.00, "descripcion": "Ideal para eventos sociales", "estado": "DISPONIBLE" },
-    { "idLocal": 3, "nombreLocal": "Centro Empresarial", "direccion": "Av. Javier Prado 789", "idDistrito": 2, "aforoMaximo": 500, "precioHora": 1000.00, "descripcion": "Centro de convenciones", "estado": "DISPONIBLE" },
-    { "idLocal": 4, "nombreLocal": "Casa Colonial", "direccion": "Calle San Martín 321", "idDistrito": 5, "aforoMaximo": 80, "precioHora": 250.00, "descripcion": "Ambiente colonial", "estado": "NO_DISPONIBLE" },
-    { "idLocal": 5, "nombreLocal": "Jardín Encantado", "direccion": "Av. Primavera 654", "idDistrito": 3, "aforoMaximo": 150, "precioHora": 400.00, "descripcion": "Eventos al aire libre", "estado": "DISPONIBLE" }
+    { "idLocal": 3, "nombreLocal": "Centro Empresarial", "direccion": "Av. Javier Prado 789", "idDistrito": 3, "aforoMaximo": 500, "precioHora": 1000.00, "descripcion": "Centro de convenciones", "estado": "DISPONIBLE" },
+    { "idLocal": 4, "nombreLocal": "Casa Colonial", "direccion": "Calle San Martín 321", "idDistrito": 4, "aforoMaximo": 80, "precioHora": 250.00, "descripcion": "Ambiente colonial", "estado": "NO_DISPONIBLE" },
   ],
   "fotosLocales": [
-    { "idFoto": 1, "idLocal": 1, "urlFoto": "salon_real1.jpg", "descripcion": "Vista principal" },
-    { "idFoto": 2, "idLocal": 1, "urlFoto": "salon_real2.jpg", "descripcion": "Decoración interior" },
-    { "idFoto": 3, "idLocal": 2, "urlFoto": "terraza_verde1.jpg", "descripcion": "Vista de la terraza" },
-    { "idFoto": 4, "idLocal": 3, "urlFoto": "centro_empresarial1.jpg", "descripcion": "Salón de conferencias" },
-    { "idFoto": 5, "idLocal": 5, "urlFoto": "jardin_encantado1.jpg", "descripcion": "Vista panorámica" }
+    { "idFoto": 1, "idLocal": 1, "urlFoto": "https://cdn0.matrimonio.com.pe/vendor/5326/3_2/1280/jpeg/whatsapp-image-2023-03-07-at-12-29-44-4_11_115326-167838324481472.jpeg", "descripcion": "Vista principal" },
+    { "idFoto": 2, "idLocal": 2, "urlFoto": "https://cdn0.matrimonio.com.pe/vendor/5326/3_2/1280/jpeg/whatsapp-image-2023-03-07-at-12-29-44-4_11_115326-167838324481472.jpeg", "descripcion": "Decoración interior" },
+    { "idFoto": 3, "idLocal": 3, "urlFoto": "https://cdn0.matrimonio.com.pe/vendor/5326/3_2/1280/jpeg/whatsapp-image-2023-03-07-at-12-29-44-4_11_115326-167838324481472.jpeg", "descripcion": "Vista de la terraza" },
+    { "idFoto": 4, "idLocal": 4, "urlFoto": "https://cdn0.matrimonio.com.pe/vendor/5326/3_2/1280/jpeg/whatsapp-image-2023-03-07-at-12-29-44-4_11_115326-167838324481472.jpeg", "descripcion": "Salón de conferencias" },
   ],
   "tiposEvento": [
     { "idTipoEvento": 1, "nombreTipo": "Boda", "descripcion": "Eventos matrimoniales" },
     { "idTipoEvento": 2, "nombreTipo": "Conferencia", "descripcion": "Charlas empresariales" },
     { "idTipoEvento": 3, "nombreTipo": "Cumpleaños", "descripcion": "Fiestas de cumpleaños" },
     { "idTipoEvento": 4, "nombreTipo": "Concierto", "descripcion": "Eventos musicales" },
-    { "idTipoEvento": 5, "nombreTipo": "Graduación", "descripcion": "Ceremonias académicas" }
   ],
   "localTipoEvento": [
     { "idLocal": 1, "idTipoEvento": 1 },
     { "idLocal": 1, "idTipoEvento": 3 },
     { "idLocal": 2, "idTipoEvento": 3 },
     { "idLocal": 3, "idTipoEvento": 2 },
-    { "idLocal": 5, "idTipoEvento": 5 }
+    { "idLocal": 4, "idTipoEvento": 5 }
   ],
   "mobiliario": [
     { "idMobiliario": 1, "nombre": "Sillas", "descripcion": "Sillas de plástico", "stockTotal": 200, "precioUnitario": 5.00 },
@@ -91,4 +210,3 @@ const data = {
     { "idPago": 5, "idReserva": 5, "idMetodoPago": 5, "monto": 2250.00, "estado": "Fallido", "codigoConfirmacion": "FAIL54321", "comprobanteUrl": "pago5.pdf" }
   ]
 }
-
