@@ -32,22 +32,19 @@
 }
 
 @utility text-title {
-    font-family: var(--font-bold);
-    font-size: 36px;
+    font-size: 34px;
     line-height: 40px;
-    font-weight: 700;
+    font-weight: 600;
     letter-spacing: 0;
+    color:var(--color-blue);
 }
 
 @utility card-title {
-    font-family: var(--font-bold);
     font-size: 20px;
-    letter-spacing: 0;
     text-align: center;
 }
 
 @utility card-description {
     font-size: 15px;
-    letter-spacing: 0;
     text-align: center;
 }

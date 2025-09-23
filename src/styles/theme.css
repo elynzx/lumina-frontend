@@ -1,14 +1,13 @@
 @theme {
-  --font-body: Urbanist, "sans-serif";
-  --font-bold: Urbanist-bold, "sans-serif";
+  --font-body: "Poppins", Arial, sans-serif;
 
   /*Base*/
-  --color-bg: #084579;       /* azul noche*/
-  --color-blue: #3174AE;     /* azul intermedio */
-  --color-gray: #8199B7;     /* gris azulado */
-  --color-yellow: #D7A217;   /* amarillo intenso */
-  --color-yellow2: #A6800B;  /* amarillo más oscuro */
+  --color-dark-blue: #0A2F50; /* azul noche*/
+  --color-blue: #084579; /* azul */
+  --color-bgray: #8199B7; /* gris azulado */
+  --color-yellow: #D7A217; /* amarillo intenso */
+  --color-yellow2: #A6800B; /* amarillo más oscuro */
+  --color-light-bgray: #E6E9EE; /* gris claro */
   --color-modal-overlay: #363636;
-  --color-litle-gray: #969696;
-
+  --color-gradient-radial: radial-gradient(circle at 50% 80%, var(--color-blue) 60%, var(--color-dark-blue) 100%);
 }

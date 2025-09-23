@@ -5,7 +5,7 @@ interface Props {
 export const Input = ({ placeholder }: Props) => {
     return (
         <input
-            className="py-[8px] px-[16px] border-litle-gray border-[1px] rounded-lg w-full"
+            className="text-gray text-sm py-[8px] px-[16px] border-zinc-400 border-[1px] rounded-lg w-full"
             placeholder={placeholder}
         />
     )

@@ -23,8 +23,8 @@ export const Button = ({
         <button
             onClick={handleClick}
             className={clsx(
-                "h-[40px] py-4 px-9 flex items-center justify-center rounded-lg cursor-pointer text-sm",
-                inverse ? "bg-white text-black border border-black" : "bg-black text-white",
+                "h-[44px] py-4 px-9 flex items-center justify-center rounded-lg cursor-pointer text-sm",
+                inverse ? "bg-white text-blue border border-blue" : "bg-blue text-white",
                 fullWidth && "w-full"
             )}
         >

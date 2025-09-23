@@ -16,5 +16,6 @@ body {
   padding: 0;
   min-width: 320px;
   min-height: 100vh;
-  font-family: var(--font-body), Arial, sans-serif;
+  font-family: var(--font-body);
+  color: var(--color-blue);
 }
