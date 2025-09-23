@@ -3,17 +3,21 @@ interface Props {
   title: string
   address: string
   details: string
+  onClick?: () => void
 }
 
 export const VenuePreviewCard = ({
   imgUrl,
   title,
   address,
-  details
+  details,
+  onClick
 }: Props) => {
 
   return (
-    <div className="w-[260px] h-[345px] flex flex-col shadow-xl rounded-lg overflow-hidden">
+    <div className="cursor-pointer w-[260px] h-[345px] flex flex-col shadow-xl rounded-lg overflow-hidden"
+      onClick={onClick}
+    >
       <div className="flex-shrink-0 h-[70%] w-full bg-gray flex items-center justify-center">
         <img src={imgUrl} alt={title} className="h-full w-full object-cover rounded-t-lg" />
       </div>
