@@ -4,3 +4,17 @@
     font-weight: 700;
     letter-spacing: 0;
 }
+
+@utility card-title {
+    font-family: var(--font-bold);
+    font-size: 20px;
+    letter-spacing: 0;
+    text-align: center;
+}
+
+@utility card-description {
+    font-size: 15px;
+    letter-spacing: 0;
+    text-align: center;
+}
+
