@@ -7,10 +7,7 @@ import { Header } from "@/components/organism/Header";
 export const Home = () => {
     return (
         <>
-            <Header
-                buttonText="Regístrate"
-                onClickAction={() => { console.log("Regístrate") }}
-            />
+            <Header onClickAction={() => { }} buttonText="Crear cuenta" isHome={true} />
             <DistrictSection />
             <HowWorksSection />
             <TypeEventSection />

@@ -1,4 +1,6 @@
 import { Button } from "@/components/atomic/Button";
+import logomark from "@/assets/logo/logomark.svg"
+import logotype from "@/assets/logo/logotype.svg"
 
 interface Props {
   onClickAction: () => void;
@@ -28,8 +30,8 @@ export const Header = ({
     <div className="flex justify-center items-center">
       <a href="/">
         <img src={isHome
-          ? "/public/logo/logotype.svg"
-          : "/public/logo/logomark.svg"}
+          ? logotype
+          : logomark}
           alt="Logo" className="h-10" />
       </a>
     </div>
