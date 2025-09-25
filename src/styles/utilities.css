@@ -28,22 +28,31 @@
             grid-template-columns: repeat(4, 1fr);
         }
     }
+
+    .text-title {
+        font-size: 34px;
+        line-height: 40px;
+        font-weight: 600;
+        letter-spacing: 0;
+        color:var(--color-blue);
+    }
+
+    .card-title {
+        font-size: 20px;
+        text-align: center;
+    }
+
+    .card-description {
+        font-size: 15px;
+        text-align: center;
+    }
+
+    .bg-gradient-radial {
+        background: var(--color-gradient-radial);
+    }
+
+    .bg-header-home {
+        background: rgba(255, 255, 255, 0.15);
+    }
 }
 
-@utility text-title {
-    font-size: 34px;
-    line-height: 40px;
-    font-weight: 600;
-    letter-spacing: 0;
-    color:var(--color-blue);
-}
-
-@utility card-title {
-    font-size: 20px;
-    text-align: center;
-}
-
-@utility card-description {
-    font-size: 15px;
-    text-align: center;
-}

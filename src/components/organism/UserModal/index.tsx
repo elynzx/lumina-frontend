@@ -33,7 +33,7 @@ export const UserModal = ({
                 <div className="flex flex-col gap-5 w-full items-center">
                     <Input placeholder="Correo electrónico" />
                     <Input placeholder="Contraseña" />
-                    <Button text={buttonText} onClick={onClickAction} fullWidth />
+                    <Button text={buttonText} onClick={onClickAction} fullWidth variant="tertiary" />
                     {isLogin && <a className="text-xs text-black underline font-bold cursor-pointer" onClick={callBackPassword}>Olvide mi contraseña</a>}
                     <hr className="h-[1px] w-full border-light-bgray" />
                     <p className="text-gray-500 text-sm">{footerText} <a className="text-blue text-[16px] font-bold cursor-pointer" onClick={callBackFooter}>{footerLinkText}</a></p>

@@ -14,13 +14,9 @@ export const Header = ({
   isHome = true,
 }: Props) => (
   <header
-    style={{
-      background: isHome
-        ? "rgba(255,255,255,0.15)"
-        : "var(--color-gradient-radial)",
-      backdropFilter: isHome ? "blur(8px)" : undefined,
-    }}
-    className="w-full grid grid-cols-[1fr_auto_1fr] items-center px-[180px] py-6"
+    className={`w-full grid grid-cols-[1fr_auto_1fr] items-center px-[180px] py-6 ${
+      isHome ? 'bg-header-home' : 'bg-gradient-radial'
+    }`}
   >
     <nav className="flex gap-6 items-center justify-start">
       <a href="/" className="text-white hover:underline">Inicio</a>
@@ -40,7 +36,7 @@ export const Header = ({
       <a href="/login" className="text-white hover:underline">
         Iniciar Sesión
       </a>
-      <Button text={buttonText} onClick={onClickAction} inverse />
+      <Button text={buttonText} onClick={onClickAction} variant="secondary" />
     </div>
   </header>
 );
