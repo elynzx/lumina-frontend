@@ -149,7 +149,7 @@ export const data: DatabaseData = {
     { "idLocal": 4, "nombreLocal": "Casa Colonial", "direccion": "Calle San Martín 321", "idDistrito": 4, "aforoMaximo": 80, "precioHora": 250.00, "descripcion": "Ambiente colonial", "estado": "NO_DISPONIBLE" },
   ],
   "fotosLocales": [
-    { "idFoto": 1, "idLocal": 1, "urlFoto": "https://cdn0.matrimonio.com.pe/vendor/5326/3_2/1280/jpeg/whatsapp-image-2023-03-07-at-12-29-44-4_11_115326-167838324481472.jpeg", "descripcion": "Vista principal" },
+    { "idFoto": 1, "idLocal": 1, "urlFoto": "https://welcomepei.com/editorial/peis-most-unique-wedding-venues/pei-brewing-company-wedding/", "descripcion": "Vista principal" },
     { "idFoto": 2, "idLocal": 2, "urlFoto": "https://cdn0.matrimonio.com.pe/vendor/5326/3_2/1280/jpeg/whatsapp-image-2023-03-07-at-12-29-44-4_11_115326-167838324481472.jpeg", "descripcion": "Decoración interior" },
     { "idFoto": 3, "idLocal": 3, "urlFoto": "https://cdn0.matrimonio.com.pe/vendor/5326/3_2/1280/jpeg/whatsapp-image-2023-03-07-at-12-29-44-4_11_115326-167838324481472.jpeg", "descripcion": "Vista de la terraza" },
     { "idFoto": 4, "idLocal": 4, "urlFoto": "https://cdn0.matrimonio.com.pe/vendor/5326/3_2/1280/jpeg/whatsapp-image-2023-03-07-at-12-29-44-4_11_115326-167838324481472.jpeg", "descripcion": "Salón de conferencias" },

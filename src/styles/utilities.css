@@ -34,7 +34,6 @@
         line-height: 40px;
         font-weight: 600;
         letter-spacing: 0;
-        color:var(--color-blue);
     }
 
     .card-title {
@@ -58,5 +57,13 @@
     .bg-gradient-lineal {
         background: var(--color-gradient-lineal);
     }
-}
 
+    .scrollbar-hide {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+    }
+
+    .scrollbar-hide::-webkit-scrollbar {
+        display: none;
+    }
+}

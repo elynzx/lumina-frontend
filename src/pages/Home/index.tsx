@@ -4,6 +4,7 @@ import { HowWorksSection } from './components/HowWorksSection';
 import { TypeEventSection } from './components/TypeEventSection'
 import { VenuePreviewSection } from './components/VenuePreviewSection'
 import { Header } from "@/components/organism/Header";
+import { PopularVenuesSection } from './components/PopularVenuesSection';
 
 export const Home = () => {
     return (
@@ -12,6 +13,7 @@ export const Home = () => {
             <DistrictSection />
             <HowWorksSection />
             <TypeEventSection />
+            <PopularVenuesSection />
             <VenuePreviewSection />
             <Footer
 

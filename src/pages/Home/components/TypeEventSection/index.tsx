@@ -1,3 +1,4 @@
+import { ScrollableSection } from '@/components/molecules/ScrollableSection';
 import { CategoryCard } from '../CategoryCard'
 import { data } from '@/constants/data';
 
@@ -12,11 +13,22 @@ export const TypeEventSection = () => {
   return (
     <div className="section-container">
       <h2 className="text-title">Tipos de Eventos</h2>
-      <div className="section-grid">
+      <ScrollableSection>
+        {data.tiposEvento.map((item, index) => (
+          <div key={item.idTipoEvento} className="flex-shrink-0">
+            <CategoryCard
+              key={item.idTipoEvento}
+              title={item.nombreTipo}
+              description={item.descripcion}
+              imgUrl={images[index]} />
+          </div>
+        ))}
+      </ScrollableSection>
+      {/*       <div className="section-grid">
         {data.tiposEvento.map((item, index) => (
           <CategoryCard key={item.idTipoEvento} title={item.nombreTipo} description={item.descripcion} imgUrl={images[index]} />
         ))}
-      </div>
+      </div> */}
     </div>
   )
 };

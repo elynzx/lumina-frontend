@@ -34,7 +34,7 @@ const cards = [
 export const HowWorksSection = () => {
     return (
         <div>
-            <div style={{ background: "var(--color-gradient-radial)" }} className="section-container">
+            <div className="section-container bg-gradient-radial">
                 <h2 className="text-title text-white">Descubre cómo funciona</h2>
                 <p className="text-center text-sm text-white w-[510px]">Busca, reserva y disfruta. Nuestro proceso es rápido, seguro y pensado para que vivas una experiencia sin complicaciones.
                 </p>
