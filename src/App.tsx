@@ -5,11 +5,13 @@ import { Register } from "@/pages/Register";
 import { Catalog } from "@/pages/Catalog";
 import { ProductDetail } from "@/pages/ProductDetail";
 import { Payment } from "@/pages/Payment";
+import Layout from "@/components/organism/Layout";
 
 export default function App() {
   const routes = useRoutes([
     {
       path: "/",
+      element: <Layout />,
       children: [
         { path: "/", element: <Home /> },
         { path: "/login", element: <Login /> },

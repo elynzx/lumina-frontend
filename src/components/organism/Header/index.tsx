@@ -1,42 +1,41 @@
 import { Button } from "@/components/atomic/Button";
 import logomark from "@/assets/logo/logomark.svg"
 import logotype from "@/assets/logo/logotype.svg"
+import { useLocation } from "react-router-dom";
 
-interface Props {
-  onClickAction: () => void;
-  buttonText: string;
-  isHome?: boolean;
-}
+export const Header = () => {
 
-export const Header = ({
-  onClickAction,
-  buttonText,
-  isHome = true,
-}: Props) => (
-  <header
-    className={`w-full grid grid-cols-[1fr_auto_1fr] items-center px-[180px] py-6 ${
-      isHome ? 'bg-header-home' : 'bg-gradient-radial'
-    }`}
-  >
-    <nav className="flex gap-6 items-center justify-start">
-      <a href="/" className="text-white hover:underline">Inicio</a>
-      <a href="/locales" className="text-white hover:underline">Locales</a>
-    </nav>
+  const location = useLocation();
+  const isHome = location.pathname === "/";
 
-    <div className="flex justify-center items-center">
-      <a href="/">
-        <img src={isHome
-          ? logotype
-          : logomark}
-          alt="Logo" className="h-10" />
-      </a>
-    </div>
+  const handleClick = () => {};
 
-    <div className="flex gap-10 items-center justify-end">
-      <a href="/login" className="text-white hover:underline">
-        Iniciar Sesión
-      </a>
-      <Button text={buttonText} onClick={onClickAction} variant="secondary" />
-    </div>
-  </header>
-);
+  return (
+    <header
+      className={`w-full grid grid-cols-[1fr_auto_1fr] items-center px-[180px] py-6 ${
+        isHome ? 'bg-header-home' : 'bg-gradient-radial'
+      }`}
+    >
+      <nav className="flex gap-6 items-center justify-start">
+        <a href="/" className="text-white hover:underline">Inicio</a>
+        <a href="/locales" className="text-white hover:underline">Locales</a>
+      </nav>
+
+      <div className="flex justify-center items-center">
+        <a href="/">
+          <img src={isHome
+            ? logotype
+            : logomark}
+            alt="Logo" className="h-10" />
+        </a>
+      </div>
+
+      <div className="flex gap-10 items-center justify-end">
+        <a href="/login" className="text-white hover:underline">
+          Iniciar Sesión
+        </a>
+        <Button text="Registrarse" onClick={handleClick} variant="secondary" />
+      </div>
+    </header>
+  );
+};
