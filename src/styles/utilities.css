@@ -54,5 +54,9 @@
     .bg-header-home {
         background: rgba(255, 255, 255, 0.15);
     }
+
+    .bg-gradient-lineal {
+        background: var(--color-gradient-lineal);
+    }
 }
 

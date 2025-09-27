@@ -1,3 +1,4 @@
+import { Footer } from '@/components/organism/Footer';
 import { DistrictSection } from './components/DistrictSection'
 import { HowWorksSection } from './components/HowWorksSection';
 import { TypeEventSection } from './components/TypeEventSection'
@@ -12,6 +13,9 @@ export const Home = () => {
             <HowWorksSection />
             <TypeEventSection />
             <VenuePreviewSection />
+            <Footer
+
+            />
         </>
     )
 };
