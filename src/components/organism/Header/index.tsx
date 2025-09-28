@@ -13,12 +13,12 @@ export const Header = () => {
   return (
     <header
       className={`w-full grid grid-cols-[1fr_auto_1fr] items-center px-[180px] py-6 ${
-        isHome ? 'bg-header-home' : 'bg-gradient-radial'
+        isHome ? 'bg-header-home absolute top-0 left-0 z-50' : 'bg-gradient-radial'
       }`}
     >
       <nav className="flex gap-6 items-center justify-start">
         <a href="/" className="text-white hover:underline">Inicio</a>
-        <a href="/locales" className="text-white hover:underline">Locales</a>
+        <a href="/catalogo" className="text-white hover:underline">Locales</a>
       </nav>
 
       <div className="flex justify-center items-center">

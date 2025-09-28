@@ -42,7 +42,7 @@ export const ScrollableSection = ({
   };
 
   return (
-    <div className="relative w-full max-w-[1400px] mx-auto py-8 px-4 sm:px-8 lg:px-16">
+    <div className="relative w-full max-w-[1400px] mx-auto sm:px-8 lg:px-16">
       {/* Botón izquierdo */}
       {canScrollLeft && (
         <button
@@ -58,7 +58,7 @@ export const ScrollableSection = ({
       <div
         ref={scrollRef}
         onScroll={handleScroll}
-        className="flex gap-8 overflow-x-auto scrollbar-hide p-10 justify-center"
+        className="flex gap-8 overflow-x-auto scrollbar-hide justify-center"
         style={{
           scrollbarWidth: 'none',
           msOverflowStyle: 'none'

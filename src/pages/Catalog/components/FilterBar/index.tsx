@@ -1,7 +1,127 @@
-export const FilterBar = () => {
+import { useState, useEffect } from "react";
+import { data } from "@/constants/data";
+import { Button } from "@/components/atomic/Button";
+import { IconSelect } from "@/components/atomic/IconSelect";
+
+
+interface Props {
+  onFilterChange: (filteredLocales: any[]) => void;
+}
+
+export const FilterBar = ({ onFilterChange }: Props) => {
+  const [priceRange, setPriceRange] = useState("");
+  const [capacity, setCapacity] = useState<number | "">("");
+  const [eventType, setEventType] = useState("");
+
+  const priceOptions = [
+    { value: "0-100", label: "S/ 0 - S/ 100" },
+    { value: "100-200", label: "S/ 100 - S/ 200" },
+    { value: "200-300", label: "S/ 200 - S/ 300" },
+    { value: "300-500", label: "S/ 300 - S/ 500" },
+    { value: "500+", label: "S/ 500+" }
+  ];
+
+  const eventTypeOptions = data.tiposEvento.map(tipo => ({
+    value: tipo.nombreTipo,
+    label: tipo.nombreTipo
+  }));
+
+  const applyFilters = () => {
+    let filtered = [...data.locales];
+
+    // Filtro por precio
+    if (priceRange) {
+      if (priceRange === "500+") {
+        filtered = filtered.filter(local => local.precioHora >= 500);
+      } else {
+        const [min, max] = priceRange.split("-").map(Number);
+        filtered = filtered.filter(local => 
+          local.precioHora >= min && local.precioHora <= max
+        );
+      }
+    }
+
+    // Filtro por capacidad
+    if (capacity) {
+      filtered = filtered.filter(local => local.aforoMaximo >= capacity);
+    }
+
+    // Filtro por tipo de evento
+    if (eventType) {
+      const selectedEventType = data.tiposEvento.find(tipo => tipo.nombreTipo === eventType);
+      if (selectedEventType) {
+        const localesConTipoEvento = data.localTipoEvento
+          .filter(relacion => relacion.idTipoEvento === selectedEventType.idTipoEvento)
+          .map(relacion => relacion.idLocal);
+        
+        filtered = filtered.filter(local => localesConTipoEvento.includes(local.idLocal));
+      }
+    }
+
+    onFilterChange(filtered);
+  };
+
+  const clearAllFilters = () => {
+    setPriceRange("");
+    setCapacity("");
+    setEventType("");
+    onFilterChange(data.locales);
+  };
+
+  // Aplicar filtros cuando cambien los valores
+  useEffect(() => {
+    applyFilters();
+  }, [priceRange, capacity, eventType]);
+
   return (
-      <div>
-        FilterBar
-      </div>
-  )
+    <div className="flex justify-end items-center gap-4 mb-8 p-4 bg-gray-50 rounded-lg">
+      <Button 
+        text="Ver Todo" 
+        variant="primary" 
+        onClick={clearAllFilters}
+      />
+
+    <IconSelect
+        value={priceRange}
+        onChange={setPriceRange}
+        options={priceOptions}
+        placeholder="Precio por hora"
+      />
+
+      <select
+        value={priceRange}
+        onChange={(e) => setPriceRange(e.target.value)}
+        className="px-3 py-2 border border-gray-300 rounded-md bg-white text-sm"
+      >
+        <option value="">Precio por hora</option>
+        {priceOptions.map(option => (
+          <option key={option.value} value={option.value}>
+            {option.label}
+          </option>
+        ))}
+      </select>
+
+      <input
+        type="number"
+        min="1"
+        placeholder="Aforo máximo"
+        value={capacity}
+        onChange={(e) => setCapacity(e.target.value ? parseInt(e.target.value) : "")}
+        className="px-3 py-2 border border-gray-300 rounded-md text-sm w-32"
+      />
+
+      <select
+        value={eventType}
+        onChange={(e) => setEventType(e.target.value)}
+        className="px-3 py-2 border border-gray-300 rounded-md bg-white text-sm"
+      >
+        <option value="">Tipo de Evento</option>
+        {eventTypeOptions.map(option => (
+          <option key={option.value} value={option.value}>
+            {option.label}
+          </option>
+        ))}
+      </select>
+    </div>
+  );
 };
