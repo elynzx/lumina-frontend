@@ -27,7 +27,7 @@ export const IconSelect = ({
           <img 
             src={icon} 
             alt={placeholder} 
-            className="w-5 h-5 ml-3flex-shrink-0" 
+            className="w-6 h-6 ml-3flex-shrink-0" 
           />
         )}
         <select

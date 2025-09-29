@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { data } from "@/constants/data";
 
-import { PopularVenueOverlay } from "../PopularVenueOverlay";
-import { SlideNavigation } from "@/components/molecules/SlideNavigation";
+import { PopularVenueOverlay } from "./PopularVenueOverlay";
+import { SlideNavigation } from "@/pages/Home/components/PopularVenuesSection/SlideNavigation";
 
 
 const title = "Los salones más reservados";
