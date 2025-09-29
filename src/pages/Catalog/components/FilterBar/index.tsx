@@ -2,7 +2,8 @@ import { useState, useEffect } from "react";
 import { data } from "@/constants/data";
 import { Button } from "@/components/atomic/Button";
 import { IconSelect } from "@/components/atomic/IconSelect";
-/* import { capacityIcon } from "@/assets/icons/capacity_lineal.svg"; */
+import { IconNumberInput } from "@/components/atomic/IconNumberInput";
+import capacityIcon from "@/assets/icons/capacity_lineal.svg";
 import priceIcon from "@/assets/icons/currency.svg";
 import eventIcon from "@/assets/icons/event_tag.svg";
 
@@ -88,13 +89,12 @@ export const FilterBar = ({ onFilterChange }: Props) => {
         placeholder="Precio por hora"
       />
 
-      <input
-        type="number"
-        min="1"
-        placeholder="Aforo máximo"
+      <IconNumberInput
         value={capacity}
-        onChange={(e) => setCapacity(e.target.value ? parseInt(e.target.value) : "")}
-        className="px-3 py-2 border border-gray-300 rounded-md text-sm w-32"
+        onChange={setCapacity}
+        icon={capacityIcon}
+        placeholder="Capacidad"
+        min={1}
       />
 
       <IconSelect

@@ -33,7 +33,7 @@ export const IconSelect = ({
         <select
           value={value}
           onChange={(e) => onChange(e.target.value)}
-          className={`flex-1 px-3 py-2 border-none outline-none text-sm bg-transparent ${variantStyles[variant].split(' ')[1]} ${icon ? 'pl-2' : ''}`}
+          className={`cursor-pointer flex-1 px-3 py-2 border-none outline-none text-sm bg-transparent ${variantStyles[variant].split(' ')[1]} ${icon ? 'pl-2' : ''}`}
         >
           <option value="">{placeholder}</option>
           {options.map(option => (
