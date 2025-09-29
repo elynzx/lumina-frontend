@@ -81,25 +81,12 @@ export const FilterBar = ({ onFilterChange }: Props) => {
         onClick={clearAllFilters}
       />
 
-    <IconSelect
+      <IconSelect
         value={priceRange}
         onChange={setPriceRange}
         options={priceOptions}
         placeholder="Precio por hora"
       />
-
-      <select
-        value={priceRange}
-        onChange={(e) => setPriceRange(e.target.value)}
-        className="px-3 py-2 border border-gray-300 rounded-md bg-white text-sm"
-      >
-        <option value="">Precio por hora</option>
-        {priceOptions.map(option => (
-          <option key={option.value} value={option.value}>
-            {option.label}
-          </option>
-        ))}
-      </select>
 
       <input
         type="number"
@@ -110,18 +97,12 @@ export const FilterBar = ({ onFilterChange }: Props) => {
         className="px-3 py-2 border border-gray-300 rounded-md text-sm w-32"
       />
 
-      <select
+      <IconSelect
         value={eventType}
-        onChange={(e) => setEventType(e.target.value)}
-        className="px-3 py-2 border border-gray-300 rounded-md bg-white text-sm"
-      >
-        <option value="">Tipo de Evento</option>
-        {eventTypeOptions.map(option => (
-          <option key={option.value} value={option.value}>
-            {option.label}
-          </option>
-        ))}
-      </select>
+        onChange={setEventType}
+        options={eventTypeOptions}
+        placeholder="Tipo de Evento"
+      />
     </div>
   );
 };

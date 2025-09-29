@@ -54,14 +54,15 @@ export const ScrollableSection = ({
         </button>
       )}
 
-      {/* Contenedor de scroll */}
+      {/* Contenedor de scroll con padding para animaciones */}
       <div
         ref={scrollRef}
         onScroll={handleScroll}
-        className="flex gap-8 overflow-x-auto scrollbar-hide justify-center"
+        className="flex gap-8 overflow-x-auto scrollbar-hide justify-center py-8"
         style={{
           scrollbarWidth: 'none',
-          msOverflowStyle: 'none'
+          msOverflowStyle: 'none',
+          overflowY: 'visible'
         }}
       >
         {children}

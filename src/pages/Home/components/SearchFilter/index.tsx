@@ -4,6 +4,8 @@ import { data } from "@/constants/data";
 import searchIcon from "@/assets/icons/search_blue.svg";
 import peopleIcon from "@/assets/icons/capacity_blue.svg";
 import locationIcon from "@/assets/icons/location_blue.svg";
+import { Dropdown } from "./Dropdown";
+import { NumberField } from "./NumberField";
 import { Button } from "@/components/atomic/Button";
 
 const SearchFilterContent = {
@@ -17,69 +19,6 @@ const SearchFilterContent = {
     district: "Seleccionar"
   }
 };
-
-interface DropdownProps {
-  title: string;
-  icon: string;
-  value: string;
-  onChange: (value: string) => void;
-  options: { id: number; name: string }[];
-  placeholder: string;
-  showBorder?: boolean;
-}
-
-const Dropdown = ({
-  title,
-  icon,
-  value,
-  onChange,
-  options,
-  placeholder,
-  showBorder = true
-}: DropdownProps) => (
-  <div className={`flex flex-col ${showBorder ? 'border-r border-gray-300 pr-6' : ''}`}>
-    <h4 className="text-sm text-center text-gray-700 mb-2">{title}</h4>
-    <div className="flex items-center gap-3 mb-2">
-      <img src={icon} alt={title} className="w-6 h-6 text-gray-400" />
-      <select
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        className="flex-1 border-none outline-none text-sm bg-transparent"
-      >
-        <option value="">{placeholder}</option>
-        {options.map((option) => (
-          <option key={option.id} value={option.name}>
-            {option.name}
-          </option>
-        ))}
-      </select>
-    </div>
-  </div>
-);
-
-interface NumberFieldProps {
-  title: string;
-  icon: string;
-  value: number | "";
-  onChange: (value: number | "") => void;
-  showBorder?: boolean;
-}
-
-const NumberField = ({ title, icon, value, onChange, showBorder = true }: NumberFieldProps) => (
-  <div className={`flex flex-col ${showBorder ? 'border-r border-gray-300 pr-6' : ''}`}>
-    <h4 className="text-sm text-center text-gray-700 mb-2">{title}</h4>
-    <div className="flex items-center gap-3 mb-2">
-      <img src={icon} alt={title} className="w-6 h-6 text-gray-400" />
-      <input
-        type="number"
-        min="1"
-        value={value}
-        onChange={(e) => onChange(e.target.value ? parseInt(e.target.value) : "")}
-        className="flex-1 border-none outline-none text-sm w-full"
-      />
-    </div>
-  </div>
-);
 
 export const SearchFilter = () => {
   const navigate = useNavigate();
@@ -184,9 +123,6 @@ export const SearchFilter = () => {
     </div>
   );
 };
-
-
-
 
 
 /* export const SearchFilter = () => {
