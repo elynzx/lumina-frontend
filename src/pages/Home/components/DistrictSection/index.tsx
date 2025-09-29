@@ -22,11 +22,6 @@ export const DistrictSection = () => {
           </div>
         ))}
       </ScrollableSection>
-      {/*       <div className="section-grid">
-        {data.distritos.map((item) => (
-          <CategoryCard key={item.idDistrito} title={item.nombreDistrito} imgUrl={getDistrictImage(item.idDistrito)} />
-        ))}
-      </div> */}
     </div>
   )
 };
