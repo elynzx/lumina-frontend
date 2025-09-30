@@ -1,7 +1,9 @@
+import locationIcon from "@/assets/icons/location_blue.svg"
+
 interface Props {
   imgUrl: string
   title: string
-  address: string
+  district: string
   details: string
   onClick?: () => void
 }
@@ -9,7 +11,7 @@ interface Props {
 export const VenuePreviewCard = ({
   imgUrl,
   title,
-  address,
+  district,
   details,
   onClick
 }: Props) => {
@@ -22,9 +24,12 @@ export const VenuePreviewCard = ({
         <img src={imgUrl} alt={title} className="h-full w-full object-cover rounded-t-lg" />
       </div>
       <div className="flex-grow h-[30%] px-4 py-2 flex flex-col justify-center">
-        <h3 className="card-title">{title}</h3>
-        <p className="text-sm text-center">{address}</p>
-        <p className="text-sm text-center">{details}</p>
+        <h3 className="font-bold text-center">{title}</h3>
+        <p className="text-xs text-center">{details}</p>
+        <div className="flex items-center justify-center gap-1 mt-2">
+          <img src={locationIcon} alt="Location Icon" className="h-4 w-4 inline-block" />
+          <p className="text-sm text-center">{district}</p>
+        </div>
       </div>
     </div>
   )

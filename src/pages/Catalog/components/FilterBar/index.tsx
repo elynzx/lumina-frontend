@@ -2,6 +2,10 @@ import { useState, useEffect } from "react";
 import { data } from "@/constants/data";
 import { Button } from "@/components/atomic/Button";
 import { IconSelect } from "@/components/atomic/IconSelect";
+import { IconNumberInput } from "@/components/atomic/IconNumberInput";
+import capacityIcon from "@/assets/icons/capacity_lineal.svg";
+import priceIcon from "@/assets/icons/currency.svg";
+import eventIcon from "@/assets/icons/event_tag.svg";
 
 
 interface Props {
@@ -29,7 +33,6 @@ export const FilterBar = ({ onFilterChange }: Props) => {
   const applyFilters = () => {
     let filtered = [...data.locales];
 
-    // Filtro por precio
     if (priceRange) {
       if (priceRange === "500+") {
         filtered = filtered.filter(local => local.precioHora >= 500);
@@ -41,12 +44,10 @@ export const FilterBar = ({ onFilterChange }: Props) => {
       }
     }
 
-    // Filtro por capacidad
     if (capacity) {
       filtered = filtered.filter(local => local.aforoMaximo >= capacity);
     }
 
-    // Filtro por tipo de evento
     if (eventType) {
       const selectedEventType = data.tiposEvento.find(tipo => tipo.nombreTipo === eventType);
       if (selectedEventType) {
@@ -68,13 +69,12 @@ export const FilterBar = ({ onFilterChange }: Props) => {
     onFilterChange(data.locales);
   };
 
-  // Aplicar filtros cuando cambien los valores
   useEffect(() => {
     applyFilters();
   }, [priceRange, capacity, eventType]);
 
   return (
-    <div className="flex justify-end items-center gap-4 mb-8 p-4 bg-gray-50 rounded-lg">
+    <div className="flex justify-end items-center gap-4 mb-8 p-4 rounded-lg">
       <Button 
         text="Ver Todo" 
         variant="primary" 
@@ -84,22 +84,23 @@ export const FilterBar = ({ onFilterChange }: Props) => {
       <IconSelect
         value={priceRange}
         onChange={setPriceRange}
+        icon={priceIcon}
         options={priceOptions}
         placeholder="Precio por hora"
       />
 
-      <input
-        type="number"
-        min="1"
-        placeholder="Aforo máximo"
+      <IconNumberInput
         value={capacity}
-        onChange={(e) => setCapacity(e.target.value ? parseInt(e.target.value) : "")}
-        className="px-3 py-2 border border-gray-300 rounded-md text-sm w-32"
+        onChange={setCapacity}
+        icon={capacityIcon}
+        placeholder="Capacidad"
+        min={1}
       />
 
       <IconSelect
         value={eventType}
         onChange={setEventType}
+        icon={eventIcon}
         options={eventTypeOptions}
         placeholder="Tipo de Evento"
       />
