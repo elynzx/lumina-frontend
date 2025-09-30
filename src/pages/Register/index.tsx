@@ -4,7 +4,7 @@ export const Register = () => {
     return (
         <UserModal
             title="Regístrate"
-            subtitle="Alquila el salón perfecto para tu evento"
+            subtitle="Crea tu cuenta y alquila el salón perfecto para tu evento"
             onClickAction={() => { console.log("Registrar") }}
             buttonText="Registrar"
             footerText="¿Ya tienes una cuenta?"
