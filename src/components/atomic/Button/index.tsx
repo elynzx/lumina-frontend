@@ -4,20 +4,24 @@ type ButtonVariants = "primary" | "secondary" | "tertiary";
 
 interface Props {
     text: string
-    onClick: () => void
+    onClick?: () => void
     fullWidth?: boolean
     variant?: ButtonVariants
+    type?: "button" | "submit" | "reset"
+    disabled?: boolean
 }
 
 export const Button = ({
     text,
     onClick,
     fullWidth,
-    variant = "primary"
+    variant = "primary",
+    type = "button",
+    disabled = false
 }: Props) => {
 
     const handleClick = () => {
-        if (onClick) {
+        if (onClick && !disabled) {
             onClick();
         }
     }
@@ -37,11 +41,16 @@ export const Button = ({
     
     return (
         <button
+            type={type}
             onClick={handleClick}
+            disabled={disabled}
             className={clsx(
-                "h-[44px] py-4 px-9 flex items-center justify-center rounded-lg cursor-pointer text-sm",
+                "h-[44px] py-4 px-9 flex items-center justify-center rounded-lg text-sm transition-colors",
                 getButtonClasses(),
-                fullWidth && "w-full"
+                fullWidth && "w-full",
+                disabled 
+                    ? "opacity-50 cursor-not-allowed" 
+                    : "cursor-pointer hover:opacity-90"
             )}
         >
             {text}

@@ -1,14 +1,17 @@
 import { Button } from "@/components/atomic/Button";
 import logomark from "@/assets/logo/logomark.svg"
 import logotype from "@/assets/logo/logotype.svg"
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 export const Header = () => {
 
   const location = useLocation();
+  const navigate = useNavigate();
   const isHome = location.pathname === "/";
 
-  const handleClick = () => {};
+  const handleClick = () => {
+    navigate("/registro");
+  };
 
   return (
     <header
