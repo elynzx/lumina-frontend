@@ -30,7 +30,59 @@ export const Input = forwardRef<HTMLInputElement, Props>(({
 
     const [viewCalendar, setViewCalendar] = useState(false);
     const [dateSelected, setDateSelected] = useState<Date>();
+    const [displayValue, setDisplayValue] = useState("");
     const containerRef = useRef<HTMLDivElement>(null);
+
+    // Función para formatear fecha en formato DD/MM/YYYY
+    const formatDateForDisplay = (date: Date): string => {
+        const day = date.getDate().toString().padStart(2, '0');
+        const month = (date.getMonth() + 1).toString().padStart(2, '0');
+        const year = date.getFullYear();
+        return `${day}/${month}/${year}`;
+    };
+
+    // Función para convertir string DD/MM/YYYY a Date
+    const parseDisplayDate = (dateString: string): Date | null => {
+        const parts = dateString.split('/');
+        if (parts.length === 3) {
+            const day = parseInt(parts[0], 10);
+            const month = parseInt(parts[1], 10) - 1; // Los meses en JS van de 0-11
+            const year = parseInt(parts[2], 10);
+            const date = new Date(year, month, day);
+            return isNaN(date.getTime()) ? null : date;
+        }
+        return null;
+    };
+
+    // Inicializar y sincronizar fechas
+    useEffect(() => {
+        if (type === 'date') {
+            if (value) {
+                // Si hay un valor, intentar parsearlo
+                const parsedDate = parseDisplayDate(value);
+                if (parsedDate) {
+                    setDateSelected(parsedDate);
+                    setDisplayValue(value);
+                } else {
+                    // Si el valor no es válido, usar hoy
+                    const today = new Date();
+                    setDateSelected(today);
+                    const formattedDate = formatDateForDisplay(today);
+                    setDisplayValue(formattedDate);
+                    onChange?.(formattedDate);
+                }
+            } else {
+                // Si no hay valor, usar hoy
+                const today = new Date();
+                setDateSelected(today);
+                const formattedDate = formatDateForDisplay(today);
+                setDisplayValue(formattedDate);
+                onChange?.(formattedDate);
+            }
+        } else {
+            setDisplayValue(value);
+        }
+    }, [value, type]);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         onChange?.(e.target.value);
@@ -39,7 +91,8 @@ export const Input = forwardRef<HTMLInputElement, Props>(({
     const handleChangeCalendar = (date: Date | undefined) => {
         setDateSelected(date);
         if (date) {
-            const formattedDate = date.toLocaleDateString();
+            const formattedDate = formatDateForDisplay(date);
+            setDisplayValue(formattedDate);
             onChange?.(formattedDate);
             setViewCalendar(false);
         }
@@ -88,10 +141,10 @@ export const Input = forwardRef<HTMLInputElement, Props>(({
                 <input
                     ref={ref}
                     name={name}
-                    type={type}
+                    type={type === 'date' ? 'text' : type}
                     className="text-gray py-3 text-sm h-full w-full outline-none focus:outline-none"
                     placeholder={placeholder}
-                    value={value}
+                    value={type === 'date' ? displayValue : value}
                     onChange={handleChange}
                     onFocus={handleFocus}
                     onBlur={handleBlur}
@@ -106,6 +159,8 @@ export const Input = forwardRef<HTMLInputElement, Props>(({
                         mode="single"
                         selected={dateSelected}
                         onSelect={handleChangeCalendar}
+                        disabled={{ before: new Date() }}
+                        defaultMonth={dateSelected || new Date()}
                     />
                 </div>
             )}
