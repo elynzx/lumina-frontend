@@ -24,7 +24,7 @@ interface RegisterFormData {
 interface Props {
     title: string
     subtitle?: string
-    onClickAction: (data: LoginFormData | RegisterFormData) => void
+    onClickAction: (data: LoginFormData | RegisterFormData) => void | Promise<void>
     isLogin?: boolean
     buttonText: string
     callBackPassword?: () => void    

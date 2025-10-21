@@ -2,16 +2,25 @@ import { Button } from "@/components/atomic/Button";
 import logomark from "@/assets/logo/logomark.svg"
 import logotype from "@/assets/logo/logotype.svg"
 import { useLocation, useNavigate } from "react-router-dom";
+import { useAuth } from "@/hooks/useAuth";
+import { useAuthStore } from "@/store/useAuthStore";
 
 export const Header = () => {
 
   const location = useLocation();
   const navigate = useNavigate();
+  const { logout } = useAuth();
+  const { user, isAuthenticated } = useAuthStore();
   const isHome = location.pathname === "/";
 
-  const handleClick = () => {
+  const handleRegisterClick = () => {
     navigate("/registro");
   };
+
+  const handleLogout = () => {
+    logout();
+    navigate("/");
+  }
 
   return (
     <header
@@ -34,10 +43,21 @@ export const Header = () => {
       </div>
 
       <div className="flex gap-10 items-center justify-end">
-        <a href="/login" className="text-white hover:underline">
-          Iniciar Sesión
-        </a>
-        <Button text="Registrarse" onClick={handleClick} variant="secondary" />
+        {isAuthenticated ? (
+          <>
+            <span className="text-white">
+              Hola, {user?.nombreCompleto || user?.email}
+            </span>
+            <Button text="Cerrar Sesión" onClick={handleLogout} variant="secondary" />
+          </>
+        ) : (
+          <>
+            <a href="/login" className="text-white hover:underline">
+              Iniciar Sesión
+            </a>
+            <Button text="Registrarse" onClick={handleRegisterClick} variant="secondary" />
+          </>
+        )}
       </div>
     </header>
   );
