@@ -1,5 +1,19 @@
 import { apiClient } from '@/api/base';
 import type { LoginRequest, RegisterRequest, AuthResponse, BackendResponse } from '@/api/interfaces/auth';
+import Cookies from 'js-cookie';
+
+// Configuración de cookies seguras
+const COOKIE_OPTIONS = {
+  secure: process.env.NODE_ENV === 'production', // Solo HTTPS en producción
+  sameSite: 'strict' as const, // Previene CSRF
+  expires: 7, // 7 días
+};
+
+const USER_COOKIE_OPTIONS = {
+  secure: process.env.NODE_ENV === 'production',
+  sameSite: 'lax' as const, // Más flexible para datos menos sensibles
+  expires: 7,
+};
 
 export const useAuthService = () => {
   /**
@@ -11,15 +25,16 @@ export const useAuthService = () => {
       const authData = response.data;
 
       if (authData?.accessToken) {
-        localStorage.setItem('token', authData.accessToken);
-        localStorage.setItem(
-          'user',
+        Cookies.set('auth_token', authData.accessToken, COOKIE_OPTIONS);        
+        Cookies.set(
+          'user_data',
           JSON.stringify({
             idUsuario: authData.idUsuario,
             email: authData.email,
             nombreCompleto: authData.nombreCompleto,
             rol: authData.rol,
-          })
+          }),
+          USER_COOKIE_OPTIONS
         );
       }
 
@@ -39,15 +54,19 @@ export const useAuthService = () => {
       const authData = response.data;
 
       if (authData?.accessToken) {
-        localStorage.setItem('token', authData.accessToken);
-        localStorage.setItem(
-          'user',
+        // Guardar token en cookie segura
+        Cookies.set('auth_token', authData.accessToken, COOKIE_OPTIONS);
+        
+        // Guardar datos de usuario en cookie (menos sensible)
+        Cookies.set(
+          'user_data',
           JSON.stringify({
             idUsuario: authData.idUsuario,
             email: authData.email,
             nombreCompleto: authData.nombreCompleto,
             rol: authData.rol,
-          })
+          }),
+          USER_COOKIE_OPTIONS
         );
       }
 
@@ -62,29 +81,29 @@ export const useAuthService = () => {
    * Cerrar sesión
    */
   const logout = (): void => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
+    Cookies.remove('auth_token');
+    Cookies.remove('user_data');
   };
 
   /**
    * Verificar si el usuario está autenticado
    */
   const isAuthenticated = (): boolean => {
-    return !!localStorage.getItem('token');
+    return !!Cookies.get('auth_token');
   };
 
   /**
    * Obtener token actual
    */
   const getToken = (): string | null => {
-    return localStorage.getItem('token');
+    return Cookies.get('auth_token') || null;
   };
   
   /**
    * Obtener usuario actual
    */
   const getCurrentUser = (): { idUsuario: number; email: string; nombreCompleto: string; rol: string } | null => {
-    const userStr = localStorage.getItem('user');
+    const userStr = Cookies.get('user_data');
     if (!userStr) return null;
 
     try {

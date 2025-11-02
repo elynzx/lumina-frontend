@@ -1,4 +1,5 @@
 // Configuración base de la API
+import Cookies from 'js-cookie';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080/api';
 
@@ -33,9 +34,9 @@ const getHeaders = (): HeadersInit => {
         'Content-Type': 'application/json',
     };
 
-    const token = localStorage.getItem('token');
+    const token = Cookies.get('auth_token');
     if (token) {
-        headers['Authorization'] = `Bearer ${token}`;
+        headers.Authorization = `Bearer ${token}`;
     }
 
     return headers;

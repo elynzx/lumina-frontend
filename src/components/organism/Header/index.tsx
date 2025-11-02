@@ -12,6 +12,10 @@ export const Header = () => {
   const { logout } = useAuth();
   const { user, isAuthenticated } = useAuthStore();
   const isHome = location.pathname === "/";
+  
+  // Obtenemos los valores actuales llamando a las funciones del store
+  const currentUser = user();
+  const userIsAuthenticated = isAuthenticated();
 
   const handleRegisterClick = () => {
     navigate("/registro");
@@ -22,6 +26,18 @@ export const Header = () => {
     navigate("/");
   }
 
+  const handleHomeClick = () => {
+    navigate("/");
+  };
+
+  const handleCatalogClick = () => {
+    navigate("/catalogo");
+  };
+
+  const handleLoginClick = () => {
+    navigate("/login");
+  };
+
   return (
     <header
       className={`w-full grid grid-cols-[1fr_auto_1fr] items-center px-[180px] py-6 ${
@@ -29,32 +45,32 @@ export const Header = () => {
       }`}
     >
       <nav className="flex gap-6 items-center justify-start">
-        <a href="/" className="text-white hover:underline">Inicio</a>
-        <a href="/catalogo" className="text-white hover:underline">Locales</a>
+        <button onClick={handleHomeClick} className="text-white hover:underline">Inicio</button>
+        <button onClick={handleCatalogClick} className="text-white hover:underline">Locales</button>
       </nav>
 
       <div className="flex justify-center items-center">
-        <a href="/">
+        <button onClick={handleHomeClick}>
           <img src={isHome
             ? logotype
             : logomark}
             alt="Logo" className="h-10" />
-        </a>
+        </button>
       </div>
 
       <div className="flex gap-10 items-center justify-end">
-        {isAuthenticated ? (
+        {userIsAuthenticated ? (
           <>
             <span className="text-white">
-              Hola, {user?.nombreCompleto || user?.email}
+              Hola, {currentUser?.nombreCompleto || currentUser?.email}
             </span>
             <Button text="Cerrar Sesión" onClick={handleLogout} variant="secondary" />
           </>
         ) : (
           <>
-            <a href="/login" className="text-white hover:underline">
+            <button onClick={handleLoginClick} className="text-white hover:underline">
               Iniciar Sesión
-            </a>
+            </button>
             <Button text="Registrarse" onClick={handleRegisterClick} variant="secondary" />
           </>
         )}

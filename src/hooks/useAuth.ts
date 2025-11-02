@@ -1,64 +1,63 @@
+import { useCallback } from 'react';
 import { useAuthStore } from '@/store/useAuthStore';
 import { useAuthService } from '@/api/services/authService';
-import type { LoginRequest, RegisterRequest, AuthResponse } from '@/api/interfaces/auth';
+import type { LoginRequest, RegisterRequest } from '@/api/interfaces/auth';
 
+/**
+ * Hook personalizado para manejar operaciones de autenticación.
+ * 
+ * @description Este hook proporciona funciones optimizadas para login, registro y logout.
+ * Después de cada operación, actualiza automáticamente la UI llamando refresh() del store.
+ * El store lee los datos directamente de cookies, manteniendo una sola fuente de verdad.
+ */
 export const useAuth = () => {
-  const { setAuthenticated, setUser, setLoading } = useAuthStore();
+  const { refresh } = useAuthStore();
   const authService = useAuthService();
 
-  const checkAuth = () => {
-    setLoading(true);
-    const authenticated = authService.isAuthenticated();
-    const currentUser = authService.getCurrentUser();
-    setAuthenticated(authenticated);
-    setUser(currentUser);
-    setLoading(false);
-  };
-
-  const login = async (credentials: LoginRequest) => {
+  /**
+   * Inicia sesión de usuario
+   * @param {LoginRequest} credentials - Email y contraseña del usuario
+   */
+  const login = useCallback(async (credentials: LoginRequest) => {
     try {
-      const response: AuthResponse = await authService.login(credentials);
-      setAuthenticated(true);
-      setUser({
-        idUsuario: response.idUsuario,
-        email: response.email,
-        nombreCompleto: response.nombreCompleto,
-        rol: response.rol
-      });
+      await authService.login(credentials);
+      // El authService ya guardó en cookies, solo necesitamos refrescar la UI
+      refresh();
     } catch (error) {
-      setAuthenticated(false);
-      setUser(null);
+      // Si hay error, también refrescamos para limpiar cualquier estado inconsistente
+      refresh();
       throw error;
     }
-  };
+  }, [authService, refresh]);
 
-  const register = async (userData: RegisterRequest) => {
+  /**
+   * Registra un nuevo usuario
+   * @param {RegisterRequest} userData - Datos del nuevo usuario
+   */
+  const register = useCallback(async (userData: RegisterRequest) => {
     try {
-      const response: AuthResponse = await authService.register(userData);
-      setAuthenticated(true);
-      setUser({
-        idUsuario: response.idUsuario,
-        email: response.email,
-        nombreCompleto: response.nombreCompleto,
-        rol: response.rol
-      });
+      await authService.register(userData);
+      // El authService ya guardó en cookies, solo necesitamos refrescar la UI
+      refresh();
     } catch (error) {
-      setAuthenticated(false);
-      setUser(null);
+      // Si hay error, también refrescamos para limpiar cualquier estado inconsistente
+      refresh();
       throw error;
     }
-  };
+  }, [authService, refresh]);
 
-  const logout = () => {
+  /**
+   * Cierra la sesión del usuario
+   */
+  const logout = useCallback(() => {
     authService.logout();
-    setAuthenticated(false);
-    setUser(null);
-  };
+    // El authService ya eliminó las cookies, solo necesitamos refrescar la UI
+    refresh();
+  }, [authService, refresh]);
 
   return {
     login,
     register,
-    logout,
-    checkAuth
+    logout
   };
 };
