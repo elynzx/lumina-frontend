@@ -7,7 +7,7 @@ interface Props {
   variant?: 'primary' | 'secondary';
 }
 
-export const IconSelect = ({ 
+export const IconChooser = ({ 
   value, 
   onChange, 
   options, 
@@ -27,7 +27,7 @@ export const IconSelect = ({
           <img 
             src={icon} 
             alt={placeholder} 
-            className="w-6 h-6 ml-3flex-shrink-0" 
+            className="w-6 h-6 ml-3 shrink" 
           />
         )}
         <select

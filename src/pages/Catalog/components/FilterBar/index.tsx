@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { data } from "@/constants/data";
 import { Button } from "@/components/atomic/Button";
-import { IconSelect } from "@/components/atomic/IconSelect";
+import { IconChooser } from "@/components/atomic/IconChooser";
 import { IconNumberInput } from "@/components/atomic/IconNumberInput";
 import capacityIcon from "@/assets/icons/capacity_lineal.svg";
 import priceIcon from "@/assets/icons/currency.svg";
@@ -81,7 +81,7 @@ export const FilterBar = ({ onFilterChange }: Props) => {
         onClick={clearAllFilters}
       />
 
-      <IconSelect
+      <IconChooser
         value={priceRange}
         onChange={setPriceRange}
         icon={priceIcon}
@@ -97,7 +97,7 @@ export const FilterBar = ({ onFilterChange }: Props) => {
         min={1}
       />
 
-      <IconSelect
+      <IconChooser
         value={eventType}
         onChange={setEventType}
         icon={eventIcon}

@@ -130,7 +130,7 @@ export const Input = forwardRef<HTMLInputElement, Props>(({
             <div className={`w-full h-[48px] px-4 flex items-center gap-2 border-[1px] rounded-lg focus-within:outline-none focus-within:ring-2 ${
                 error 
                     ? 'border-red-500 focus-within:ring-red-500 focus-within:border-red-500' 
-                    : 'border-zinc-400 focus-within:ring-blue focus-within:border-blue'
+                    : 'border-blue focus-within:ring-blue focus-within:border-blue'
             }`}>
                 {icon && (
                     <img

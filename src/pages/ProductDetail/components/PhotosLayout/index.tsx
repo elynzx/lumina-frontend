@@ -16,7 +16,7 @@ export const PhotosLayout = ({
     <div className="w-full px-3 md:px-12 py-6 md:py-10">
       <div className="flex gap-8 max-w-6xl mx-auto h-[550px]">
 
-        <div className="w-[70%] h-full">
+        <div className="w-[60%] h-full">
           <img 
             className="w-full h-full object-cover rounded-lg cursor-pointer hover:opacity-90 transition-opacity" 
             src={images[0]} 
@@ -25,7 +25,7 @@ export const PhotosLayout = ({
           />
         </div>
 
-        <div className="w-[30%] h-full flex flex-col">
+        <div className="w-[40%] h-full flex flex-col">
 
           <div className="h-[calc(50%-8px)]">
             <img 

@@ -53,6 +53,19 @@ export interface LocalTipoEvento {
   idTipoEvento: number;
 }
 
+export interface ReviewLocal {
+  idLocal: number;
+  promedio: number;
+  totalReviews: number;
+}
+
+export interface UbicacionLocal {
+  idLocal: number;
+  latitud: number;
+  longitud: number;
+  urlGoogleMaps: string;
+}
+
 export interface Mobiliario {
   idMobiliario: number;
   nombre: string;
@@ -119,6 +132,8 @@ export interface DatabaseData {
   reservas: Reserva[];
   reservaMobiliario: ReservaMobiliario[];
   pagos: Pago[];
+  reviewsLocales: ReviewLocal[];
+  ubicacionesLocales: UbicacionLocal[];
 }
 
 export const data: DatabaseData = {
@@ -210,5 +225,39 @@ export const data: DatabaseData = {
     { "idPago": 3, "idReserva": 3, "idMetodoPago": 3, "monto": 9000.00, "estado": "Pagado", "codigoConfirmacion": "CONF67890", "comprobanteUrl": "pago3.pdf" },
     { "idPago": 4, "idReserva": 4, "idMetodoPago": 4, "monto": 2800.00, "estado": "Pendiente", "codigoConfirmacion": null, "comprobanteUrl": null },
     { "idPago": 5, "idReserva": 5, "idMetodoPago": 5, "monto": 2250.00, "estado": "Fallido", "codigoConfirmacion": "FAIL54321", "comprobanteUrl": "pago5.pdf" }
+  ],
+    "reviewsLocales": [
+    { "idLocal": 1, "promedio": 4.8, "totalReviews": 128 },
+    { "idLocal": 2, "promedio": 4.5, "totalReviews": 87 },
+    { "idLocal": 3, "promedio": 4.9, "totalReviews": 215 },
+    { "idLocal": 4, "promedio": 4.3, "totalReviews": 45 }
+  ],
+
+  "ubicacionesLocales": [
+    { 
+      "idLocal": 1, 
+      "latitud": -12.111627, 
+      "longitud": -77.021151,
+      "urlGoogleMaps": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3901.0461505005206!2d-77.02145!3d-12.111627!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x9105c8d4d4d4d4d5%3A0x0!2sMiraflores%2C%20Lima!5e0!3m2!1ses!2spe!4v1234567890"
+    },
+    { 
+      "idLocal": 2, 
+      "latitud": -12.091807, 
+      "longitud": -77.031641,
+      "urlGoogleMaps": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3901.2168505005206!2d-77.031641!3d-12.091807!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x9105c8a8a8a8a8a9%3A0x0!2sSan%20Isidro%2C%20Lima!5e0!3m2!1ses!2spe!4v1234567890"
+    },
+    { 
+      "idLocal": 3, 
+      "latitud": -12.055410, 
+      "longitud": -77.025319,
+      "urlGoogleMaps": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3901.4875505005206!2d-77.025319!3d-12.055410!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x9105c8d4d4d4d4d5%3A0x0!2sSurco%2C%20Lima!5e0!3m2!1ses!2spe!4v1234567890"
+    },
+    { 
+      "idLocal": 4, 
+      "latitud": -12.072038, 
+      "longitud": -76.984680,
+      "urlGoogleMaps": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3901.3168505005206!2d-76.984680!3d-12.072038!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x9105c8d4d4d4d4d5%3A0x0!2sLa%20Molina%2C%20Lima!5e0!3m2!1ses!2spe!4v1234567890"
+    }
   ]
 }
+
