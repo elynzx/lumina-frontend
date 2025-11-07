@@ -157,11 +157,47 @@ export const data: DatabaseData = {
     { "idDistrito": 3, "nombreDistrito": "Surco"},
     { "idDistrito": 4, "nombreDistrito": "La Molina"},
   ],
-  "locales": [
-    { "idLocal": 1, "nombreLocal": "Salon Real", "direccion": "Av. Pardo 123", "idDistrito": 1, "aforoMaximo": 200, "precioHora": 500.00, "descripcion": "Salón elegante para bodas", "estado": "DISPONIBLE" },
-    { "idLocal": 2, "nombreLocal": "Terraza Verde", "direccion": "Jr. Olivos 456", "idDistrito": 2, "aforoMaximo": 100, "precioHora": 300.00, "descripcion": "Ideal para eventos sociales", "estado": "DISPONIBLE" },
-    { "idLocal": 3, "nombreLocal": "Centro Empresarial", "direccion": "Av. Javier Prado 789", "idDistrito": 3, "aforoMaximo": 500, "precioHora": 1000.00, "descripcion": "Centro de convenciones", "estado": "DISPONIBLE" },
-    { "idLocal": 4, "nombreLocal": "Casa Colonial", "direccion": "Calle San Martín 321", "idDistrito": 4, "aforoMaximo": 80, "precioHora": 250.00, "descripcion": "Ambiente colonial", "estado": "NO_DISPONIBLE" },
+"locales": [
+    { 
+      "idLocal": 1, 
+      "nombreLocal": "Salon Real", 
+      "direccion": "Av. Pardo 123", 
+      "idDistrito": 1, 
+      "aforoMaximo": 200, 
+      "precioHora": 500.00, 
+      "descripcion": "Local de 800m² ubicado en Miraflores. Cuenta con salón principal amplio, 3 ambientes diferenciados, 4 baños completos, cocina industrial, estacionamiento privado, sistema de aire acondicionado, iluminación LED regulable, sonido profesional, acceso para personas con discapacidad y seguridad 24 horas.", 
+      "estado": "DISPONIBLE" 
+    },
+    { 
+      "idLocal": 2, 
+      "nombreLocal": "Terraza Verde", 
+      "direccion": "Jr. Olivos 456", 
+      "idDistrito": 2, 
+      "aforoMaximo": 100, 
+      "precioHora": 300.00, 
+      "descripcion": "Local de 450m² en San Isidro con ambiente al aire libre. Terraza con jardín tropical, toldo retráctil, 2 baños modernos, área de bar, decoración natural, WiFi de alta velocidad, iluminación ambiental, estacionamiento para 15 vehículos y acceso fácil desde la avenida principal.", 
+      "estado": "DISPONIBLE" 
+    },
+    { 
+      "idLocal": 3, 
+      "nombreLocal": "Centro Empresarial", 
+      "direccion": "Av. Javier Prado 789", 
+      "idDistrito": 3, 
+      "aforoMaximo": 500, 
+      "precioHora": 1000.00, 
+      "descripcion": "Centro de convenciones de 2,500m² en Surco. Múltiples salones modulables, 8 baños de lujo, zona de estacionamiento techado (100 espacios), cocina comercial, sala VIP, paneles audiovisuales 4K, sonido envolvente profesional, seguridad biométrica, conexión de fibra óptica y servicio de catering interno.", 
+      "estado": "DISPONIBLE" 
+    },
+    { 
+      "idLocal": 4, 
+      "nombreLocal": "Casa Colonial", 
+      "direccion": "Calle San Martín 321", 
+      "idDistrito": 4, 
+      "aforoMaximo": 80, 
+      "precioHora": 250.00, 
+      "descripcion": "Casona colonial restaurada de 350m² en La Molina. Arquitectura tradicional, 3 salones temáticos, 2 baños elegantes, patio interno con fuente, jardín decorativo, parqueadero privado (10 espacios), chimenea funcional, iluminación vintage, ambiente íntimo y acogedor, ideal para eventos exclusivos.", 
+      "estado": "NO_DISPONIBLE" 
+    }
   ],
   "fotosLocales": [
     { "idFoto": 1, "idLocal": 1, "urlFoto": "https://welcomepei.com/editorial/peis-most-unique-wedding-venues/pei-brewing-company-wedding/", "descripcion": "Vista principal" },

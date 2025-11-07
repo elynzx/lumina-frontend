@@ -24,6 +24,8 @@ export const VenuePreviewSection = () => {
             district={getDistrict(local.idDistrito)}
             details={local.descripcion}
             imgUrl={getLocalImage(local.idLocal)}
+
+            onClick={() => { }}
           />
         ))}
       </div>

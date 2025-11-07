@@ -59,10 +59,10 @@ export const TimeInput = forwardRef<HTMLInputElement, Props>(({
     }, []);
 
     return (
-        <div ref={containerRef} className="flex flex-col w-full shrink relative">
+        <div ref={containerRef} className="flex flex-col w-full relative">
             {label && <label htmlFor={name} className="mb-1 text-xs">{label}</label>}
             <div
-                className={`w-full h-12 px-3 flex items-center gap-2 border rounded-lg cursor-pointer transition-all ${error
+                className={`w-full h-12 px-4 flex items-center gap-2 border rounded-lg cursor-pointer transition-all ${error
                     ? 'border-red-500 ring-1 ring-red-500'
                     : 'border-blue hover:ring-2 hover:ring-blue'
                     } ${disabled ? 'cursor-not-allowed bg-gray-100' : 'bg-white'}`}
@@ -72,7 +72,7 @@ export const TimeInput = forwardRef<HTMLInputElement, Props>(({
                     <img
                         src={icon}
                         alt={placeholder}
-                        className="w-5 h-5 ml-1 shrink"
+                        className="w-5 h-5"
                     />
                 )}
                 <span className={`text-sm flex-1 min-w-0 overflow-hidden ${value ? 'text-blue' : 'text-bgray'}`}>

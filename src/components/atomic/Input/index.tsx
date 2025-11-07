@@ -127,7 +127,7 @@ export const Input = forwardRef<HTMLInputElement, Props>(({
     return (
         <div ref={containerRef} className="flex flex-col w-full relative">
             {label && <label htmlFor={name} className="mb-2 text-sm text-gray-600">{label}</label>}
-            <div className={`w-full h-[48px] px-4 flex items-center gap-2 border-[1px] rounded-lg focus-within:outline-none focus-within:ring-2 ${
+            <div className={`w-full h-12 px-4 flex items-center gap-2 border-[1px] rounded-lg focus-within:outline-none focus-within:ring-2 ${
                 error 
                     ? 'border-red-500 focus-within:ring-red-500 focus-within:border-red-500' 
                     : 'border-blue focus-within:ring-blue focus-within:border-blue'
