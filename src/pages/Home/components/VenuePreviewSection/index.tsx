@@ -20,12 +20,11 @@ export const VenuePreviewSection = () => {
         {data.locales.map((local) => (
           <VenuePreviewCard
             key={local.idLocal}
+            idLocal={local.idLocal}
             title={local.nombreLocal}
             district={getDistrict(local.idDistrito)}
             details={local.descripcion}
             imgUrl={getLocalImage(local.idLocal)}
-
-            onClick={() => { }}
           />
         ))}
       </div>

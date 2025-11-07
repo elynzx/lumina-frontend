@@ -31,9 +31,9 @@ export const VenuePreviewCard = ({
 
   return (
     <div className="cursor-pointer w-[260px] h-[345px] flex flex-col shadow-xl rounded-lg overflow-hidden"
-      onClick={onClick}
+      onClick={handleNavigate}
     >
-      <div className="flex-shrink-0 h-[60%] w-full bg-gray flex items-center justify-center">
+      <div className="shrink-0 h-[60%] w-full bg-gray flex items-center justify-center">
         <img src={imgUrl} alt={title} className="h-full w-full object-cover rounded-t-lg" />
       </div>
       <div className="grow h-[40%] px-4 py-2 flex flex-col justify-center">
