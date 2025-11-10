@@ -61,8 +61,8 @@ export const Header = () => {
       <div className="flex gap-10 items-center justify-end">
         {userIsAuthenticated ? (
           <>
-            <span className="text-white">
-              Hola, {currentUser?.nombreCompleto || currentUser?.email}
+            <span className="text-white font-medium">
+              Hola {currentUser?.firstName} {currentUser?.lastName}
             </span>
             <Button text="Cerrar Sesión" onClick={handleLogout} variant="secondary" />
           </>

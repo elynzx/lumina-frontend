@@ -1,24 +1,21 @@
 export interface LoginRequest {
     email: string;
-    contrasena: string;
+    password: string;
 }
 
 export interface RegisterRequest {
-    nombre: string;
-    apellido: string;
+    firstName: string;
+    lastName: string;
     dni: string;
-    celular: string;
+    phone: string;
     email: string;
-    contrasena: string;
+    password: string;
 }
 
 export interface AuthResponse {
-    accessToken: string;
+    token: string;
     tokenType: string;
-    idUsuario: number;
-    email: string;
-    nombreCompleto: string;
-    rol: string;
+    user: User;
 }
 
 export interface BackendResponse<T> {
@@ -28,13 +25,12 @@ export interface BackendResponse<T> {
 }
 
 export interface User {
-    idUsuario: number;
-    nombre: string;
-    apellido: string;
-    dni: string;
-    celular: string;
+    userId: number;
+    firstName: string;
+    lastName: string;
     email: string;
-    rol: string;
+    phone: string;
+    roleName: string;
 }
 
 export interface ApiError {

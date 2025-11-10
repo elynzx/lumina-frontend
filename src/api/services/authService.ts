@@ -24,16 +24,11 @@ export const useAuthService = () => {
       const response = await apiClient.post<BackendResponse<AuthResponse>>('/auth/login', credentials);
       const authData = response.data;
 
-      if (authData?.accessToken) {
-        Cookies.set('auth_token', authData.accessToken, COOKIE_OPTIONS);        
+      if (authData?.token) {
+        Cookies.set('auth_token', authData.token, COOKIE_OPTIONS);        
         Cookies.set(
           'user_data',
-          JSON.stringify({
-            idUsuario: authData.idUsuario,
-            email: authData.email,
-            nombreCompleto: authData.nombreCompleto,
-            rol: authData.rol,
-          }),
+          JSON.stringify(authData.user),
           USER_COOKIE_OPTIONS
         );
       }
@@ -53,19 +48,14 @@ export const useAuthService = () => {
       const response = await apiClient.post<BackendResponse<AuthResponse>>('/auth/register', userData);
       const authData = response.data;
 
-      if (authData?.accessToken) {
+      if (authData?.token) {
         // Guardar token en cookie segura
-        Cookies.set('auth_token', authData.accessToken, COOKIE_OPTIONS);
+        Cookies.set('auth_token', authData.token, COOKIE_OPTIONS);
         
         // Guardar datos de usuario en cookie (menos sensible)
         Cookies.set(
           'user_data',
-          JSON.stringify({
-            idUsuario: authData.idUsuario,
-            email: authData.email,
-            nombreCompleto: authData.nombreCompleto,
-            rol: authData.rol,
-          }),
+          JSON.stringify(authData.user),
           USER_COOKIE_OPTIONS
         );
       }
@@ -102,7 +92,7 @@ export const useAuthService = () => {
   /**
    * Obtener usuario actual
    */
-  const getCurrentUser = (): { idUsuario: number; email: string; nombreCompleto: string; rol: string } | null => {
+  const getCurrentUser = () => {
     const userStr = Cookies.get('user_data');
     if (!userStr) return null;
 
