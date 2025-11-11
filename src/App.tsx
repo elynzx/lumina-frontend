@@ -7,6 +7,8 @@ import { Register } from "@/pages/Register";
 import { Catalog } from "@/pages/Catalog";
 import { ProductDetail } from "@/pages/ProductDetail";
 import { Payment } from "@/pages/Payment";
+import { AdminLogin } from "@/pages/AdminLogin";
+import { AdminDashboard } from "@/pages/AdminDashboard";
 
 import Layout from "@/components/organism/Layout";
 import { useAuthStore } from "@/store/useAuthStore";
@@ -63,6 +65,9 @@ export default function App() {
         { path: "/pago", element: <Payment /> },
       ],
     },
+    // Rutas de admin sin Layout (páginas independientes)
+    { path: "/admin/login", element: <AdminLogin /> },
+    { path: "/admin/dashboard", element: <AdminDashboard /> },
   ]);
 
   if (!isInitialized) {

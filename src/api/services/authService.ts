@@ -103,6 +103,30 @@ export const useAuthService = () => {
     }
   };
 
-  return { login, register, logout, isAuthenticated, getToken, getCurrentUser };
+  /**
+   * Login de administrador
+   */
+  const adminLogin = async (credentials: LoginRequest): Promise<AuthResponse> => {
+    try {
+      const response = await apiClient.post<BackendResponse<AuthResponse>>('/admin/auth/login', credentials);
+      const authData = response.data;
+
+      if (authData?.token) {
+        Cookies.set('auth_token', authData.token, COOKIE_OPTIONS);        
+        Cookies.set(
+          'user_data',
+          JSON.stringify(authData.user),
+          USER_COOKIE_OPTIONS
+        );
+      }
+
+      return authData;
+    } catch (error) {
+      console.error('Error en login de administrador:', error);
+      throw error;
+    }
+  };
+
+  return { login, register, logout, isAuthenticated, getToken, getCurrentUser, adminLogin };
 
 };

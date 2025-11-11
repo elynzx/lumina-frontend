@@ -3,6 +3,8 @@ interface AlertOptions {
   text?: string;
   icon?: 'success' | 'error' | 'warning' | 'info';
   confirmButtonText?: string;
+  cancelButtonText?: string;
+  showCancelButton?: boolean;
   timer?: number;
 }
 
@@ -11,8 +13,10 @@ export const showAlert = ({
   text, 
   icon = 'success', 
   confirmButtonText = 'OK',
+  cancelButtonText = 'Cancelar',
+  showCancelButton = false,
   timer 
-}: AlertOptions): Promise<void> => {
+}: AlertOptions): Promise<boolean> => {
   return new Promise((resolve) => {
     // Crear el overlay
     const overlay = document.createElement('div');
@@ -72,19 +76,36 @@ export const showAlert = ({
         ${title}
       </h2>
       ${text ? `<p style="font-size: 16px; color: #6B7280; margin-bottom: 24px;">${text}</p>` : ''}
-      <button id="alert-confirm-btn" style="
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white;
-        border: none;
-        padding: 12px 32px;
-        border-radius: 8px;
-        font-size: 16px;
-        font-weight: 600;
-        cursor: pointer;
-        transition: transform 0.2s ease;
-      ">
-        ${confirmButtonText}
-      </button>
+      <div style="display: flex; gap: 12px; justify-content: center;">
+        ${showCancelButton ? `
+          <button id="alert-cancel-btn" style="
+            background: #E5E7EB;
+            color: #374151;
+            border: none;
+            padding: 12px 32px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+          ">
+            ${cancelButtonText}
+          </button>
+        ` : ''}
+        <button id="alert-confirm-btn" style="
+          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+          color: white;
+          border: none;
+          padding: 12px 32px;
+          border-radius: 8px;
+          font-size: 16px;
+          font-weight: 600;
+          cursor: pointer;
+          transition: transform 0.2s ease;
+        ">
+          ${confirmButtonText}
+        </button>
+      </div>
     `;
 
     // Agregar animaciones CSS
@@ -111,25 +132,29 @@ export const showAlert = ({
     document.body.appendChild(overlay);
 
     // Función para cerrar el modal
-    const closeModal = () => {
+    const closeModal = (confirmed: boolean) => {
       overlay.style.animation = 'fadeIn 0.3s ease reverse';
       setTimeout(() => {
         document.body.removeChild(overlay);
         document.head.removeChild(style);
-        resolve();
+        resolve(confirmed);
       }, 300);
     };
 
     // Event listeners
     const confirmBtn = modal.querySelector('#alert-confirm-btn');
-    confirmBtn?.addEventListener('click', closeModal);
+    const cancelBtn = modal.querySelector('#alert-cancel-btn');
+    
+    confirmBtn?.addEventListener('click', () => closeModal(true));
+    cancelBtn?.addEventListener('click', () => closeModal(false));
+    
     overlay.addEventListener('click', (e) => {
-      if (e.target === overlay) closeModal();
+      if (e.target === overlay) closeModal(false);
     });
 
     // Auto-cerrar si hay timer
     if (timer) {
-      setTimeout(closeModal, timer);
+      setTimeout(() => closeModal(true), timer);
     }
   });
 };
