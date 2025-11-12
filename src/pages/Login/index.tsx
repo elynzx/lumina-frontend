@@ -22,8 +22,6 @@ const isLoginFormData = (data: LoginFormData | RegisterFormData): data is LoginF
     return 'password' in data;
 };
 
-
-
 export const Login = () => {
     const navigate = useNavigate();
     const [error, setError] = useState<string>("");
@@ -38,7 +36,6 @@ export const Login = () => {
         try {
             setError("");
             
-            /* Verificar que es LoginFormData usando el type guard */
             if (isLoginFormData(data)) {
                 await login({
                     email: data.email,
@@ -56,11 +53,6 @@ export const Login = () => {
 
     return (
         <>
-            {/* {error && (
-                <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
-                    {error}
-                </div>
-            )} */}
             <UserModal
                 title="Iniciar sesión"
                 onClickAction={handleClickLogin}

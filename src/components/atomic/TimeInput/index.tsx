@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect, forwardRef } from "react";
+import type { LucideIcon } from "lucide-react";
 
 interface Props {
     name: string;
@@ -9,6 +10,7 @@ interface Props {
     disabled?: boolean;
     placeholder?: string;
     icon?: string;
+    IconComponent?: LucideIcon;
 }
 
 export const TimeInput = forwardRef<HTMLInputElement, Props>(({
@@ -16,6 +18,7 @@ export const TimeInput = forwardRef<HTMLInputElement, Props>(({
     value = "",
     onChange,
     icon,
+    IconComponent,
     label,
     error,
     disabled = false,
@@ -68,7 +71,13 @@ export const TimeInput = forwardRef<HTMLInputElement, Props>(({
                     } ${disabled ? 'cursor-not-allowed bg-gray-100' : 'bg-white'}`}
                 onClick={handleToggle}
             >
-                {icon && (
+                {IconComponent && (
+                    <IconComponent
+                        size={20}
+                        className="shrink-0 text-bgray"
+                    />
+                )}
+                {!IconComponent && icon && (
                     <img
                         src={icon}
                         alt={placeholder}

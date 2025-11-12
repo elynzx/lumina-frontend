@@ -1,20 +1,27 @@
+import { useNavigate } from "react-router-dom";
 import { ProductCard } from "../ProductCard";
-import { data } from "@/constants/data";
+import { data, type Local } from "@/constants/data";
 
-const getLocalImage = (localId: number) => {
-  const fotosLocal = data.fotosLocales.filter(_ => _.idLocal === localId);
-  return fotosLocal[0]?.urlFoto || '';
+const getLocalImage = (venueId: number) => {
+  const venuePhotosList = data.fotosLocales.filter(_ => _.idLocal === venueId);
+  return venuePhotosList[0]?.urlFoto || '';
 }
 
-const getDistrict = (idDistrito: number) => {
-  return data.distritos.find(_ => _.idDistrito === idDistrito)?.nombreDistrito || '';
+const getDistrict = (districtId: number) => {
+  return data.distritos.find(_ => _.idDistrito === districtId)?.nombreDistrito || '';
 }
 
-interface Props {
-  locales: any[];
+interface ProductsSectionProps {
+  locales: Local[];
 }
 
-export const ProductsSection = ({ locales }: Props) => {
+export const ProductsSection = ({ locales }: ProductsSectionProps) => {
+  const navigate = useNavigate();
+
+    const handleReserveClick = (localeId: number) => {
+    navigate(`/producto/${localeId}`);
+  };
+
   if (locales.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-16">
@@ -31,20 +38,20 @@ export const ProductsSection = ({ locales }: Props) => {
   }
 
   return (
-      <div className="catalog-grid">
-        {locales.map((item) => (
-          <ProductCard
-            key={item.idLocal}
-            imgUrl={getLocalImage(item.idLocal)}
-            title={item.nombreLocal}
-            district={getDistrict(item.idDistrito)}
-            address={item.direccion}
-            capacity={item.aforoMaximo}
-            pricePerHour={item.precioHora}
-            buttonText="Reservar"
-            onClickAction={() => alert('Reservar')}
-          />
-        ))}
-      </div>
+    <div className="catalog-grid">
+      {locales.map((item) => (
+        <ProductCard
+          key={item.idLocal}
+          imgUrl={getLocalImage(item.idLocal)}
+          title={item.nombreLocal}
+          district={getDistrict(item.idDistrito)}
+          address={item.direccion}
+          capacity={item.aforoMaximo}
+          pricePerHour={item.precioHora}
+          buttonText="Reservar"
+          onClickAction={() => handleReserveClick(item.idLocal)}  
+        />
+      ))}
+    </div>
   );
 };

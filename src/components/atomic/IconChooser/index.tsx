@@ -1,18 +1,22 @@
+import type { LucideIcon } from 'lucide-react';
+
 interface Props {
   value: string;
   onChange: (value: string) => void;
   options: { value: string; label: string }[];
   placeholder: string;
   icon?: string;
+  IconComponent?: LucideIcon;
   variant?: 'primary' | 'secondary';
 }
 
-export const IconChooser = ({ 
-  value, 
-  onChange, 
-  options, 
-  placeholder, 
+export const IconChooser = ({
+  value,
+  onChange,
+  options,
+  placeholder,
   icon,
+  IconComponent,
   variant = 'primary'
 }: Props) => {
   const variantStyles = {
@@ -23,11 +27,17 @@ export const IconChooser = ({
   return (
     <div className="relative">
       <div className={`flex items-center px-3 border rounded-md bg-white ${variantStyles[variant]}`}>
-        {icon && (
-          <img 
-            src={icon} 
-            alt={placeholder} 
-            className="w-6 h-6 ml-3 shrink" 
+        {IconComponent && (
+          <IconComponent
+            size={20}
+            className="ml-1 shrink-0 text-bgray"
+          />
+        )}
+        {!IconComponent && icon && (
+          <img
+            src={icon}
+            alt={placeholder}
+            className="w-6 h-6 ml-3 shrink"
           />
         )}
         <select

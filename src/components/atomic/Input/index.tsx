@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect, forwardRef } from "react";
 import { DayPicker } from "react-day-picker";
+import type { LucideIcon } from 'lucide-react';
 
 import "react-day-picker/style.css";
 
@@ -9,10 +10,13 @@ interface Props {
     value?: string;
     onChange?: (value: string) => void;
     icon?: string;
+    IconComponent?: LucideIcon;
     label?: string;
     type?: string;
     error?: string;
     disabled?: boolean;
+    min?: string | number;
+    max?: string | number;
 }
 
 export const Input = forwardRef<HTMLInputElement, Props>(({
@@ -21,10 +25,13 @@ export const Input = forwardRef<HTMLInputElement, Props>(({
     value = "",
     onChange,
     icon,
+    IconComponent,
     label,
     type = "text",
     error,
     disabled = false,
+    min,
+    max,
     ...props
 }, ref) => {
 
@@ -33,7 +40,6 @@ export const Input = forwardRef<HTMLInputElement, Props>(({
     const [displayValue, setDisplayValue] = useState("");
     const containerRef = useRef<HTMLDivElement>(null);
 
-    // Función para formatear fecha en formato DD/MM/YYYY
     const formatDateForDisplay = (date: Date): string => {
         const day = date.getDate().toString().padStart(2, '0');
         const month = (date.getMonth() + 1).toString().padStart(2, '0');
@@ -41,12 +47,11 @@ export const Input = forwardRef<HTMLInputElement, Props>(({
         return `${day}/${month}/${year}`;
     };
 
-    // Función para convertir string DD/MM/YYYY a Date
     const parseDisplayDate = (dateString: string): Date | null => {
         const parts = dateString.split('/');
         if (parts.length === 3) {
             const day = parseInt(parts[0], 10);
-            const month = parseInt(parts[1], 10) - 1; // Los meses en JS van de 0-11
+            const month = parseInt(parts[1], 10) - 1;
             const year = parseInt(parts[2], 10);
             const date = new Date(year, month, day);
             return isNaN(date.getTime()) ? null : date;
@@ -54,17 +59,15 @@ export const Input = forwardRef<HTMLInputElement, Props>(({
         return null;
     };
 
-    // Inicializar y sincronizar fechas
+
     useEffect(() => {
         if (type === 'date') {
             if (value) {
-                // Si hay un valor, intentar parsearlo
                 const parsedDate = parseDisplayDate(value);
                 if (parsedDate) {
                     setDateSelected(parsedDate);
                     setDisplayValue(value);
                 } else {
-                    // Si el valor no es válido, usar hoy
                     const today = new Date();
                     setDateSelected(today);
                     const formattedDate = formatDateForDisplay(today);
@@ -72,7 +75,6 @@ export const Input = forwardRef<HTMLInputElement, Props>(({
                     onChange?.(formattedDate);
                 }
             } else {
-                // Si no hay valor, usar hoy
                 const today = new Date();
                 setDateSelected(today);
                 const formattedDate = formatDateForDisplay(today);
@@ -127,12 +129,17 @@ export const Input = forwardRef<HTMLInputElement, Props>(({
     return (
         <div ref={containerRef} className="flex flex-col w-full relative">
             {label && <label htmlFor={name} className="mb-2 text-sm text-gray-600">{label}</label>}
-            <div className={`w-full h-12 px-4 flex items-center gap-2 border-[1px] rounded-lg focus-within:outline-none focus-within:ring-2 ${
-                error 
-                    ? 'border-red-500 focus-within:ring-red-500 focus-within:border-red-500' 
-                    : 'border-blue focus-within:ring-blue focus-within:border-blue'
-            }`}>
-                {icon && (
+            <div className={`w-full h-12 px-4 flex items-center gap-2 border-[1px] rounded-lg focus-within:outline-none focus-within:ring-2 ${error
+                ? 'border-red-500 focus-within:ring-red-500 focus-within:border-red-500'
+                : 'border-blue focus-within:ring-blue focus-within:border-blue'
+                }`}>
+                {IconComponent && (
+                    <IconComponent
+                        size={20}
+                        className="shrink-0 text-bgray"
+                    />
+                )}
+                {!IconComponent && icon && (
                     <img
                         src={icon}
                         className="w-5 h-5"
@@ -150,11 +157,13 @@ export const Input = forwardRef<HTMLInputElement, Props>(({
                     onBlur={handleBlur}
                     readOnly={type === 'date'}
                     disabled={disabled}
+                    min={min}
+                    max={max}
                 />
             </div>
             {error && <span className="text-red-500 text-xs mt-1">{error}</span>}
             {viewCalendar && type === "date" && (
-                <div className="absolute top-full left-0 mt-2 z-10 bg-white shadow-lg rounded-lg border border-gray-200 p-4">
+                <div className="absolute top-full left-0 mt-2 z-10 bg-white shadow-lg rounded-lg border border-gray-200 p-5">
                     <DayPicker
                         mode="single"
                         selected={dateSelected}

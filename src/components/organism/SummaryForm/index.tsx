@@ -3,11 +3,8 @@ import { IconChooser } from "@/components/atomic/IconChooser";
 import { Input } from "@/components/atomic/Input";
 import { TimeInput } from "@/components/atomic/TimeInput";
 import { data } from "@/constants/data";
-import calendarIcon from "@/assets/icons/calendar_gray.svg";
-import peopleIcon from "@/assets/icons/capacity_gray.svg";
-import clockIcon from "@/assets/icons/clock_gray.svg";
-import eventIcon from "@/assets/icons/event_tag_gray.svg";
-
+import { Calendar, Users, Clock, Tag } from "lucide-react";
+import { useEffect } from "react";
 
 interface FormData {
     eventType: string;
@@ -18,19 +15,34 @@ interface FormData {
 }
 
 interface SummaryFormProps {
-    localId?: number;
+    venueId?: number;
+    onFormChange?: (data: FormData) => void;
+    initialValues?: Partial<FormData>;
+    onSubmit?: (data: FormData) => void;
 }
 
-export const SummaryForm = ({ localId = 1 }: SummaryFormProps) => {
+export const SummaryForm = ({ venueId = 1, onFormChange, initialValues, onSubmit }: SummaryFormProps) => {
 
-    const localData = data.locales.find(l => l.idLocal === localId);
-    const maxCapacity = localData?.aforoMaximo || 120;
+    const venueData = data.locales.find(l => l.idLocal === venueId);
+    const maxCapacity = venueData?.aforoMaximo || 0;
 
-    const formatDateForForm = (date: Date): string => {
-        const day = date.getDate().toString().padStart(2, '0');
-        const month = (date.getMonth() + 1).toString().padStart(2, '0');
-        const year = date.getFullYear();
-        return `${day}/${month}/${year}`;
+    const venueEventTypeIds = data.localTipoEvento
+        .filter(le => le.idLocal === venueId)
+        .map(le => le.idTipoEvento);
+
+    const eventTypeOptions = data.tiposEvento
+        .filter(te => venueEventTypeIds.includes(te.idTipoEvento))
+        .map(tipo => ({
+            value: tipo.idTipoEvento.toString(),
+            label: tipo.nombreTipo
+        }));
+
+    const getDefaultDate = (): string => {
+        const today = new Date();
+        const year = today.getFullYear();
+        const month = String(today.getMonth() + 1).padStart(2, '0');
+        const day = String(today.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
     };
 
     const {
@@ -40,34 +52,27 @@ export const SummaryForm = ({ localId = 1 }: SummaryFormProps) => {
         watch
     } = useForm<FormData>({
         defaultValues: {
-            eventType: "",
-            date: formatDateForForm(new Date()),
-            quantity: "",
-            initTime: "",
-            endTime: ""
+            eventType: initialValues?.eventType || "",
+            date: initialValues?.date || getDefaultDate(),
+            quantity: initialValues?.quantity || "",
+            initTime: initialValues?.initTime || "",
+            endTime: initialValues?.endTime || ""
         }
     });
 
-    const eventTypeOptions = data.tiposEvento.map(tipo => ({
-        value: tipo.nombreTipo,
-        label: tipo.nombreTipo
-    }));
+    const formValues = watch();
+    useEffect(() => {
+        onFormChange?.(formValues);
+    }, [formValues.eventType, formValues.date, formValues.quantity, formValues.initTime, formValues.endTime, onFormChange]);
 
-    const onSubmit = (data: FormData) => {
-        console.log('Form data:', data);
+    const handleFormSubmit = (data: FormData) => {
+        onSubmit?.(data);
     };
 
     const validateDate = (value: string) => {
-        const parts = value.split('/');
-        if (parts.length !== 3) {
-            return "Formato de fecha inválido";
-        }
+        if (!value) return "La fecha es requerida";
 
-        const day = parseInt(parts[0], 10);
-        const month = parseInt(parts[1], 10) - 1;
-        const year = parseInt(parts[2], 10);
-        const selectedDate = new Date(year, month, day);
-
+        const selectedDate = new Date(value);
         if (isNaN(selectedDate.getTime())) {
             return "Fecha inválida";
         }
@@ -83,9 +88,13 @@ export const SummaryForm = ({ localId = 1 }: SummaryFormProps) => {
     };
 
     const validateQuantity = (value: string) => {
+        if (!value) {
+            return "El número de personas es requerido";
+        }
+
         const num = parseInt(value);
         if (isNaN(num) || num <= 0) {
-            return "Debe ingresar un número válido";
+            return "Debe ingresar un número válido mayor a 0";
         }
         if (num > maxCapacity) {
             return `El máximo es ${maxCapacity} personas`;
@@ -94,10 +103,7 @@ export const SummaryForm = ({ localId = 1 }: SummaryFormProps) => {
     };
 
     const validateTime = (value: string) => {
-        if (!value) {
-            return "Debe seleccionar una hora";
-        }
-        return true;
+        return value ? true : "Debe seleccionar una hora";
     };
 
     const validateEndTime = (endTime: string) => {
@@ -118,7 +124,7 @@ export const SummaryForm = ({ localId = 1 }: SummaryFormProps) => {
     };
 
     return (
-        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-3">
+        <form onSubmit={handleSubmit(handleFormSubmit)} className="flex flex-col gap-3" id="summary-form" noValidate>
             <Controller
                 name="eventType"
                 control={control}
@@ -131,7 +137,7 @@ export const SummaryForm = ({ localId = 1 }: SummaryFormProps) => {
                             onChange={field.onChange}
                             options={eventTypeOptions}
                             placeholder="Tipo de Evento"
-                            icon={eventIcon}
+                            IconComponent={Tag}
                         />
                         {errors.eventType && (<p className="text-red-500 text-sm mt-1">{errors.eventType.message}</p>)}
                     </div>
@@ -146,16 +152,16 @@ export const SummaryForm = ({ localId = 1 }: SummaryFormProps) => {
                         validate: validateDate
                     }}
                     render={({ field }) => (
-                        <div>
+                        <div className="flex-1">
                             <label className="text-xs text-bgray block mb-1">Fecha</label>
                             <Input
                                 name="date"
-                                placeholder="DD/MM/AA"
+                                placeholder="Selecciona una fecha"
                                 value={field.value}
                                 onChange={field.onChange}
                                 type="date"
                                 error={errors.date?.message}
-                                icon={calendarIcon}
+                                IconComponent={Calendar}
                             />
                         </div>
                     )}
@@ -168,7 +174,7 @@ export const SummaryForm = ({ localId = 1 }: SummaryFormProps) => {
                         validate: validateQuantity
                     }}
                     render={({ field }) => (
-                        <div>
+                        <div className="flex-1">
                             <label className="text-xs text-bgray block mb-1">Personas (max {maxCapacity})</label>
                             <Input
                                 name="quantity"
@@ -177,7 +183,9 @@ export const SummaryForm = ({ localId = 1 }: SummaryFormProps) => {
                                 type="number"
                                 placeholder="Ej: 50"
                                 error={errors.quantity?.message}
-                                icon={peopleIcon}
+                                IconComponent={Users}
+                                min="1"
+                                max={maxCapacity}
                             />
                         </div>
                     )}
@@ -199,7 +207,7 @@ export const SummaryForm = ({ localId = 1 }: SummaryFormProps) => {
                                 value={field.value}
                                 onChange={field.onChange}
                                 error={errors.initTime?.message}
-                                icon={clockIcon}
+                                IconComponent={Clock}
                             />
                         </div>
                     )}
@@ -219,7 +227,7 @@ export const SummaryForm = ({ localId = 1 }: SummaryFormProps) => {
                                 value={field.value}
                                 onChange={field.onChange}
                                 error={errors.endTime?.message}
-                                icon={clockIcon}
+                                IconComponent={Clock}
                             />
                         </div>
                     )}

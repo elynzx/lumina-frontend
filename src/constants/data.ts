@@ -72,13 +72,7 @@ export interface Mobiliario {
   descripcion: string;
   stockTotal: number;
   precioUnitario: number;
-}
-
-export interface FotoMobiliario {
-  idFoto: number;
-  idMobiliario: number;
   urlFoto: string;
-  descripcion: string;
 }
 
 export interface MetodoPago {
@@ -127,7 +121,6 @@ export interface DatabaseData {
   tiposEvento: TipoEvento[];
   localTipoEvento: LocalTipoEvento[];
   mobiliario: Mobiliario[];
-  fotosMobiliario: FotoMobiliario[];
   metodosPago: MetodoPago[];
   reservas: Reserva[];
   reservaMobiliario: ReservaMobiliario[];
@@ -152,51 +145,51 @@ export const data: DatabaseData = {
     { "idUsuario": 5, "nombre": "Luis", "apellido": "Torres", "dni": "56789012", "celular": "976543210", "email": "luis@example.com", "contrasena": "hashedpass5", "idRol": 2 }
   ],
   "distritos": [
-    { "idDistrito": 1, "nombreDistrito": "Miraflores"},
-    { "idDistrito": 2, "nombreDistrito": "San Isidro"},
-    { "idDistrito": 3, "nombreDistrito": "Surco"},
-    { "idDistrito": 4, "nombreDistrito": "La Molina"},
+    { "idDistrito": 1, "nombreDistrito": "Miraflores" },
+    { "idDistrito": 2, "nombreDistrito": "San Isidro" },
+    { "idDistrito": 3, "nombreDistrito": "Surco" },
+    { "idDistrito": 4, "nombreDistrito": "La Molina" }
   ],
-"locales": [
-    { 
-      "idLocal": 1, 
-      "nombreLocal": "Salon Real", 
-      "direccion": "Av. Pardo 123", 
-      "idDistrito": 1, 
-      "aforoMaximo": 200, 
-      "precioHora": 500.00, 
-      "descripcion": "Local de 800m² ubicado en Miraflores. Cuenta con salón principal amplio, 3 ambientes diferenciados, 4 baños completos, cocina industrial, estacionamiento privado, sistema de aire acondicionado, iluminación LED regulable, sonido profesional, acceso para personas con discapacidad y seguridad 24 horas.", 
-      "estado": "DISPONIBLE" 
+  "locales": [
+    {
+      "idLocal": 1,
+      "nombreLocal": "Salon Real",
+      "direccion": "Av. Pardo 123",
+      "idDistrito": 1,
+      "aforoMaximo": 200,
+      "precioHora": 500.00,
+      "descripcion": "Local de 800m² ubicado en Miraflores. Cuenta con salón principal amplio, 3 ambientes diferenciados, 4 baños completos, cocina industrial, estacionamiento privado, sistema de aire acondicionado, iluminación LED regulable, sonido profesional, acceso para personas con discapacidad y seguridad 24 horas.",
+      "estado": "DISPONIBLE"
     },
-    { 
-      "idLocal": 2, 
-      "nombreLocal": "Terraza Verde", 
-      "direccion": "Jr. Olivos 456", 
-      "idDistrito": 2, 
-      "aforoMaximo": 100, 
-      "precioHora": 300.00, 
-      "descripcion": "Local de 450m² en San Isidro con ambiente al aire libre. Terraza con jardín tropical, toldo retráctil, 2 baños modernos, área de bar, decoración natural, WiFi de alta velocidad, iluminación ambiental, estacionamiento para 15 vehículos y acceso fácil desde la avenida principal.", 
-      "estado": "DISPONIBLE" 
+    {
+      "idLocal": 2,
+      "nombreLocal": "Terraza Verde",
+      "direccion": "Jr. Olivos 456",
+      "idDistrito": 2,
+      "aforoMaximo": 100,
+      "precioHora": 300.00,
+      "descripcion": "Local de 450m² en San Isidro con ambiente al aire libre. Terraza con jardín tropical, toldo retráctil, 2 baños modernos, área de bar, decoración natural, WiFi de alta velocidad, iluminación ambiental, estacionamiento para 15 vehículos y acceso fácil desde la avenida principal.",
+      "estado": "DISPONIBLE"
     },
-    { 
-      "idLocal": 3, 
-      "nombreLocal": "Centro Empresarial", 
-      "direccion": "Av. Javier Prado 789", 
-      "idDistrito": 3, 
-      "aforoMaximo": 500, 
-      "precioHora": 1000.00, 
-      "descripcion": "Centro de convenciones de 2,500m² en Surco. Múltiples salones modulables, 8 baños de lujo, zona de estacionamiento techado (100 espacios), cocina comercial, sala VIP, paneles audiovisuales 4K, sonido envolvente profesional, seguridad biométrica, conexión de fibra óptica y servicio de catering interno.", 
-      "estado": "DISPONIBLE" 
+    {
+      "idLocal": 3,
+      "nombreLocal": "Centro Empresarial",
+      "direccion": "Av. Javier Prado 789",
+      "idDistrito": 3,
+      "aforoMaximo": 500,
+      "precioHora": 1000.00,
+      "descripcion": "Centro de convenciones de 2,500m² en Surco. Múltiples salones modulables, 8 baños de lujo, zona de estacionamiento techado (100 espacios), cocina comercial, sala VIP, paneles audiovisuales 4K, sonido envolvente profesional, seguridad biométrica, conexión de fibra óptica y servicio de catering interno.",
+      "estado": "DISPONIBLE"
     },
-    { 
-      "idLocal": 4, 
-      "nombreLocal": "Casa Colonial", 
-      "direccion": "Calle San Martín 321", 
-      "idDistrito": 4, 
-      "aforoMaximo": 80, 
-      "precioHora": 250.00, 
-      "descripcion": "Casona colonial restaurada de 350m² en La Molina. Arquitectura tradicional, 3 salones temáticos, 2 baños elegantes, patio interno con fuente, jardín decorativo, parqueadero privado (10 espacios), chimenea funcional, iluminación vintage, ambiente íntimo y acogedor, ideal para eventos exclusivos.", 
-      "estado": "NO_DISPONIBLE" 
+    {
+      "idLocal": 4,
+      "nombreLocal": "Casa Colonial",
+      "direccion": "Calle San Martín 321",
+      "idDistrito": 4,
+      "aforoMaximo": 80,
+      "precioHora": 250.00,
+      "descripcion": "Casona colonial restaurada de 350m² en La Molina. Arquitectura tradicional, 3 salones temáticos, 2 baños elegantes, patio interno con fuente, jardín decorativo, parqueadero privado (10 espacios), chimenea funcional, iluminación vintage, ambiente íntimo y acogedor, ideal para eventos exclusivos.",
+      "estado": "NO_DISPONIBLE"
     }
   ],
   "fotosLocales": [
@@ -205,41 +198,34 @@ export const data: DatabaseData = {
     { "idFoto": 3, "idLocal": 1, "urlFoto": "https://cdn0.matrimonio.com.pe/vendor/5326/3_2/1280/jpeg/whatsapp-image-2023-03-07-at-12-29-44-4_11_115326-167838324481472.jpeg", "descripcion": "Vista lateral" },
     { "idFoto": 4, "idLocal": 2, "urlFoto": "https://welcomepei.com/editorial/peis-most-unique-wedding-venues/pei-brewing-company-wedding/", "descripcion": "Vista principal" },
     { "idFoto": 5, "idLocal": 3, "urlFoto": "https://cdn0.matrimonio.com.pe/vendor/5326/3_2/1280/jpeg/whatsapp-image-2023-03-07-at-12-29-44-4_11_115326-167838324481472.jpeg", "descripcion": "Decoración interior" },
-    { "idFoto": 6, "idLocal": 4, "urlFoto": "https://cdn0.matrimonio.com.pe/vendor/5326/3_2/1280/jpeg/whatsapp-image-2023-03-07-at-12-29-44-4_11_115326-167838324481472.jpeg", "descripcion": "Vista de la terraza" },
+    { "idFoto": 6, "idLocal": 4, "urlFoto": "https://cdn0.matrimonio.com.pe/vendor/5326/3_2/1280/jpeg/whatsapp-image-2023-03-07-at-12-29-44-4_11_115326-167838324481472.jpeg", "descripcion": "Vista de la terraza" }
   ],
   "tiposEvento": [
     { "idTipoEvento": 1, "nombreTipo": "Boda", "descripcion": "Eventos matrimoniales" },
     { "idTipoEvento": 2, "nombreTipo": "Conferencia", "descripcion": "Charlas empresariales" },
     { "idTipoEvento": 3, "nombreTipo": "Cumpleaños", "descripcion": "Fiestas de cumpleaños" },
-    { "idTipoEvento": 4, "nombreTipo": "Concierto", "descripcion": "Eventos musicales" },
+    { "idTipoEvento": 4, "nombreTipo": "Concierto", "descripcion": "Eventos musicales" }
   ],
   "localTipoEvento": [
     { "idLocal": 1, "idTipoEvento": 1 },
     { "idLocal": 1, "idTipoEvento": 3 },
     { "idLocal": 2, "idTipoEvento": 3 },
     { "idLocal": 3, "idTipoEvento": 2 },
-    { "idLocal": 4, "idTipoEvento": 5 }
+    { "idLocal": 4, "idTipoEvento": 1 }
   ],
   "mobiliario": [
-    { "idMobiliario": 1, "nombre": "Sillas", "descripcion": "Sillas de plástico", "stockTotal": 200, "precioUnitario": 5.00 },
-    { "idMobiliario": 2, "nombre": "Mesas", "descripcion": "Mesas rectangulares", "stockTotal": 50, "precioUnitario": 20.00 },
-    { "idMobiliario": 3, "nombre": "Luces", "descripcion": "Luces decorativas LED", "stockTotal": 100, "precioUnitario": 15.00 },
-    { "idMobiliario": 4, "nombre": "Parlantes", "descripcion": "Equipo de sonido", "stockTotal": 20, "precioUnitario": 100.00 },
-    { "idMobiliario": 5, "nombre": "Carpas", "descripcion": "Carpas para exteriores", "stockTotal": 10, "precioUnitario": 200.00 }
-  ],
-  "fotosMobiliario": [
-    { "idFoto": 1, "idMobiliario": 1, "urlFoto": "sillas.jpg", "descripcion": "Sillas blancas" },
-    { "idFoto": 2, "idMobiliario": 2, "urlFoto": "mesas.jpg", "descripcion": "Mesas grandes" },
-    { "idFoto": 3, "idMobiliario": 3, "urlFoto": "luces.jpg", "descripcion": "Luces LED" },
-    { "idFoto": 4, "idMobiliario": 4, "urlFoto": "parlantes.jpg", "descripcion": "Sistema de sonido" },
-    { "idFoto": 5, "idMobiliario": 5, "urlFoto": "carpas.jpg", "descripcion": "Carpa para eventos" }
+    { "idMobiliario": 1, "nombre": "Sillas", "descripcion": "Sillas de metal", "stockTotal": 200, "precioUnitario": 5.00, "urlFoto": "https://reimse.mx/wp-content/uploads/2019/09/tiffany-fierro-800x800.jpg" },
+    { "idMobiliario": 2, "nombre": "Mesas", "descripcion": "Mesa circular de 1.80m", "stockTotal": 50, "precioUnitario": 20.00, "urlFoto": "https://www.vivoeventos.cl/wp-content/uploads/2023/09/Mesa-redonda-18-metros.webp" },
+    { "idMobiliario": 3, "nombre": "Luces", "descripcion": "Luces decorativas LED", "stockTotal": 100, "precioUnitario": 15.00, "urlFoto": "https://via.placeholder.com/150?text=Luces" },
+    { "idMobiliario": 4, "nombre": "Parlantes", "descripcion": "Equipo de sonido", "stockTotal": 20, "precioUnitario": 100.00, "urlFoto": "https://via.placeholder.com/150?text=Parlantes" },
+    { "idMobiliario": 5, "nombre": "Carpas", "descripcion": "Carpas para exteriores", "stockTotal": 10, "precioUnitario": 200.00, "urlFoto": "https://via.placeholder.com/150?text=Carpas" }
   ],
   "metodosPago": [
-    { "idMetodoPago": 1, "nombreMetodo": "Tarjeta de Crédito", "descripcion": "Visa, MasterCard" },
-    { "idMetodoPago": 2, "nombreMetodo": "Transferencia", "descripcion": "Depósito bancario" },
-    { "idMetodoPago": 3, "nombreMetodo": "Yape", "descripcion": "Pago con celular" },
-    { "idMetodoPago": 4, "nombreMetodo": "Plin", "descripcion": "Pago móvil" },
-    { "idMetodoPago": 5, "nombreMetodo": "Efectivo", "descripcion": "Pago en caja" }
+    { "idMetodoPago": 1, "nombreMetodo": "Tarjeta de Crédito/Débito", "descripcion": "Visa, MasterCard, Amex" },
+    { "idMetodoPago": 2, "nombreMetodo": "Transferencia Bancaria", "descripcion": "Depósito o transferencia" },
+    { "idMetodoPago": 3, "nombreMetodo": "PagoEfectivo", "descripcion": "Pago en efectivo con CIP" },
+    { "idMetodoPago": 4, "nombreMetodo": "Yape", "descripcion": "Pago con celular" },
+    { "idMetodoPago": 5, "nombreMetodo": "Plin", "descripcion": "Pago móvil" }
   ],
   "reservas": [
     { "idReserva": 1, "idUsuario": 1, "idLocal": 1, "idTipoEvento": 1, "fecha": "2025-10-15", "horaInicio": "18:00:00", "horaFin": "23:00:00", "cantidadPersonas": 150, "costoLocal": 2500.00, "costoMobiliario": 300.00, "estado": "Confirmada" },
@@ -262,7 +248,7 @@ export const data: DatabaseData = {
     { "idPago": 4, "idReserva": 4, "idMetodoPago": 4, "monto": 2800.00, "estado": "Pendiente", "codigoConfirmacion": null, "comprobanteUrl": null },
     { "idPago": 5, "idReserva": 5, "idMetodoPago": 5, "monto": 2250.00, "estado": "Fallido", "codigoConfirmacion": "FAIL54321", "comprobanteUrl": "pago5.pdf" }
   ],
-    "reviewsLocales": [
+  "reviewsLocales": [
     { "idLocal": 1, "promedio": 4.8, "totalReviews": 128 },
     { "idLocal": 2, "promedio": 4.5, "totalReviews": 87 },
     { "idLocal": 3, "promedio": 4.9, "totalReviews": 215 },
@@ -270,27 +256,27 @@ export const data: DatabaseData = {
   ],
 
   "ubicacionesLocales": [
-    { 
-      "idLocal": 1, 
-      "latitud": -12.111627, 
+    {
+      "idLocal": 1,
+      "latitud": -12.111627,
       "longitud": -77.021151,
       "urlGoogleMaps": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3901.0461505005206!2d-77.02145!3d-12.111627!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x9105c8d4d4d4d4d5%3A0x0!2sMiraflores%2C%20Lima!5e0!3m2!1ses!2spe!4v1234567890"
     },
-    { 
-      "idLocal": 2, 
-      "latitud": -12.091807, 
+    {
+      "idLocal": 2,
+      "latitud": -12.091807,
       "longitud": -77.031641,
       "urlGoogleMaps": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3901.2168505005206!2d-77.031641!3d-12.091807!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x9105c8a8a8a8a8a9%3A0x0!2sSan%20Isidro%2C%20Lima!5e0!3m2!1ses!2spe!4v1234567890"
     },
-    { 
-      "idLocal": 3, 
-      "latitud": -12.055410, 
+    {
+      "idLocal": 3,
+      "latitud": -12.055410,
       "longitud": -77.025319,
       "urlGoogleMaps": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3901.4875505005206!2d-77.025319!3d-12.055410!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x9105c8d4d4d4d4d5%3A0x0!2sSurco%2C%20Lima!5e0!3m2!1ses!2spe!4v1234567890"
     },
-    { 
-      "idLocal": 4, 
-      "latitud": -12.072038, 
+    {
+      "idLocal": 4,
+      "latitud": -12.072038,
       "longitud": -76.984680,
       "urlGoogleMaps": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3901.3168505005206!2d-76.984680!3d-12.072038!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x9105c8d4d4d4d4d5%3A0x0!2sLa%20Molina%2C%20Lima!5e0!3m2!1ses!2spe!4v1234567890"
     }

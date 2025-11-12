@@ -9,6 +9,7 @@ interface Props {
     variant?: ButtonVariants
     type?: "button" | "submit" | "reset"
     disabled?: boolean
+    form?: string
 }
 
 export const Button = ({
@@ -17,7 +18,8 @@ export const Button = ({
     fullWidth,
     variant = "primary",
     type = "button",
-    disabled = false
+    disabled = false,
+    form
 }: Props) => {
 
     const handleClick = () => {
@@ -44,8 +46,9 @@ export const Button = ({
             type={type}
             onClick={handleClick}
             disabled={disabled}
+            form={form}
             className={clsx(
-                "h-[44px] py-4 px-9 flex items-center justify-center rounded-lg text-sm transition-colors",
+                "h-11 py-4 px-9 flex items-center justify-center rounded-lg text-sm transition-colors",
                 getButtonClasses(),
                 fullWidth && "w-full",
                 disabled 

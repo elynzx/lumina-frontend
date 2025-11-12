@@ -60,8 +60,11 @@ export default function App() {
         { path: "/registro", element: <Register /> },
         { path: "/catalogo", element: <Catalog /> },
         { path: "/producto/:id", element: <ProductDetail /> },
-        { path: "/pago", element: <Payment /> },
       ],
+    },
+    {
+      path: "/pago/:id",
+      element: <Payment />,
     },
   ]);
 

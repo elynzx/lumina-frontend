@@ -1,6 +1,7 @@
 import { VenuePreviewCard } from '../VenuePreviewCard'
 import { Button } from "@/components/atomic/Button";
 import { data } from "@/constants/data";
+import { useNavigate } from 'react-router-dom';
 
 const getLocalImage = (localId: number) => {
   const fotosLocal = data.fotosLocales.filter(_ => _.idLocal === localId);
@@ -13,6 +14,10 @@ const getDistrict = (idDistrito: number) => {
 
 export const VenuePreviewSection = () => {
 
+  const navigate = useNavigate();
+  const handleViewAllVenues = () => {
+    navigate('/catalogo');
+  };
   return (
     <div className="section-container">
       <h2 className="text-title">Conoce nuestros locales</h2>
@@ -28,7 +33,7 @@ export const VenuePreviewSection = () => {
           />
         ))}
       </div>
-        <Button text="Ver todos los locales" onClick={() => { }} />
+      <Button text="Ver todos los locales" onClick={handleViewAllVenues} />
       <div className="flex flex-col gap-5 mt-4 text-center text-xs text-gray-500">
         <p>*Los precios y disponibilidad pueden variar. Consulta con el local para más detalles.</p>
         <p>**Imágenes referenciales. Los locales pueden diferir en apariencia y características.</p>

@@ -271,7 +271,7 @@ export const UserModal = ({
                             isSubmitting={isSubmitting}
                         />
                     )}
-                    <hr className="h-[1px] w-full border-light-bgray" />
+                    <hr className="h-px w-full border-light-bgray" />
                     <p className="text-gray-500 text-xs">
                         {footerText}{' '}
                         <a className="text-blue font-bold cursor-pointer" onClick={callBackFooter}>
