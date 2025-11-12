@@ -80,11 +80,12 @@ export interface DistrictCreateRequest {
 export interface EventType {
     eventTypeId: number;
     eventTypeName: string;
-    photoUrl?: string;
+    description?: string;
 }
 
 export interface EventTypeCreateRequest {
     eventTypeName: string;
+    description?: string;
 }
 
 export interface Furniture {
