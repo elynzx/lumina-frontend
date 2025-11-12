@@ -120,8 +120,7 @@ export const MyDataStep = ({ userData = {
               text="Guardar cambios"
               onClick={handleSaveChanges}
               disabled={!isEditing}
-              variant={isEditing ? "secondary" : "outline"}
-              className={isEditing ? "bg-blue text-white" : "bg-gray-200 text-gray-400"}
+              variant={isEditing ? "primary" : "secondary"}
             />
           </div>
         </form>
