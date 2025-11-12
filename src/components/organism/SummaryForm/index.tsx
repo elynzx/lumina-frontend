@@ -70,9 +70,17 @@ export const SummaryForm = ({ venueId = 1, onFormChange, initialValues, onSubmit
     };
 
     const validateDate = (value: string) => {
+        console.log("Validating date:", value);
         if (!value) return "La fecha es requerida";
 
-        const selectedDate = new Date(value);
+        const [day, month, year] = value.split('/').map(Number);
+
+        if (!day || !month || !year) {
+            return "Formato de fecha inválido";
+        }
+
+        const selectedDate = new Date(year, month - 1, day);
+        
         if (isNaN(selectedDate.getTime())) {
             return "Fecha inválida";
         }
@@ -162,6 +170,7 @@ export const SummaryForm = ({ venueId = 1, onFormChange, initialValues, onSubmit
                                 type="date"
                                 error={errors.date?.message}
                                 IconComponent={Calendar}
+                                min={getDefaultDate()}
                             />
                         </div>
                     )}
