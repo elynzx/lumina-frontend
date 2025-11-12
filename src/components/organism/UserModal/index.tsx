@@ -5,6 +5,7 @@ import { Input } from "@/components/atomic/Input";
 import { PasswordInput } from "@/components/atomic/PasswordInput";
 import { Button } from "@/components/atomic/Button";
 import { VALIDATION_RULES, VALIDATION_MESSAGES } from "@/utils/validations";
+import { AlertCircle } from "lucide-react";
 
 interface LoginFormData {
     email: string;
@@ -27,17 +28,19 @@ interface Props {
     onClickAction: (data: LoginFormData | RegisterFormData) => void | Promise<void>
     isLogin?: boolean
     buttonText: string
-    callBackPassword?: () => void    
+    callBackPassword?: () => void
     footerText: string
     footerLinkText: string
     callBackFooter: () => void
+    error?: string
+    disabled?: boolean
 }
 
-const LoginForm = ({ 
-    onSubmit, 
-    buttonText, 
-    callBackPassword, 
-    isSubmitting 
+const LoginForm = ({
+    onSubmit,
+    buttonText,
+    callBackPassword,
+    isSubmitting
 }: {
     onSubmit: (data: LoginFormData) => void;
     buttonText: string;
@@ -76,17 +79,17 @@ const LoginForm = ({
                     />
                 )}
             />
-            <Button 
-                text={buttonText} 
-                type="submit" 
-                fullWidth 
-                variant="tertiary" 
+            <Button
+                text={buttonText}
+                type="submit"
+                fullWidth
+                variant="tertiary"
                 disabled={isSubmitting}
                 onClick={handleSubmit(onSubmit)}
             />
             {callBackPassword && (
-                <a 
-                    className="text-xs text-black underline font-bold cursor-pointer" 
+                <a
+                    className="text-xs text-black underline font-bold cursor-pointer"
                     onClick={callBackPassword}
                 >
                     Olvide mi contraseña
@@ -96,10 +99,10 @@ const LoginForm = ({
     );
 };
 
-const RegisterForm = ({ 
-    onSubmit, 
-    buttonText, 
-    isSubmitting 
+const RegisterForm = ({
+    onSubmit,
+    buttonText,
+    isSubmitting
 }: {
     onSubmit: (data: RegisterFormData) => void;
     buttonText: string;
@@ -107,14 +110,14 @@ const RegisterForm = ({
 }) => {
     const { control, handleSubmit, formState: { errors }, watch } = useForm<RegisterFormData>({
         mode: 'onChange',
-        defaultValues: { 
-            firstName: '', 
-            lastName: '', 
-            documentNumber: '', 
-            phone: '', 
-            email: '', 
-            newPassword: '', 
-            confirmPassword: '' 
+        defaultValues: {
+            firstName: '',
+            lastName: '',
+            documentNumber: '',
+            phone: '',
+            email: '',
+            newPassword: '',
+            confirmPassword: ''
         }
     });
 
@@ -205,7 +208,7 @@ const RegisterForm = ({
                     control={control}
                     rules={{
                         required: VALIDATION_MESSAGES.required,
-                        validate: (value: string) => 
+                        validate: (value: string) =>
                             value === watchedPassword || VALIDATION_MESSAGES.passwordMatch
                     }}
                     render={({ field }) => (
@@ -217,11 +220,11 @@ const RegisterForm = ({
                     )}
                 />
             </div>
-            <Button 
-                text={buttonText} 
-                type="submit" 
-                fullWidth 
-                variant="tertiary" 
+            <Button
+                text={buttonText}
+                type="submit"
+                fullWidth
+                variant="tertiary"
                 disabled={isSubmitting}
                 onClick={handleSubmit(onSubmit)}
             />
@@ -238,7 +241,9 @@ export const UserModal = ({
     callBackPassword,
     footerText,
     footerLinkText,
-    callBackFooter
+    callBackFooter,
+    error,
+    disabled = false
 }: Props) => {
     const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -250,12 +255,19 @@ export const UserModal = ({
             setIsSubmitting(false);
         }
     };
-    
+
     return (
         <Modal>
             <div className="flex flex-col items-center">
                 <h2 className="text-title mb-8">{title}</h2>
                 {subtitle && <p className="text-blue text-[16px] mb-8">{subtitle}</p>}
+
+                {error && (
+                    <div className="w-full mb-4 p-3 bg-red-50 border border-red-200 rounded-lg flex items-start gap-2">
+                        <AlertCircle className="text-red-600 shrink-0 mt-0.5" size={18} />
+                        <p className="text-sm text-red-800">{error}</p>
+                    </div>
+                )}
                 <div className="flex flex-col gap-5 w-full items-center">
                     {isLogin ? (
                         <LoginForm

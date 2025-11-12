@@ -1,12 +1,6 @@
 import { create } from 'zustand';
 import Cookies from 'js-cookie';
-
-interface User {
-  idUsuario: number;
-  email: string;
-  nombreCompleto: string;
-  rol: string;
-}
+import type { User } from '@/api/interfaces/auth';
 
 interface AuthState {
   loading: boolean;

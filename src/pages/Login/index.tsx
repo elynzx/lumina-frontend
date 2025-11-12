@@ -25,29 +25,33 @@ const isLoginFormData = (data: LoginFormData | RegisterFormData): data is LoginF
 export const Login = () => {
     const navigate = useNavigate();
     const [error, setError] = useState<string>("");
+    const [isLoading, setIsLoading] = useState(false);
     const { login } = useAuth();
 
     const handleClickAction = () => {
         navigate("/registro");
-        
+
     }
 
     const handleClickLogin = async (data: LoginFormData | RegisterFormData) => {
         try {
             setError("");
-            
+            setIsLoading(true);
+
             if (isLoginFormData(data)) {
                 await login({
                     email: data.email,
-                    contrasena: data.password
+                    password: data.password
                 });
-               
+
                 navigate("/");
             }
         } catch (err) {
             const errorMessage = err instanceof Error ? err.message : "Error al iniciar sesión";
             setError(errorMessage);
             console.error("Error en login:", err);
+        } finally {
+            setIsLoading(false);
         }
     };
 
@@ -57,11 +61,13 @@ export const Login = () => {
                 title="Iniciar sesión"
                 onClickAction={handleClickLogin}
                 isLogin={true}
-                buttonText="Iniciar sesión"
+                buttonText={isLoading ? "Iniciando..." : "Iniciar sesión"}
                 callBackPassword={() => { console.log("Olvide mi contraseña") }}
                 footerText="¿No tienes una cuenta?"
                 footerLinkText="Regístrate"
                 callBackFooter={handleClickAction}
+                error={error}
+                disabled={isLoading}
             />
         </>
     )
