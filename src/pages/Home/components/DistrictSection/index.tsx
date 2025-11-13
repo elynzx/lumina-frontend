@@ -1,23 +1,37 @@
 import { ScrollableSection } from '@/components/molecules/ScrollableSection';
 import { CategoryCard } from '../CategoryCard'
-import { data } from '@/constants/data';
-
-const getDistrictImage = (id: number) => {
-  const local = data.locales.find(_ => _.idDistrito === id);
-  const fotosLocal = data.fotosLocales.filter(_ => _.idLocal === local?.idLocal);
-  return fotosLocal[0]?.urlFoto || '';
-};
+import { useDistrictCards } from '@/hooks/api';
 
 export const DistrictSection = () => {
+  const { districtCards, loading, error } = useDistrictCards();
+
+  if (loading) {
+    return (
+      <div className="section-container">
+        <h2 className="text-title">Descubre las zonas</h2>
+        <p className="text-center text-gray-500 py-8">Cargando distritos...</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="section-container">
+        <h2 className="text-title">Descubre las zonas</h2>
+        <p className="text-center text-red-500 py-8">{error}</p>
+      </div>
+    );
+  }
+
   return (
     <div className="section-container">
       <h2 className="text-title">Descubre las zonas</h2>
       <ScrollableSection>
-        {data.distritos.map((item) => (
-          <div key={item.idDistrito} className="flex-shrink-0">
+        {districtCards.map((district) => (
+          <div key={district.districtId} className="flex-shrink-0">
             <CategoryCard
-              title={item.nombreDistrito}
-              imgUrl={getDistrictImage(item.idDistrito)}
+              title={district.districtName}
+              imgUrl={district.photoUrl}
             />
           </div>
         ))}

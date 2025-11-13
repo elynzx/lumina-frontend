@@ -1,21 +1,22 @@
 import { useState, useEffect } from "react";
-import { data } from "@/constants/data";
 import { Button } from "@/components/atomic/Button";
 import { IconChooser } from "@/components/atomic/IconChooser";
 import { IconNumberInput } from "@/components/atomic/IconNumberInput";
 import capacityIcon from "@/assets/icons/capacity_lineal.svg";
 import priceIcon from "@/assets/icons/currency.svg";
 import eventIcon from "@/assets/icons/event_tag.svg";
+import type { EventType } from "@/api/interfaces";
 
 
 interface Props {
-  onFilterChange: (filteredLocales: any[]) => void;
+  eventTypes: EventType[];
+  onFilterChange: (params: Record<string, any>) => void;
 }
 
-export const FilterBar = ({ onFilterChange }: Props) => {
+export const FilterBar = ({ eventTypes }: Props) => {
   const [priceRange, setPriceRange] = useState("");
   const [capacity, setCapacity] = useState<number | "">("");
-  const [eventType, setEventType] = useState("");
+  const [eventTypeId, setEventTypeId] = useState<number | "">("");
 
   const priceOptions = [
     { value: "0-100", label: "S/ 0 - S/ 100" },
@@ -25,59 +26,42 @@ export const FilterBar = ({ onFilterChange }: Props) => {
     { value: "500+", label: "S/ 500+" }
   ];
 
-  const eventTypeOptions = data.tiposEvento.map(tipo => ({
-    value: tipo.nombreTipo,
-    label: tipo.nombreTipo
+  const eventTypeOptions = eventTypes.map(tipo => ({
+    value: tipo.eventTypeId,
+    label: tipo.eventTypeName
   }));
 
-  const applyFilters = () => {
-    let filtered = [...data.locales];
-
+  const handleFilter = () => {
+    console.log('filtered')
+    const params: Record<string, any> = {};
     if (priceRange) {
       if (priceRange === "500+") {
-        filtered = filtered.filter(local => local.precioHora >= 500);
+        params.minPrice = 500;
       } else {
         const [min, max] = priceRange.split("-").map(Number);
-        filtered = filtered.filter(local => 
-          local.precioHora >= min && local.precioHora <= max
-        );
+        params.minPrice = min;
+        params.maxPrice = max;
       }
     }
-
-    if (capacity) {
-      filtered = filtered.filter(local => local.aforoMaximo >= capacity);
-    }
-
-    if (eventType) {
-      const selectedEventType = data.tiposEvento.find(tipo => tipo.nombreTipo === eventType);
-      if (selectedEventType) {
-        const localesConTipoEvento = data.localTipoEvento
-          .filter(relacion => relacion.idTipoEvento === selectedEventType.idTipoEvento)
-          .map(relacion => relacion.idLocal);
-        
-        filtered = filtered.filter(local => localesConTipoEvento.includes(local.idLocal));
-      }
-    }
-
-    onFilterChange(filtered);
+    if (capacity) params.minCapacity = capacity;
+    if (eventTypeId) params.eventTypeId = eventTypeId;
   };
 
   const clearAllFilters = () => {
     setPriceRange("");
     setCapacity("");
-    setEventType("");
-    onFilterChange(data.locales);
+    setEventTypeId("");
   };
 
   useEffect(() => {
-    applyFilters();
-  }, [priceRange, capacity, eventType]);
+    handleFilter();
+  }, [priceRange, capacity, eventTypeId]);
 
   return (
     <div className="flex justify-end items-center gap-4 mb-8 p-4 rounded-lg">
-      <Button 
-        text="Ver Todo" 
-        variant="primary" 
+      <Button
+        text="Ver Todo"
+        variant="primary"
         onClick={clearAllFilters}
       />
 
@@ -98,8 +82,8 @@ export const FilterBar = ({ onFilterChange }: Props) => {
       />
 
       <IconChooser
-        value={eventType}
-        onChange={setEventType}
+        value={eventTypeId}
+        onChange={setEventTypeId}
         icon={eventIcon}
         options={eventTypeOptions}
         placeholder="Tipo de Evento"

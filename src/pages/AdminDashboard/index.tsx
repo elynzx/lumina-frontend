@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "@/hooks/useAuth";
+import { useAuth } from "@/hooks/api/useAuth";
 import { useAuthStore } from "@/store/useAuthStore";
 import { useState, useEffect } from 'react';
 import { DashboardView } from './views/DashboardView';

@@ -62,13 +62,21 @@ export const ProductDetail = () => {
                         </div>
                     </div>
                     <p className="leading-relaxed text-sm">{venueData.descripcion}</p>
-                    <iframe
-                        className="w-full h-96 rounded-lg border border-gray-200"
-                        src={venueLocation?.urlGoogleMaps || ''}
-                        allowFullScreen={true}
-                        loading="lazy"
-                        referrerPolicy="no-referrer-when-downgrade"
-                    ></iframe>
+                    
+                    {/* Mapa de ubicación - Solo se muestra si existe googleMapsUrl */}
+                    {venueLocation?.urlGoogleMaps && (
+                        <div className="w-full">
+                            <h3 className="text-lg font-semibold mb-3">📍 Ubicación</h3>
+                            <iframe
+                                className="w-full h-96 rounded-lg border border-gray-200"
+                                src={venueLocation.urlGoogleMaps}
+                                allowFullScreen={true}
+                                loading="lazy"
+                                referrerPolicy="no-referrer-when-downgrade"
+                                title="Ubicación del local"
+                            ></iframe>
+                        </div>
+                    )}
                 </div>
 
                 <div className="w-full max-w-[38%] flex flex-col gap-6 sticky top-20">

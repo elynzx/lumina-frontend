@@ -1,21 +1,20 @@
-// Configuración base de la API
+/**
+ * Configuración base de la API
+ * Cliente HTTP centralizado con autenticación JWT y manejo de errores
+ */
 import Cookies from 'js-cookie';
+import type { ApiError, BackendResponse, } from '@/api/interfaces/common';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080/api';
 
-export interface ApiResponse<T> {
-    mensaje: string;
-    estado: string;
-    datos: T;
-}
+/**
+ * Re-exporta tipos comunes en base a la API
+ */
+export type { ApiResponse, BackendResponse, ApiError } from '@/api/interfaces/common';
 
-export interface ApiError {
-    message: string;
-    status: number;
-    details?: unknown;
-}
-
-// Mapa de mensajes de error por código de estado
+/**
+ * Mapa de mensajes de error por código de estado HTTP
+ */
 const ERROR_MESSAGES: Record<number, string> = {
     400: 'Datos inválidos',
     401: 'Credenciales incorrectas',
@@ -28,6 +27,7 @@ const ERROR_MESSAGES: Record<number, string> = {
 
 /**
  * Obtiene los headers base para las peticiones HTTP
+ * Incluye Content-Type y Authorization (JWT) si existe token
  */
 const getHeaders = (): HeadersInit => {
     const headers: HeadersInit = {
@@ -44,6 +44,7 @@ const getHeaders = (): HeadersInit => {
 
 /**
  * Maneja la respuesta HTTP y extrae los datos o lanza errores
+ * Parsea errores del backend y los transforma en ApiError
  */
 const handleResponse = async <T>(response: Response): Promise<T> => {
     if (!response.ok) {
@@ -76,12 +77,13 @@ const handleResponse = async <T>(response: Response): Promise<T> => {
 };
 
 /**
- * Crea una petición HTTP configurada
+ * Crea una petición HTTP configurada con headers y body
  */
 const createRequest = (method: string, data?: unknown): RequestInit => {
     const baseConfig: RequestInit = {
         method,
         headers: getHeaders(),
+        credentials: 'include',
     };
 
     if (data) {
@@ -95,39 +97,32 @@ const createRequest = (method: string, data?: unknown): RequestInit => {
 };
 
 /**
- * Realiza una petición GET
+ * Métodos HTTP principales.
  */
-export const get = async <T>(endpoint: string): Promise<T> => {
-    const response = await fetch(`${API_BASE_URL}${endpoint}`, createRequest('GET'));
-    return handleResponse<T>(response);
+const get = async <T>(url: string): Promise<BackendResponse<T>> => {
+    const response = await fetch(`${API_BASE_URL}${url}`, createRequest('GET'));
+    return handleResponse<BackendResponse<T>>(response);
+};
+
+const post = async <T>(url: string, data: unknown): Promise<BackendResponse<T>> => {
+    const response = await fetch(`${API_BASE_URL}${url}`, createRequest('POST', data));
+    return handleResponse<BackendResponse<T>>(response);
+};
+
+const put = async <T>(url: string, data?: unknown): Promise<BackendResponse<T>> => {
+    const response = await fetch(`${API_BASE_URL}${url}`, createRequest('PUT', data));
+    return handleResponse<BackendResponse<T>>(response);
+};
+
+const del = async <T>(url: string): Promise<BackendResponse<T>> => {
+    const response = await fetch(`${API_BASE_URL}${url}`, createRequest('DELETE'));
+    return handleResponse<BackendResponse<T>>(response);
 };
 
 /**
- * Realiza una petición POST
- */
-export const post = async <T>(endpoint: string, data?: unknown): Promise<T> => {
-    const response = await fetch(`${API_BASE_URL}${endpoint}`, createRequest('POST', data));
-    return handleResponse<T>(response);
-};
-
-/**
- * Realiza una petición PUT
- */
-export const put = async <T>(endpoint: string, data?: unknown): Promise<T> => {
-    const response = await fetch(`${API_BASE_URL}${endpoint}`, createRequest('PUT', data));
-    return handleResponse<T>(response);
-};
-
-/**
- * Realiza una petición DELETE
- */
-export const del = async <T>(endpoint: string): Promise<T> => {
-    const response = await fetch(`${API_BASE_URL}${endpoint}`, createRequest('DELETE'));
-    return handleResponse<T>(response);
-};
-
-/**
- * Utilidad para manejar errores de la API
+ * Parsea error de respuesta HTTP a formato ApiError
+ * @param error - Error capturado
+ * @returns Objeto ApiError con mensaje y código
  */
 export const parseApiError = (error: Error): ApiError => {
     try {
@@ -140,6 +135,9 @@ export const parseApiError = (error: Error): ApiError => {
     }
 };
 
+/**
+ * Cliente principal para consumir la API.
+ */
 export const apiClient = {
     get,
     post,

@@ -2,7 +2,7 @@ import { Button } from "@/components/atomic/Button";
 import logomark from "@/assets/logo/logomark.svg"
 import logotype from "@/assets/logo/logotype.svg"
 import { useLocation, useNavigate } from "react-router-dom";
-import { useAuth } from "@/hooks/useAuth";
+import { useAuth } from "@/hooks/api/useAuth";
 import { useAuthStore } from "@/store/useAuthStore";
 
 export const Header = () => {

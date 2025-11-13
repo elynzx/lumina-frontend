@@ -1,34 +1,51 @@
 import { ScrollableSection } from '@/components/molecules/ScrollableSection';
 import { CategoryCard } from '../CategoryCard'
-import { data } from '@/constants/data';
+import { useEventTypes } from '@/hooks/api';
 
-const images = [
-  "https://cdn0.matrimonio.com.pe/vendor/5326/3_2/1280/jpeg/whatsapp-image-2023-03-07-at-12-29-44-4_11_115326-167838324481472.jpeg",
-  "https://cdn0.matrimonio.com.pe/vendor/5326/3_2/1280/jpeg/whatsapp-image-2023-03-07-at-12-29-44-4_11_115326-167838324481472.jpeg",
-  "https://cdn0.matrimonio.com.pe/vendor/5326/3_2/1280/jpeg/whatsapp-image-2023-03-07-at-12-29-44-4_11_115326-167838324481472.jpeg",
-  "https://cdn0.matrimonio.com.pe/vendor/5326/3_2/1280/jpeg/whatsapp-image-2023-03-07-at-12-29-44-4_11_115326-167838324481472.jpeg",
-]
+// Imágenes por defecto hasta que se agregue photoUrl al backend
+const DEFAULT_IMAGES: Record<string, string> = {
+  'Boda': 'https://images.unsplash.com/photo-1519741497674-611481863552?w=800',
+  'Cumpleaños': 'https://images.unsplash.com/photo-1530103862676-de8c9debad1d?w=800',
+  'Corporativo': 'https://images.unsplash.com/photo-1511578314322-379afb476865?w=800',
+  'Quinceañera': 'https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?w=800',
+  'default': 'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=800'
+};
+
+
+const getEventImage = (photoUrl: string | undefined, eventTypeName: string): string => {
+  return photoUrl && photoUrl.trim() !== '' ? photoUrl : DEFAULT_IMAGES[eventTypeName] || DEFAULT_IMAGES.default;
+}
 
 export const TypeEventSection = () => {
+  const { eventTypes, loading, error } = useEventTypes();
+
+  if (loading) {
+    return (
+      <div className="section-container">
+        <h2 className="text-title">Tipos de Eventos</h2>
+        <p className="text-center text-gray-500 py-8">Cargando tipos de evento...</p>
+      </div>
+    );
+  }
+
+  if (error || eventTypes.length === 0) {
+    return null; // No mostramos la sección si hay error
+  }
+
   return (
     <div className="section-container">
       <h2 className="text-title">Tipos de Eventos</h2>
       <ScrollableSection>
-        {data.tiposEvento.map((item, index) => (
-          <div key={item.idTipoEvento} className="flex-shrink-0">
+        {eventTypes.map((eventType) => (
+          <div key={eventType.eventTypeId} className="flex-shrink-0">
             <CategoryCard
-              key={item.idTipoEvento}
-              title={item.nombreTipo}
-              description={item.descripcion}
-              imgUrl={images[index]} />
+              title={eventType.eventTypeName}
+              description={eventType.description}
+              imgUrl={getEventImage(eventType.photoUrl, eventType.eventTypeName)}
+            />
           </div>
         ))}
       </ScrollableSection>
-      {/*       <div className="section-grid">
-        {data.tiposEvento.map((item, index) => (
-          <CategoryCard key={item.idTipoEvento} title={item.nombreTipo} description={item.descripcion} imgUrl={images[index]} />
-        ))}
-      </div> */}
     </div>
   )
 };

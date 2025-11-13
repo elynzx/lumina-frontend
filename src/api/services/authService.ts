@@ -1,27 +1,42 @@
 import { apiClient } from '@/api/base';
-import type { LoginRequest, RegisterRequest, AuthResponse, BackendResponse } from '@/api/interfaces/auth';
+import type { LoginRequest, RegisterRequest, AuthResponse } from '@/api/interfaces';
 import Cookies from 'js-cookie';
 
-// Configuración de cookies seguras
+/**
+ * Configuración de cookies para el token de autenticación
+ * - secure: Solo HTTPS en producción
+ * - sameSite: 'strict' para prevenir ataques CSRF
+ * - expires: 7 días de duración
+ */
 const COOKIE_OPTIONS = {
-  secure: process.env.NODE_ENV === 'production', // Solo HTTPS en producción
-  sameSite: 'strict' as const, // Previene CSRF
-  expires: 7, // 7 días
-};
-
-const USER_COOKIE_OPTIONS = {
   secure: process.env.NODE_ENV === 'production',
-  sameSite: 'lax' as const, // Más flexible para datos menos sensibles
+  sameSite: 'strict' as const,
   expires: 7,
 };
 
+/**
+ * Configuración de cookies para datos de usuario
+ * - sameSite: 'lax' para mayor flexibilidad
+ */
+const USER_COOKIE_OPTIONS = {
+  secure: process.env.NODE_ENV === 'production',
+  sameSite: 'lax' as const,
+  expires: 7,
+};
+
+/**
+ * Servicio de autenticación para clientes y administradores
+ * Maneja login, registro, logout y gestión de sesiones mediante cookies seguras
+ */
 export const useAuthService = () => {
   /**
-   * Iniciar sesión
+   * Iniciar sesión de cliente
+   * @param credentials - Email y contraseña del usuario
+   * @returns Datos de autenticación (token, usuario)
    */
   const login = async (credentials: LoginRequest): Promise<AuthResponse> => {
     try {
-      const response = await apiClient.post<BackendResponse<AuthResponse>>('/auth/login', credentials);
+      const response = await apiClient.post<AuthResponse>('/auth/login', credentials);
       const authData = response.data;
 
       if (authData?.token) {
@@ -41,18 +56,17 @@ export const useAuthService = () => {
   };
 
   /**
-   * Registrar nuevo usuario
+   * Registrar nuevo usuario cliente
+   * @param userData - Datos del nuevo usuario (nombre, email, dni, teléfono, contraseña)
+   * @returns Datos de autenticación del usuario registrado
    */
   const register = async (userData: RegisterRequest): Promise<AuthResponse> => {
     try {
-      const response = await apiClient.post<BackendResponse<AuthResponse>>('/auth/register', userData);
+      const response = await apiClient.post<AuthResponse>('/auth/register', userData);
       const authData = response.data;
 
       if (authData?.token) {
-        // Guardar token en cookie segura
         Cookies.set('auth_token', authData.token, COOKIE_OPTIONS);
-        
-        // Guardar datos de usuario en cookie (menos sensible)
         Cookies.set(
           'user_data',
           JSON.stringify(authData.user),
@@ -67,8 +81,9 @@ export const useAuthService = () => {
     }
   };
 
-   /**
+  /**
    * Cerrar sesión
+   * Elimina el token y datos del usuario de las cookies
    */
   const logout = (): void => {
     Cookies.remove('auth_token');
@@ -77,20 +92,23 @@ export const useAuthService = () => {
 
   /**
    * Verificar si el usuario está autenticado
+   * @returns true si existe un token válido
    */
   const isAuthenticated = (): boolean => {
     return !!Cookies.get('auth_token');
   };
 
   /**
-   * Obtener token actual
+   * Obtener token de autenticación actual
+   * @returns Token JWT o null si no existe
    */
   const getToken = (): string | null => {
     return Cookies.get('auth_token') || null;
   };
   
   /**
-   * Obtener usuario actual
+   * Obtener datos del usuario actual desde la cookie
+   * @returns Perfil del usuario o null si no está autenticado
    */
   const getCurrentUser = () => {
     const userStr = Cookies.get('user_data');
@@ -104,11 +122,14 @@ export const useAuthService = () => {
   };
 
   /**
-   * Login de administrador
+   * Iniciar sesión de administrador
+   * Utiliza endpoint /admin/auth/login para autenticar administradores
+   * @param credentials - Email y contraseña del administrador
+   * @returns Datos de autenticación (token, usuario con rol ADMIN)
    */
   const adminLogin = async (credentials: LoginRequest): Promise<AuthResponse> => {
     try {
-      const response = await apiClient.post<BackendResponse<AuthResponse>>('/admin/auth/login', credentials);
+      const response = await apiClient.post<AuthResponse>('/admin/auth/login', credentials);
       const authData = response.data;
 
       if (authData?.token) {
@@ -127,6 +148,13 @@ export const useAuthService = () => {
     }
   };
 
-  return { login, register, logout, isAuthenticated, getToken, getCurrentUser, adminLogin };
-
+  return { 
+    login, 
+    register, 
+    logout, 
+    isAuthenticated, 
+    getToken, 
+    getCurrentUser, 
+    adminLogin 
+  };
 };

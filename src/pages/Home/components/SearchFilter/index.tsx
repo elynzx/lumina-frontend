@@ -1,12 +1,12 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { data } from "@/constants/data";
 import searchIcon from "@/assets/icons/search_blue.svg";
 import peopleIcon from "@/assets/icons/capacity_blue.svg";
 import locationIcon from "@/assets/icons/location_blue.svg";
 import { Dropdown } from "./Dropdown";
 import { NumberField } from "./NumberField";
 import { Button } from "@/components/atomic/Button";
+import { useEventTypes, useDistricts } from "@/hooks/api";
 
 const SearchFilterContent = {
   titles: {
@@ -22,81 +22,58 @@ const SearchFilterContent = {
 
 export const SearchFilter = () => {
   const navigate = useNavigate();
-  const [eventType, setEventType] = useState("");
+
+  const [eventTypeId, setEventTypeId] = useState<string>("");
+  const [districtId, setDistrictId] = useState<string>("");
   const [capacityCount, setCapacityCount] = useState<number | "">("");
-  const [district, setDistrict] = useState("");
 
-  const eventTypeOptions = data.tiposEvento.map(tipo => ({
-    id: tipo.idTipoEvento,
-    name: tipo.nombreTipo
+  const { eventTypes, loading: eventTypesLoading } = useEventTypes();
+  const { districts, loading: districtsLoading } = useDistricts();
+
+  const eventTypeOptions = eventTypes.map(eventType => ({
+    id: eventType.eventTypeId.toString(),
+    name: eventType.eventTypeName
+  }));
+  const districtOptions = districts.map(district => ({
+    id: district.districtId.toString(),
+    name: district.districtName
   }));
 
-  const districtOptions = data.distritos.map(distrito => ({
-    id: distrito.idDistrito,
-    name: distrito.nombreDistrito
-  }));
-
-  const filterVenues = () => {
-    let filteredVenues = [...data.locales];
-
-    if (eventType) {
-      const selectedEventType = data.tiposEvento.find(tipo => tipo.nombreTipo === eventType);
-      if (selectedEventType) {
-        const EventTypeVenues = data.localTipoEvento
-          .filter(relacion => relacion.idTipoEvento === selectedEventType.idTipoEvento)
-          .map(relacion => relacion.idLocal);
-
-        filteredVenues = filteredVenues.filter(local =>
-          EventTypeVenues.includes(local.idLocal)
-        );
-      }
-    }
-
-    if (capacityCount) {
-      filteredVenues = filteredVenues.filter(local =>
-        local.aforoMaximo >= capacityCount
-      );
-    }
-
-    if (district) {
-      const selectedDistrict = data.distritos.find(d => d.nombreDistrito === district);
-      if (selectedDistrict) {
-        filteredVenues = filteredVenues.filter(local =>
-          local.idDistrito === selectedDistrict.idDistrito
-        );
-      }
-    }
-
-    return filteredVenues;
+  const handleEventTypeChange = (value: string) => {
+    setEventTypeId(value);
   };
 
-  
-  const handleSearch = () => {
-    const filteredResults = filterVenues();
+  const handleDistrictChange = (value: string) => {
+    setDistrictId(value);
+  };
 
+  const handleSearch = () => {
     const searchParams = new URLSearchParams();
 
-    if (eventType) searchParams.set('tipoEvento', eventType);
-    if (capacityCount) searchParams.set('aforo', capacityCount.toString());
-    if (district) searchParams.set('distrito', district);
+    if (eventTypeId !== "" && eventTypeId !== undefined && eventTypeId !== null) {
+      searchParams.set("eventTypeId", eventTypeId);
+    }
+    if (capacityCount !== "" && capacityCount !== undefined && capacityCount !== null) {
+      searchParams.set("minCapacity", capacityCount.toString());
+    }
+    if (districtId !== "" && districtId !== undefined && districtId !== null) {
+      searchParams.set("districtId", districtId);
+    }
 
-    // Agregar IDs de locales filtrados
-    const localIds = filteredResults.map(local => local.idLocal).join(',');
-    if (localIds) searchParams.set('locales', localIds);
-
-    console.log(`Encontrados ${filteredResults.length} locales que coinciden con los filtros`);
-
-    // Navegar a catálogo con parámetros
     navigate(`/catalogo?${searchParams.toString()}`);
+    console.log("Filtros enviados:", { eventTypeId, districtId, capacityCount });
+    console.log("URL generada:", `/catalogo?${searchParams.toString()}`);
   };
+
+  const isLoading = eventTypesLoading || districtsLoading;
 
   return (
     <div className="bg-white rounded-lg p-4 shadow-lg grid grid-cols-4 gap-6 max-w-4xl mx-auto">
       <Dropdown
         title={SearchFilterContent.titles.eventType}
         icon={searchIcon}
-        value={eventType}
-        onChange={setEventType}
+        value={eventTypeId}
+        onChange={handleEventTypeChange}
         options={eventTypeOptions}
         placeholder={SearchFilterContent.placeholders.eventType}
       />
@@ -111,76 +88,19 @@ export const SearchFilter = () => {
       <Dropdown
         title={SearchFilterContent.titles.district}
         icon={locationIcon}
-        value={district}
-        onChange={setDistrict}
+        value={districtId}
+        onChange={handleDistrictChange}
         options={districtOptions}
         placeholder={SearchFilterContent.placeholders.district}
       />
 
       <div className="flex flex-col justify-center items-center">
-        <Button variant="tertiary" text="Buscar" onClick={handleSearch} />
+        <Button
+          variant="tertiary"
+          text={isLoading ? "Cargando..." : "Buscar "}
+          onClick={handleSearch}
+          disabled={isLoading} />
       </div>
     </div>
   );
 };
-
-
-/* export const SearchFilter = () => {
-  const [eventType, setEventType] = useState("");
-  const [guestCount, setGuestCount] = useState<number | "">("");
-  const [district, setDistrict] = useState("");
-
-  const eventTypeOptions = data.tiposEvento.map(tipo => ({
-    id: tipo.idTipoEvento,
-    name: tipo.nombreTipo
-  }));
-
-  const districtOptions = data.distritos.map(distrito => ({
-    id: distrito.idDistrito,
-    name: distrito.nombreDistrito
-  }));
-
-  const handleSearch = () => {
-    const searchParams = {
-      eventType: eventType.trim(),
-      guestCount: guestCount || null,
-      district
-    };
-
-    console.log("Buscar con filtros:", searchParams);
-    // lógica de navegación a Catálogo con filtros
-  };
-
-  return (
-    <div className="bg-white rounded-lg p-4 shadow-lg grid grid-cols-4 gap-6 max-w-4xl mx-auto">
-      <Dropdown
-        title={SearchFilterContent.titles.eventType}
-        icon={searchIcon}
-        value={eventType}
-        onChange={setEventType}
-        options={eventTypeOptions}
-        placeholder={SearchFilterContent.placeholders.eventType}
-      />
-
-      <NumberField
-        title={SearchFilterContent.titles.guestCount}
-        icon={peopleIcon}
-        value={guestCount}
-        onChange={setGuestCount}
-      />
-
-      <Dropdown
-        title={SearchFilterContent.titles.district}
-        icon={locationIcon}
-        value={district}
-        onChange={setDistrict}
-        options={districtOptions}
-        placeholder={SearchFilterContent.placeholders.district}
-      />
-
-      <div className="flex flex-col justify-center items-center">
-        <Button variant="tertiary" text="Buscar" onClick={handleSearch} />
-      </div>
-    </div>
-  );
-}; */

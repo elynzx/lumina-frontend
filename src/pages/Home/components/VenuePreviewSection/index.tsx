@@ -1,35 +1,46 @@
 import { VenuePreviewCard } from '../VenuePreviewCard'
 import { Button } from "@/components/atomic/Button";
-import { data } from "@/constants/data";
+import { useVenues } from "@/hooks/api";
 import { useNavigate } from 'react-router-dom';
 
-const getLocalImage = (localId: number) => {
-  const fotosLocal = data.fotosLocales.filter(_ => _.idLocal === localId);
-  return fotosLocal[0]?.urlFoto || '';
-}
-
-const getDistrict = (idDistrito: number) => {
-  return data.distritos.find(_ => _.idDistrito === idDistrito)?.nombreDistrito || '';
-}
-
 export const VenuePreviewSection = () => {
-
   const navigate = useNavigate();
+  const { venues, loading, error } = useVenues();
+
   const handleViewAllVenues = () => {
     navigate('/catalogo');
   };
+
+  if (loading) {
+    return (
+      <div className="section-container">
+        <h2 className="text-title">Conoce nuestros locales</h2>
+        <p className="text-center text-gray-500 py-8">Cargando locales...</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="section-container">
+        <h2 className="text-title">Conoce nuestros locales</h2>
+        <p className="text-center text-red-500 py-8">{error}</p>
+      </div>
+    );
+  }
+
   return (
     <div className="section-container">
       <h2 className="text-title">Conoce nuestros locales</h2>
       <div className="section-grid mt-4 mb-6">
-        {data.locales.map((local) => (
+        {venues.slice(0, 4).map((venue) => (
           <VenuePreviewCard
-            key={local.idLocal}
-            idLocal={local.idLocal}
-            title={local.nombreLocal}
-            district={getDistrict(local.idDistrito)}
-            details={local.descripcion}
-            imgUrl={getLocalImage(local.idLocal)}
+            key={venue.venueId}
+            idLocal={venue.venueId}
+            title={venue.venueName}
+            district={venue.districtName}
+            details={venue.description}
+            imgUrl={venue.mainPhotoUrl}
           />
         ))}
       </div>
@@ -39,6 +50,5 @@ export const VenuePreviewSection = () => {
         <p>**Imágenes referenciales. Los locales pueden diferir en apariencia y características.</p>
       </div>
     </div>
-
   )
 };

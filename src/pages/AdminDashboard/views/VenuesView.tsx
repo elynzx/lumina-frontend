@@ -99,7 +99,10 @@ export const VenuesView = () => {
                 maxCapacity: venue.maxCapacity,
                 pricePerHour: venue.pricePerHour,
                 description: venue.description || '',
-                districtId: venue.districtId
+                districtId: venue.districtId,
+                latitude: venue.latitude,
+                longitude: venue.longitude,
+                googleMapsUrl: venue.googleMapsUrl
             });
             // Cargar fotos y tipos de evento existentes
             setPhotoUrls(venue.photos ? venue.photos.split(',').filter(p => p.trim()) : []);
@@ -529,6 +532,92 @@ export const VenuesView = () => {
                                             rows={6}
                                             className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                                         />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="mt-8 border-t border-gray-200 pt-6">
+                                <h3 className="text-lg font-semibold text-gray-800 mb-4">Ubicación del Local (Opcional)</h3>
+                                
+                                <div className="grid grid-cols-2 gap-8">
+
+                                    <div className="space-y-4">
+                                        {/* Latitud */}
+                                        <div>
+                                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                                                Latitud
+                                            </label>
+                                            <input
+                                                type="number"
+                                                step="0.000001"
+                                                placeholder="-12.111627"
+                                                value={formData.latitude || ''}
+                                                onChange={(e) => setFormData({ ...formData, latitude: e.target.value ? parseFloat(e.target.value) : undefined })}
+                                                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                            />
+                                        </div>
+
+                                        {/* Longitud */}
+                                        <div>
+                                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                                                Longitud
+                                            </label>
+                                            <input
+                                                type="number"
+                                                step="0.000001"
+                                                placeholder="-77.021151"
+                                                value={formData.longitude || ''}
+                                                onChange={(e) => setFormData({ ...formData, longitude: e.target.value ? parseFloat(e.target.value) : undefined })}
+                                                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                            />
+                                        </div>
+
+                                        {/* URL de Google Maps */}
+                                        <div>
+                                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                                                URL de Google Maps Embed
+                                            </label>
+                                            <input
+                                                type="url"
+                                                placeholder="https://www.google.com/maps/embed?pb=..."
+                                                value={formData.googleMapsUrl || ''}
+                                                onChange={(e) => setFormData({ ...formData, googleMapsUrl: e.target.value || undefined })}
+                                                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                            />
+                                        </div>
+                                    </div>
+
+                                    <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 h-fit">
+                                        <div className="flex items-start">
+                                            <svg className="w-5 h-5 text-blue-600 mt-0.5 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                            </svg>
+                                            <div className="flex-1">
+                                                <p className="text-sm font-semibold text-blue-900 mb-3">Cómo obtener las coordenadas y mapa:</p>
+                                                <ol className="list-decimal ml-4 space-y-2 text-xs text-blue-800">
+                                                    <li>
+                                                        Ve a <a href="https://www.google.com/maps" target="_blank" rel="noopener noreferrer" className="text-blue-600 underline hover:text-blue-800 font-medium">Google Maps</a>
+                                                    </li>
+                                                    <li>Busca la dirección del local</li>
+                                                    <li>Haz <strong>clic derecho</strong> en el marcador del local</li>
+                                                    <li>
+                                                        Las coordenadas aparecen arriba
+                                                        <br />
+                                                        <code className="bg-blue-100 px-1 py-0.5 rounded text-blue-900 text-xs">-12.111627, -77.021151</code>
+                                                        <br />
+                                                        Cópialas por separado en los campos
+                                                    </li>
+                                                    <li>
+                                                        Para el mapa: Click en <strong>"Compartir"</strong> → <strong>"Insertar un mapa"</strong>
+                                                        <br />
+                                                        Copia el <strong>URL</strong> del <code className="bg-blue-100 px-1 py-0.5 rounded">&lt;iframe src="..."&gt;</code>
+                                                    </li>
+                                                </ol>
+                                                <p className="text-xs text-blue-700 mt-3 italic bg-blue-100 p-2 rounded">
+                                                    💡 La ubicación mejora la experiencia del cliente al mostrar un mapa interactivo
+                                                </p>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>

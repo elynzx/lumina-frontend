@@ -1,6 +1,6 @@
 import { apiClient } from '@/api/base';
 import type { 
-    Venue, 
+    AdminVenue as Venue,
     VenueCreateRequest, 
     District, 
     DistrictCreateRequest, 
@@ -9,15 +9,10 @@ import type {
     Furniture, 
     FurnitureCreateRequest,
     Customer,
-    Reservation,
-    DashboardStats
-} from '@/api/interfaces/admin';
-
-interface BackendResponse<T> {
-    success: boolean;
-    message: string;
-    data: T;
-}
+    AdminReservation as Reservation,
+    DashboardStats,
+    BackendResponse
+} from '@/api/interfaces';
 
 export const useAdminService = () => {
     // ==================== DASHBOARD ====================

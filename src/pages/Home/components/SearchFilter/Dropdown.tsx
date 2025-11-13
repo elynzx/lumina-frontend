@@ -3,7 +3,7 @@ interface Props {
   icon: string;
   value: string;
   onChange: (value: string) => void;
-  options: { id: number; name: string }[];
+  options: { id: string; name: string }[];
   placeholder: string;
   showBorder?: boolean;
 }
@@ -23,12 +23,12 @@ export const Dropdown = ({
       <img src={icon} alt={title} className="w-6 h-6 text-gray-400" />
       <select
         value={value}
-        onChange={(e) => onChange(e.target.value)}
+        onChange={e => onChange(e.target.value)}
         className="flex-1 border-none outline-none text-sm bg-transparent"
       >
         <option value="">{placeholder}</option>
         {options.map((option) => (
-          <option key={option.id} value={option.name}>
+          <option key={option.id} value={option.id}>
             {option.name}
           </option>
         ))}

@@ -20,12 +20,12 @@ export const CategoryCard = ({
       <div
         className="absolute inset-0 z-0"
         style={{
-          background: "linear-gradient(to bottom, rgba(0,0,0,0.05) 0%, rgba(0,0,0,0.05) 60%, rgba(0,0,0,0.7) 100%)"
+          background: "linear-gradient(to bottom, rgba(0,0,0,0.05) 0%, rgba(0,0,0,0.05) 40%, rgba(0,0,0,0.9) 100%)"
         }}
       />
-      <div className="mb-10 relative z-10">
-        <h3 className="card-title text-white">{title}</h3>
-        <p className="card-description text-white">{description}</p>
+      <div className="mb-8 relative z-10">
+        <h4 className="card-title font-semibold text-white">{title}</h4>
+        <p className="card-description text-white px-3">{description}</p>
       </div>
     </div>
   )

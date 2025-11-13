@@ -1,4 +1,4 @@
-// Interfaces para las entidades del sistema
+export type { BackendResponse } from './common';
 
 export interface DashboardStats {
     totalVenues: number;
@@ -50,6 +50,9 @@ export interface Venue {
     photos?: string;
     availableEventTypes?: string;
     availableEventTypeIds?: string;
+    latitude?: number;
+    longitude?: number;
+    googleMapsUrl?: string;
 }
 
 export interface VenueCreateRequest {
@@ -59,6 +62,9 @@ export interface VenueCreateRequest {
     pricePerHour: number;
     description: string;
     districtId: number;
+    latitude?: number;
+    longitude?: number;
+    googleMapsUrl?: string;
 }
 
 export interface District {
@@ -74,6 +80,7 @@ export interface DistrictCreateRequest {
 export interface EventType {
     eventTypeId: number;
     eventTypeName: string;
+    photoUrl?: string;
 }
 
 export interface EventTypeCreateRequest {

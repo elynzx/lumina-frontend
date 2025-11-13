@@ -1,28 +1,29 @@
 import { useNavigate } from "react-router-dom";
 import { ProductCard } from "../ProductCard";
-import { data, type Local } from "@/constants/data";
+import { useVenues } from "@/hooks/api";
 
-const getLocalImage = (venueId: number) => {
-  const venuePhotosList = data.fotosLocales.filter(_ => _.idLocal === venueId);
-  return venuePhotosList[0]?.urlFoto || '';
-}
-
-const getDistrict = (districtId: number) => {
-  return data.distritos.find(_ => _.idDistrito === districtId)?.nombreDistrito || '';
+interface Venue {
+  venueId: number;
+  venueName: string;
+  address: string;
+  districtName: string;
+  maxCapacity: number;
+  pricePerHour: number;
+  mainPhotoUrl: string;
 }
 
 interface ProductsSectionProps {
-  locales: Local[];
+  venues: Venue[];
 }
 
-export const ProductsSection = ({ locales }: ProductsSectionProps) => {
+export const ProductsSection = ({ venues }: ProductsSectionProps) => {
   const navigate = useNavigate();
 
-    const handleReserveClick = (localeId: number) => {
+  const handleReserveClick = (localeId: number) => {
     navigate(`/producto/${localeId}`);
   };
 
-  if (locales.length === 0) {
+  if (venues.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-16">
         <div className="text-center">
@@ -39,17 +40,17 @@ export const ProductsSection = ({ locales }: ProductsSectionProps) => {
 
   return (
     <div className="catalog-grid">
-      {locales.map((item) => (
+      {venues?.map((venue) => (
         <ProductCard
-          key={item.idLocal}
-          imgUrl={getLocalImage(item.idLocal)}
-          title={item.nombreLocal}
-          district={getDistrict(item.idDistrito)}
-          address={item.direccion}
-          capacity={item.aforoMaximo}
-          pricePerHour={item.precioHora}
+          key={venue.venueName}
+          imgUrl={venue.mainPhotoUrl}
+          title={venue.venueName}
+          district={venue.districtName}
+          address={venue.address}
+          capacity={venue.maxCapacity}
+          pricePerHour={venue.pricePerHour}
           buttonText="Reservar"
-          onClickAction={() => handleReserveClick(item.idLocal)}  
+          onClickAction={() => handleReserveClick(venue.venueId)}
         />
       ))}
     </div>

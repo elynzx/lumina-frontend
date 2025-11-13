@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { UserModal } from "@/components/organism/UserModal";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "@/hooks/useAuth";
+import { useAuth } from "@/hooks/api/useAuth";
 
 interface LoginFormData {
     email: string;
