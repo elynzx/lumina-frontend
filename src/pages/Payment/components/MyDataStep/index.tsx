@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/atomic/Button";
 import editIcon from "@/assets/icons/edit.svg";
 
@@ -12,16 +12,24 @@ interface MyDataStepProps {
   }
 }
 
-export const MyDataStep = ({ userData = {
-  email: "usuario@example.com",
-  nombres: "Juan",
-  apellidos: "Pérez",
-  dni: "12345678",
-  celular: "987654321"
-} }: MyDataStepProps) => {
+export const MyDataStep = ({ userData }: MyDataStepProps) => {
+  const defaultUserData = {
+    email: "usuario@example.com",
+    nombres: "Juan",
+    apellidos: "Pérez",
+    dni: "12345678",
+    celular: "987654321"
+  };
 
   const [isEditing, setIsEditing] = useState(false);
-  const [formData, setFormData] = useState(userData);
+  const [formData, setFormData] = useState(userData || defaultUserData);
+
+  // Actualizar formData cuando userData cambia
+  useEffect(() => {
+    if (userData && Object.values(userData).some(val => val)) {
+      setFormData(userData);
+    }
+  }, [userData]);
 
   const handleInputChange = (field: string, value: string) => {
     setFormData(prev => ({

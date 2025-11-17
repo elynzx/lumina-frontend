@@ -17,6 +17,7 @@ interface Props {
     disabled?: boolean;
     min?: string | number;
     max?: string | number;
+    disabledDates?: string[];
 }
 
 export const Input = forwardRef<HTMLInputElement, Props>(({
@@ -32,7 +33,7 @@ export const Input = forwardRef<HTMLInputElement, Props>(({
     disabled = false,
     min,
     max,
-    ...props
+    disabledDates = [],
 }, ref) => {
 
     const [viewCalendar, setViewCalendar] = useState(false);
@@ -84,7 +85,7 @@ export const Input = forwardRef<HTMLInputElement, Props>(({
         } else {
             setDisplayValue(value);
         }
-    }, [value, type]);
+    }, [value, type, onChange]);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         onChange?.(e.target.value);
@@ -126,6 +127,40 @@ export const Input = forwardRef<HTMLInputElement, Props>(({
         };
     }, []);
 
+    useEffect(() => {
+        if (viewCalendar && type === 'date') {
+            // Aplicar clase 'reserved' a los botones de fechas reservadas
+            const applyReservedClass = () => {
+                const buttons = document.querySelectorAll('button.rdp-day_button:disabled');
+                buttons.forEach((button) => {
+                    const buttonText = button.textContent?.trim();
+                    if (buttonText) {
+                        const day = parseInt(buttonText, 10);
+                        const year = new Date().getFullYear();
+                        const month = new Date().getMonth() + 1;
+                        const formattedDate = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+                        
+                        if (disabledDates.includes(formattedDate)) {
+                            (button as HTMLElement).classList.add('reserved');
+                        } else {
+                            (button as HTMLElement).classList.remove('reserved');
+                        }
+                    }
+                });
+            };
+            
+            // Aplicar clase múltiples veces para asegurar que se aplique
+            applyReservedClass();
+            const timeout1 = setTimeout(applyReservedClass, 50);
+            const timeout2 = setTimeout(applyReservedClass, 100);
+            
+            return () => {
+                clearTimeout(timeout1);
+                clearTimeout(timeout2);
+            };
+        }
+    }, [viewCalendar, type, disabledDates]);
+
     return (
         <div ref={containerRef} className="flex flex-col w-full relative">
             {label && <label htmlFor={name} className="mb-2 text-sm text-gray-600">{label}</label>}
@@ -164,13 +199,64 @@ export const Input = forwardRef<HTMLInputElement, Props>(({
             {error && <span className="text-red-500 text-xs mt-1">{error}</span>}
             {viewCalendar && type === "date" && (
                 <div className="absolute top-full left-0 mt-2 z-10 bg-white shadow-lg rounded-lg border border-gray-200 p-5">
+                    <style>{`
+                        .rdp {
+                            --rdp-cell-size: 40px;
+                        }
+                        /* Selector para botones deshabilitados */
+                        button.rdp-day_button:disabled,
+                        button[aria-disabled="true"],
+                        .rdp-day_disabled {
+                            background-color: #d1d5db;
+                            color: #6b7280;
+                            cursor: not-allowed !important;
+                            font-weight: normal;
+                            border-radius: 6px !important;
+                            border: none !important;
+                        }
+                        button.rdp-day_button:disabled:hover,
+                        button[aria-disabled="true"]:hover,
+                        .rdp-day_disabled:hover {
+                            background-color: #9ca3af;
+                            box-shadow: none !important;
+                        }
+                        /* Clase especial para fechas reservadas */
+                        button.rdp-day_button.reserved {
+                            background-color: #ef4444 !important;
+                            color: white !important;
+                            font-weight: bold !important;
+                        }
+                        button.rdp-day_button.reserved:hover {
+                            background-color: #dc2626 !important;
+                            box-shadow: 0 0 0 2px #fca5a5 !important;
+                        }
+                    `}</style>
                     <DayPicker
                         mode="single"
                         selected={dateSelected}
                         onSelect={handleChangeCalendar}
-                        disabled={{ before: new Date() }}
+                        disabled={(date) => {
+                            // Crear fecha de hoy sin hora
+                            const today = new Date();
+                            today.setHours(0, 0, 0, 0);
+                            
+                            // Crear fecha a comparar sin hora
+                            const checkDate = new Date(date);
+                            checkDate.setHours(0, 0, 0, 0);
+                            
+                            // Deshabilitar solo fechas ANTERIORES a hoy (no incluyendo hoy)
+                            if (checkDate < today) return true;
+                            
+                            // Deshabilitar fechas en la lista de no disponibles
+                            const formattedDate = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+                            return disabledDates.includes(formattedDate);
+                        }}
                         defaultMonth={dateSelected || new Date()}
                     />
+                    <div className="mt-3 text-xs text-gray-600 bg-red-50 p-2 rounded border border-red-200">
+                        <span className="inline-block w-3 h-3 bg-red-500 rounded mr-2"></span>
+                        Fechas en rojo = Ya reservadas
+                    </div>
                 </div>
             )}
         </div>

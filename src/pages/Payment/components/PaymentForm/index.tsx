@@ -1,5 +1,6 @@
 import { SummaryForm } from "@/components/organism/SummaryForm";
 import type { Local } from "@/constants/data";
+import type { Furniture } from "@/api/interfaces/furniture";
 import { data } from "@/constants/data";
 import locationIcon from "@/assets/icons/location_blue.svg";
 import { useEffect } from "react";
@@ -8,6 +9,7 @@ interface PaymentFormProps {
     venueData: Local;
     firstPhoto: string;
     selectedFurniture?: { [key: number]: number };
+    furnitureList?: Furniture[];
     onRemoveFurniture?: (furnitureId: number) => void;
     eventType: string;
     date: string;
@@ -23,6 +25,7 @@ export const PaymentForm = ({
     venueData,
     firstPhoto,
     selectedFurniture = {},
+    furnitureList = [],
     onRemoveFurniture,
     eventType,
     date,
@@ -42,8 +45,8 @@ export const PaymentForm = ({
     const eventTypeId = data.tiposEvento.find(te => te.nombreTipo === eventType)?.idTipoEvento.toString() || "";
 
     const furnitureSubtotal = Object.entries(selectedFurniture).reduce((total, [furnitureId, qty]) => {
-        const furniture = data.mobiliario.find(m => m.idMobiliario === parseInt(furnitureId));
-        return total + (furniture ? furniture.precioUnitario * qty : 0);
+        const furniture = furnitureList.find(f => f.furnitureId === parseInt(furnitureId));
+        return total + (furniture ? furniture.unitPrice * qty : 0);
     }, 0);
 
     const totalEstimate = venueSubtotal + furnitureSubtotal;
@@ -58,12 +61,12 @@ export const PaymentForm = ({
 
     const hasFurniture = Object.keys(selectedFurniture).length > 0;
     const furnitureItems = Object.entries(selectedFurniture).map(([furnitureId, qty]) => {
-        const furniture = data.mobiliario.find(m => m.idMobiliario === parseInt(furnitureId));
+        const furniture = furnitureList.find(f => f.furnitureId === parseInt(furnitureId));
         return {
             furnitureId: parseInt(furnitureId),
             furniture,
             qty,
-            itemSubtotal: furniture ? furniture.precioUnitario * qty : 0
+            itemSubtotal: furniture ? furniture.unitPrice * qty : 0
         };
     }).filter(item => item.furniture);
 
@@ -111,7 +114,7 @@ export const PaymentForm = ({
                             {furnitureItems.map(({ furnitureId, furniture, qty, itemSubtotal }) => (
                                 <div key={furnitureId} className="flex items-center justify-between gap-2">
                                     <div className="flex-1 min-w-0">
-                                        <p className="text-xs">{furniture!.nombre} x {qty}</p>
+                                        <p className="text-xs">{furniture!.furnitureName} x {qty}</p>
                                     </div>
                                     <span className="text-xs font-semibold shrink-0">S/ {itemSubtotal.toFixed(2)}</span>
                                     <button

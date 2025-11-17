@@ -2,7 +2,8 @@ import { useEffect, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/atomic/Button";
 import { SummaryForm } from "@/components/organism/SummaryForm";
-import { data } from "@/constants/data";
+import Cookies from 'js-cookie';
+import Swal from 'sweetalert2';
 
 interface FormData {
   eventType: string;
@@ -14,12 +15,15 @@ interface FormData {
 
 interface BudgetFormProps {
   venueId: number;
+  pricePerHour: number;
+  maxCapacity: number;
+  availableEventTypes?: string[];
+  unavailableDates?: string[];
 }
 
-export const BudgetForm = ({ venueId }: BudgetFormProps) => {
+export const BudgetForm = ({ venueId, pricePerHour, maxCapacity, availableEventTypes = [], unavailableDates = [] }: BudgetFormProps) => {
   const navigate = useNavigate();
-  const selectedVenue = data.locales.find(l => l.idLocal === venueId);
-  const pricePerHour = selectedVenue?.precioHora || 0;
+  const price = Number(pricePerHour);
 
   const [formData, setFormData] = useState<FormData>({
     eventType: "",
@@ -57,9 +61,30 @@ export const BudgetForm = ({ venueId }: BudgetFormProps) => {
   };
 
   const totalHours = calculateDurationInHours();
-  const subtotal = pricePerHour * totalHours;
+  const subtotal = price * totalHours;
 
   const handleFormSubmit = (data: FormData) => {
+    // Verificar si el usuario está autenticado
+    const authToken = Cookies.get('auth_token');
+    
+    if (!authToken) {
+      // Mostrar alerta de SweetAlert2
+      Swal.fire({
+        title: 'Inicia sesión',
+        text: 'Debes iniciar sesión para continuar con tu reserva',
+        icon: 'warning',
+        confirmButtonText: 'Ir a login',
+        confirmButtonColor: '#3b82f6',
+        allowOutsideClick: false,
+        allowEscapeKey: false
+      }).then((result) => {
+        if (result.isConfirmed) {
+          navigate('/login');
+        }
+      });
+      return;
+    }
+
     const queryParams = new URLSearchParams({
       horas: totalHours.toString(),
       subtotal: subtotal.toFixed(2),
@@ -76,11 +101,14 @@ export const BudgetForm = ({ venueId }: BudgetFormProps) => {
   return (
     <div className="w-full p-8 rounded-lg border border-blue">
       <h2 className="text-3xl text-center font-semibold mb-8 py-2">
-        s/ {pricePerHour.toFixed(2)} <span className="text-sm font-normal">por hora</span>
+        s/ {price.toFixed(2)} <span className="text-sm font-normal">por hora</span>
       </h2>
 
       <SummaryForm
         venueId={venueId}
+        maxCapacity={maxCapacity}
+        availableEventTypes={availableEventTypes}
+        unavailableDates={unavailableDates}
         onFormChange={handleFormChange}
         onSubmit={handleFormSubmit}
       />
@@ -88,7 +116,7 @@ export const BudgetForm = ({ venueId }: BudgetFormProps) => {
       <div className="my-6 space-y-4">
         <p className="font-semibold text-sm">Detalles</p>
         <div className="flex justify-between">
-          <p className="font-normal text-sm">s/{pricePerHour.toFixed(2)} x {totalHours} {totalHours === 1 ? 'hora' : 'horas'}</p>
+          <p className="font-normal text-sm">s/{price.toFixed(2)} x {totalHours} {totalHours === 1 ? 'hora' : 'horas'}</p>
           <p className="font-normal text-sm">s/{subtotal.toFixed(2)}</p>
         </div>
         <hr />

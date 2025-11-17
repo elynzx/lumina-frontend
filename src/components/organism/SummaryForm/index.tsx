@@ -16,26 +16,30 @@ interface FormData {
 
 interface SummaryFormProps {
     venueId?: number;
+    maxCapacity?: number;
+    availableEventTypes?: string[];
+    unavailableDates?: string[];
     onFormChange?: (data: FormData) => void;
     initialValues?: Partial<FormData>;
     onSubmit?: (data: FormData) => void;
 }
 
-export const SummaryForm = ({ venueId = 1, onFormChange, initialValues, onSubmit }: SummaryFormProps) => {
+export const SummaryForm = ({ venueId = 1, maxCapacity = 0, availableEventTypes = [], unavailableDates = [], onFormChange, initialValues, onSubmit }: SummaryFormProps) => {
 
     const venueData = data.locales.find(l => l.idLocal === venueId);
-    const maxCapacity = venueData?.aforoMaximo || 0;
+    const capacity = maxCapacity || venueData?.aforoMaximo || 0;
 
-    const venueEventTypeIds = data.localTipoEvento
-        .filter(le => le.idLocal === venueId)
-        .map(le => le.idTipoEvento);
-
-    const eventTypeOptions = data.tiposEvento
-        .filter(te => venueEventTypeIds.includes(te.idTipoEvento))
-        .map(tipo => ({
-            value: tipo.idTipoEvento.toString(),
-            label: tipo.nombreTipo
-        }));
+    const eventTypeOptions = availableEventTypes.length > 0
+        ? availableEventTypes.map((tipo, index) => ({
+            value: (index + 1).toString(),
+            label: tipo
+        }))
+        : data.tiposEvento
+            .filter(te => data.localTipoEvento.some(le => le.idLocal === venueId && le.idTipoEvento === te.idTipoEvento))
+            .map(tipo => ({
+                value: tipo.idTipoEvento.toString(),
+                label: tipo.nombreTipo
+            }));
 
     const getDefaultDate = (): string => {
         const today = new Date();
@@ -70,10 +74,18 @@ export const SummaryForm = ({ venueId = 1, onFormChange, initialValues, onSubmit
     };
 
     const validateDate = (value: string) => {
-        console.log("Validating date:", value);
         if (!value) return "La fecha es requerida";
 
-        const [day, month, year] = value.split('/').map(Number);
+        let year, month, day;
+
+        // Detectar formato: YYYY-MM-DD o DD/MM/YYYY
+        if (value.includes('-')) {
+            [year, month, day] = value.split('-').map(Number);
+        } else if (value.includes('/')) {
+            [day, month, year] = value.split('/').map(Number);
+        } else {
+            return "Formato de fecha inválido";
+        }
 
         if (!day || !month || !year) {
             return "Formato de fecha inválido";
@@ -92,6 +104,13 @@ export const SummaryForm = ({ venueId = 1, onFormChange, initialValues, onSubmit
         if (selectedDate < today) {
             return "No se pueden seleccionar fechas anteriores a hoy";
         }
+
+        // Convertir a formato YYYY-MM-DD para comparar con unavailableDates
+        const formattedDate = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+        if (unavailableDates.includes(formattedDate)) {
+            return "Esta fecha no está disponible";
+        }
+
         return true;
     };
 
@@ -104,8 +123,8 @@ export const SummaryForm = ({ venueId = 1, onFormChange, initialValues, onSubmit
         if (isNaN(num) || num <= 0) {
             return "Debe ingresar un número válido mayor a 0";
         }
-        if (num > maxCapacity) {
-            return `El máximo es ${maxCapacity} personas`;
+        if (num > capacity) {
+            return `El máximo es ${capacity} personas`;
         }
         return true;
     };
@@ -171,6 +190,7 @@ export const SummaryForm = ({ venueId = 1, onFormChange, initialValues, onSubmit
                                 error={errors.date?.message}
                                 IconComponent={Calendar}
                                 min={getDefaultDate()}
+                                disabledDates={unavailableDates}
                             />
                         </div>
                     )}
@@ -184,7 +204,7 @@ export const SummaryForm = ({ venueId = 1, onFormChange, initialValues, onSubmit
                     }}
                     render={({ field }) => (
                         <div className="flex-1">
-                            <label className="text-xs text-bgray block mb-1">Personas (max {maxCapacity})</label>
+                            <label className="text-xs text-bgray block mb-1">Personas (max {capacity})</label>
                             <Input
                                 name="quantity"
                                 value={field.value}
@@ -194,7 +214,7 @@ export const SummaryForm = ({ venueId = 1, onFormChange, initialValues, onSubmit
                                 error={errors.quantity?.message}
                                 IconComponent={Users}
                                 min="1"
-                                max={maxCapacity}
+                                max={capacity}
                             />
                         </div>
                     )}
