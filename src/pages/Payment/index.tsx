@@ -149,7 +149,7 @@ export const Payment = () => {
             const response = await createReservation(reservationData);
             console.log('Reserva creada exitosamente:', response);
         } catch (err: any) {
-            console.error('❌ Error al crear reserva:', err);
+            console.error('Error al crear reserva:', err);
             alert('Error al crear la reserva. Por favor, inténtalo de nuevo.');
             return;
         }

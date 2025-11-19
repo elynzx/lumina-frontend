@@ -21,7 +21,7 @@ export interface ReservationRequest {
 export interface CreateReservationRequest {
     venueId: number;
     eventTypeId: number;
-    reservationDate: string; // yyyy-MM-dd
+    reservationDate: string;
     startTime: string;
     endTime: string;
     guestCount: number;
@@ -35,9 +35,9 @@ export interface CreateReservationRequest {
 
 export interface CreateReservationResponse {
     reservationId: number;
-    approvalCode: string;
-    status: 'CONFIRMED' | 'PENDING' | 'CANCELLED';
-    totalCost: number;
+    status: string;
+    confirmationCode: string;
+    message: string;
 }
 
 export interface FurnitureItemRequest {
