@@ -4,9 +4,10 @@ interface Props {
   value: number | "";
   onChange: (value: number | "") => void;
   showBorder?: boolean;
+  placeholder?: string;
 }
 
-export const NumberField = ({ title, icon, value, onChange, showBorder = true }: Props) => (
+export const NumberField = ({ title, icon, value, onChange, showBorder = true, placeholder }: Props) => (
   <div className={`flex flex-col ${showBorder ? 'border-r border-gray-300 pr-6' : ''}`}>
     <h4 className="text-sm text-center text-gray-700 mb-2">{title}</h4>
     <div className="flex items-center gap-3 mb-2">
@@ -15,6 +16,7 @@ export const NumberField = ({ title, icon, value, onChange, showBorder = true }:
         type="number"
         min="1"
         value={value}
+        placeholder={placeholder}
         onChange={(e) => onChange(e.target.value ? parseInt(e.target.value) : "")}
         className="flex-1 border-none outline-none text-sm w-full"
       />

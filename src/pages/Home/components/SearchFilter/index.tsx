@@ -7,6 +7,7 @@ import { Dropdown } from "./Dropdown";
 import { NumberField } from "./NumberField";
 import { Button } from "@/components/atomic/Button";
 import { useEventTypes, useDistricts } from "@/hooks/api";
+import { useFilterStore } from "@/store/useFilterStore";
 
 const SearchFilterContent = {
   titles: {
@@ -22,7 +23,7 @@ const SearchFilterContent = {
 
 export const SearchFilter = () => {
   const navigate = useNavigate();
-
+  const { setFilters, clearFilters } = useFilterStore();
   const [eventTypeId, setEventTypeId] = useState<string>("");
   const [districtId, setDistrictId] = useState<string>("");
   const [capacityCount, setCapacityCount] = useState<number | "">("");
@@ -39,30 +40,29 @@ export const SearchFilter = () => {
     name: district.districtName
   }));
 
-  const handleEventTypeChange = (value: string) => {
-    setEventTypeId(value);
-  };
-
-  const handleDistrictChange = (value: string) => {
-    setDistrictId(value);
+  const calculateMaxCapacity = (minCapacity: number): number | null => {
+    if (minCapacity >= 200) return null; // Sin límite superior para valores altos
+    if (minCapacity >= 100) return 200;
+    if (minCapacity >= 50) return 100;
+    return 50; // Por defecto, rango bajo
   };
 
   const handleSearch = () => {
-    const searchParams = new URLSearchParams();
+    clearFilters();
 
-    if (eventTypeId !== "" && eventTypeId !== undefined && eventTypeId !== null) {
-      searchParams.set("eventTypeId", eventTypeId);
-    }
-    if (capacityCount !== "" && capacityCount !== undefined && capacityCount !== null) {
-      searchParams.set("minCapacity", capacityCount.toString());
-    }
-    if (districtId !== "" && districtId !== undefined && districtId !== null) {
-      searchParams.set("districtId", districtId);
-    }
+    const minCapacity = capacityCount !== "" ? Number(capacityCount) : null;
+    const maxCapacity = minCapacity !== null ? calculateMaxCapacity(minCapacity) : null;
 
-    navigate(`/catalogo?${searchParams.toString()}`);
-    console.log("Filtros enviados:", { eventTypeId, districtId, capacityCount });
-    console.log("URL generada:", `/catalogo?${searchParams.toString()}`);
+    setFilters({
+      eventTypeId: eventTypeId ? Number(eventTypeId) : null,
+      districtId: districtId ? Number(districtId) : null,
+      minCapacity,
+      maxCapacity, // Agregado para enviar el rango
+      priceRange: null, // Mantener como null si no se usa
+    });
+
+    navigate("/catalogo");
+    console.log("Filtros enviados:", { eventTypeId, districtId, minCapacity, maxCapacity });
   };
 
   const isLoading = eventTypesLoading || districtsLoading;
@@ -73,7 +73,7 @@ export const SearchFilter = () => {
         title={SearchFilterContent.titles.eventType}
         icon={searchIcon}
         value={eventTypeId}
-        onChange={handleEventTypeChange}
+        onChange={setEventTypeId}
         options={eventTypeOptions}
         placeholder={SearchFilterContent.placeholders.eventType}
       />
@@ -89,7 +89,7 @@ export const SearchFilter = () => {
         title={SearchFilterContent.titles.district}
         icon={locationIcon}
         value={districtId}
-        onChange={handleDistrictChange}
+        onChange={setDistrictId}
         options={districtOptions}
         placeholder={SearchFilterContent.placeholders.district}
       />

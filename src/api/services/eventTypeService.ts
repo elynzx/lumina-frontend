@@ -1,5 +1,6 @@
 import { apiClient } from '@/api/base';
 import type { EventType } from '@/api/interfaces';
+import { ENDPOINTS } from '@/api/config/endpoints';
 
 /**
  * Servicio para gestionar tipos de eventos (Vista Cliente)
@@ -11,13 +12,8 @@ export const useEventTypeService = () => {
    * @returns Lista de tipos de eventos disponibles
    */
   const getAllEventTypes = async (): Promise<EventType[]> => {
-    try {
-      const response = await apiClient.get<EventType[]>('/event-types');
-      return response.data;
-    } catch (error) {
-      console.error('Error al obtener tipos de eventos:', error);
-      throw error;
-    }
+    const response = await apiClient.get<EventType[]>(ENDPOINTS.EVENT_TYPES.BASE);
+    return response.data;
   };
 
   /**
@@ -26,13 +22,8 @@ export const useEventTypeService = () => {
    * @returns Detalle del tipo de evento
    */
   const getEventTypeById = async (id: number): Promise<EventType> => {
-    try {
-      const response = await apiClient.get<EventType>(`/event-types/${id}`);
-      return response.data;
-    } catch (error) {
-      console.error(`Error al obtener tipo de evento ${id}:`, error);
-      throw error;
-    }
+    const response = await apiClient.get<EventType>(ENDPOINTS.EVENT_TYPES.BY_ID(id));
+    return response.data;
   };
 
   return {

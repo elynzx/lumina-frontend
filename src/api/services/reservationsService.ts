@@ -1,5 +1,5 @@
 import { apiClient } from '@/api/base';
-import type { 
+import type {
   ReservationRequest,
   ReservationResponse,
   ReservationSuccess,
@@ -8,6 +8,7 @@ import type {
   BudgetCalculation,
   Reservation
 } from '@/api/interfaces';
+import { ENDPOINTS } from '@/api/config/endpoints';
 
 /**
  * Servicio para gestionar reservas (Vista Cliente)
@@ -20,16 +21,11 @@ export const useReservationService = () => {
    * @returns Datos de la reserva creada
    */
   const createReservation = async (data: ReservationRequest): Promise<ReservationResponse> => {
-    try {
-      const response = await apiClient.post<ReservationResponse>(
-        '/reservations',
-        data
-      );
-      return response.data;
-    } catch (error) {
-      console.error('Error al crear reserva:', error);
-      throw error;
-    }
+    const response = await apiClient.post<ReservationResponse>(
+      ENDPOINTS.RESERVATIONS.CREATE,
+      data
+    );
+    return response.data;
   };
 
   /**
@@ -38,16 +34,11 @@ export const useReservationService = () => {
    * @returns Estado de disponibilidad y conflictos si existen
    */
   const checkAvailability = async (data: AvailabilityRequest): Promise<AvailabilityResponse> => {
-    try {
-      const response = await apiClient.post<AvailabilityResponse>(
-        '/reservations/availability',
-        data
-      );
-      return response.data;
-    } catch (error) {
-      console.error('Error al verificar disponibilidad:', error);
-      throw error;
-    }
+    const response = await apiClient.post<AvailabilityResponse>(
+      ENDPOINTS.RESERVATIONS.CHECK_AVAILABILITY,
+      data
+    );
+    return response.data;
   };
 
   /**
@@ -56,16 +47,11 @@ export const useReservationService = () => {
    * @returns Desglose completo de costos (local, mobiliario, total)
    */
   const calculateBudget = async (data: ReservationRequest): Promise<BudgetCalculation> => {
-    try {
-      const response = await apiClient.post<BudgetCalculation>(
-        '/reservations/calculate-budget',
-        data
-      );
-      return response.data;
-    } catch (error) {
-      console.error('Error al calcular presupuesto:', error);
-      throw error;
-    }
+    const response = await apiClient.post<BudgetCalculation>(
+      ENDPOINTS.RESERVATIONS.CALCULATE_BUDGET,
+      data
+    );
+    return response.data;
   };
 
   /**
@@ -75,15 +61,10 @@ export const useReservationService = () => {
    * @returns Detalle completo con código de confirmación
    */
   const getReservationDetails = async (id: number): Promise<ReservationSuccess> => {
-    try {
-      const response = await apiClient.get<ReservationSuccess>(
-        `/reservations/${id}/details`
-      );
-      return response.data;
-    } catch (error) {
-      console.error(`Error al obtener detalle de reserva ${id}:`, error);
-      throw error;
-    }
+    const response = await apiClient.get<ReservationSuccess>(
+      ENDPOINTS.RESERVATIONS.DETAILS(id)
+    );
+    return response.data;
   };
 
   /**
@@ -91,15 +72,10 @@ export const useReservationService = () => {
    * @returns Lista de reservas propias (confirmadas, pendientes, canceladas)
    */
   const getMyReservations = async (): Promise<Reservation[]> => {
-    try {
-      const response = await apiClient.get<Reservation[]>(
-        '/reservations/my-reservations'
-      );
-      return response.data;
-    } catch (error) {
-      console.error('Error al obtener mis reservas:', error);
-      throw error;
-    }
+    const response = await apiClient.get<Reservation[]>(
+      ENDPOINTS.RESERVATIONS.MY_RESERVATIONS
+    );
+    return response.data;
   };
 
   /**
@@ -108,15 +84,10 @@ export const useReservationService = () => {
    * @returns Datos de la reserva cancelada
    */
   const cancelReservation = async (id: number): Promise<ReservationResponse> => {
-    try {
-      const response = await apiClient.put<ReservationResponse>(
-        `/reservations/${id}/cancel`
-      );
-      return response.data;
-    } catch (error) {
-      console.error(`Error al cancelar reserva ${id}:`, error);
-      throw error;
-    }
+    const response = await apiClient.put<ReservationResponse>(
+      ENDPOINTS.RESERVATIONS.CANCEL(id)
+    );
+    return response.data;
   };
 
   return {

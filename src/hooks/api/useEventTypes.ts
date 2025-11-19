@@ -3,12 +3,12 @@ import { useEventTypeService } from '@/api/services/eventTypeService';
 import { parseApiError } from '@/api/base';
 import type { EventType } from '@/api/interfaces';
 
-const eventTypeService = useEventTypeService();
 
 /**
  * Hook para obtener todos los tipos de evento
  */
 export const useEventTypes = () => {
+    const eventTypeService = useEventTypeService();
     const [eventTypes, setEventTypes] = useState<EventType[]>([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
@@ -38,6 +38,7 @@ export const useEventTypes = () => {
  * Hook para obtener un tipo de evento por ID
  */
 export const useEventTypeById = (eventTypeId: number) => {
+    const eventTypeService = useEventTypeService();
     const [eventType, setEventType] = useState<EventType | null>(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);

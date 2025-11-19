@@ -3,13 +3,14 @@
 // ============================================
 
 // Servicios del Cliente
-export { useVenueService } from './venueService';
-export { useFurnitureService } from './furnitureService';
-export { useReservationService } from './reservationsService';
-export { useDistrictService } from './districtService';
-export { useEventTypeService } from './eventTypeService';
-export { useAuthService } from './authService';
-export { useCustomerService } from './customerService';
+export { userService } from './userService';
+export { venueService } from './venueService';
+export { furnitureService } from './furnitureService';
+export { reservationService } from './reservationsService';
+export { districtService } from './districtService';
+export { eventTypeService } from './eventTypeService';
+export { authService } from './authService';
 
 // Servicios del Admin
+export { useCustomerService } from './customerService';
 export { useAdminService } from './adminService';
