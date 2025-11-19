@@ -1,4 +1,4 @@
-import { useEffect, memo } from "react";
+import { useEffect, memo, useState } from "react";
 import { SummaryForm } from "@/components/organism/SummaryForm";
 import type { Furniture } from "@/api/interfaces/furniture";
 import locationIcon from "@/assets/icons/location_blue.svg";
@@ -6,7 +6,6 @@ import locationIcon from "@/assets/icons/location_blue.svg";
 interface PaymentFormProps {
     venueId: number;
     venueName: string;
-    districtName: string;
     address: string;
     pricePerHour: number;
     firstPhoto: string;
@@ -14,7 +13,6 @@ interface PaymentFormProps {
     furnitureList?: Furniture[];
     onRemoveFurniture?: (furnitureId: number) => void;
     eventType: string; // eventTypeId como string
-    eventTypeName: string; // Nombre para mostrar
     date: string;
     quantity: string;
     initTime: string;
@@ -25,10 +23,22 @@ interface PaymentFormProps {
     onFormSubmit?: () => void;
 }
 
+const calculateDurationInHours = (initTime: string, endTime: string): number => {
+    if (!initTime || !endTime) return 0;
+
+    const [initHour, initMin] = initTime.split(':').map(Number);
+    const [endHour, endMin] = endTime.split(':').map(Number);
+
+    const initialTimeInMinutes = initHour * 60 + initMin;
+    const endTimeInMinutes = endHour * 60 + endMin;
+
+    const timeDifference = endTimeInMinutes - initialTimeInMinutes;
+    return Math.max(0, Math.ceil(timeDifference / 60));
+};
+
 export const PaymentForm = memo(({
     venueId,
     venueName,
-    districtName,
     address,
     pricePerHour,
     firstPhoto,
@@ -36,7 +46,6 @@ export const PaymentForm = memo(({
     furnitureList = [],
     onRemoveFurniture,
     eventType,
-    eventTypeName,
     date,
     quantity,
     initTime,
@@ -46,6 +55,23 @@ export const PaymentForm = memo(({
     onTotalAmountChange,
     onFormSubmit
 }: PaymentFormProps) => {
+    const [totalHours, setTotalHours] = useState(0);
+    const [subtotal, setSubtotal] = useState(0);
+    const [formValues, setFormValues] = useState({ initTime, endTime });
+
+    const handleFormChange = (updatedValues: Partial<PaymentFormProps>) => {
+        setFormValues((prev) => {
+            const newValues = { ...prev, ...updatedValues };
+            if (
+                newValues.initTime === prev.initTime &&
+                newValues.endTime === prev.endTime
+            ) {
+                return prev; // Evitar actualizaciones innecesarias
+            }
+            return newValues;
+        });
+    };
+
     const venueSubtotal = parseFloat(subtotalFromUrl);
     const furnitureSubtotal = Object.entries(selectedFurniture).reduce((total, [furnitureId, qty]) => {
         const furniture = furnitureList.find(f => f.furnitureId === parseInt(furnitureId));
@@ -55,8 +81,26 @@ export const PaymentForm = memo(({
     const totalEstimate = venueSubtotal + furnitureSubtotal;
 
     useEffect(() => {
+        const hours = calculateDurationInHours(formValues.initTime, formValues.endTime);
+        setTotalHours(hours);
+        setSubtotal(hours * pricePerHour);
+    }, [formValues.initTime, formValues.endTime, pricePerHour]);
+
+    useEffect(() => {
+        onTotalAmountChange?.(subtotal);
+    }, [subtotal, onTotalAmountChange]);
+
+    useEffect(() => {
         onTotalAmountChange?.(totalEstimate);
     }, [totalEstimate, onTotalAmountChange]);
+
+    useEffect(() => {
+        const hours = parseInt(eventHours) || 0;
+        const updatedVenueSubtotal = pricePerHour * hours;
+        const updatedTotalEstimate = updatedVenueSubtotal + furnitureSubtotal;
+
+        onTotalAmountChange?.(updatedTotalEstimate);
+    }, [eventHours, pricePerHour, furnitureSubtotal, onTotalAmountChange]);
 
     const handleFormSubmit = () => {
         onFormSubmit?.();
@@ -107,16 +151,17 @@ export const PaymentForm = memo(({
                     eventType: eventType,
                     date: date,
                     quantity: quantity,
-                    initTime: initTime,
-                    endTime: endTime
+                    initTime: formValues.initTime,
+                    endTime: formValues.endTime
                 }}
+                onFormChange={handleFormChange}
                 onSubmit={handleFormSubmit}
             />
 
             <div className="pt-4 space-y-3 mt-6">
                 <div className="flex justify-between mb-5">
-                    <span className="text-sm">S/ {pricePerHour} x <span className="font-semibold">{eventHours} horas</span></span>
-                    <span className="font-semibold">S/ {venueSubtotal.toFixed(2)}</span>
+                    <span className="text-sm">S/ {pricePerHour.toFixed(2)} x <span className="font-semibold">{totalHours} horas</span></span>
+                    <span className="font-semibold">S/ {subtotal.toFixed(2)}</span>
                 </div>
 
                 {hasFurniture && (
