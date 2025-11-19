@@ -6,7 +6,9 @@ import type {
   AvailabilityRequest,
   AvailabilityResponse,
   BudgetCalculation,
-  Reservation
+  Reservation,
+  CreateReservationRequest,
+  CreateReservationResponse,
 } from '@/api/interfaces';
 import { ENDPOINTS } from '@/api/config/endpoints';
 
@@ -20,13 +22,22 @@ export const useReservationService = () => {
    * @param data - Datos de la reserva (local, fecha, hora, invitados, mobiliario)
    * @returns Datos de la reserva creada
    */
-  const createReservation = async (data: ReservationRequest): Promise<ReservationResponse> => {
+/*   const createReservation = async (data: ReservationRequest): Promise<ReservationResponse> => {
     const response = await apiClient.post<ReservationResponse>(
       ENDPOINTS.RESERVATIONS.CREATE,
       data
     );
     return response.data;
+  }; */
+
+  const createReservation = async (data: CreateReservationRequest): Promise<CreateReservationResponse> => {
+    const response = await apiClient.post<CreateReservationResponse>(
+      ENDPOINTS.RESERVATIONS.CREATE,
+      data
+    );
+    return response.data || ({} as CreateReservationResponse);
   };
+
 
   /**
    * Verificar disponibilidad de un local

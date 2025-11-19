@@ -45,7 +45,9 @@ export type {
     PaymentInfo,
     FurnitureCartItem,
     ConflictInfo,
-    BudgetFurnitureItem
+    BudgetFurnitureItem,
+    CreateReservationRequest,
+    CreateReservationResponse,
 } from './reservation';
 
 /**

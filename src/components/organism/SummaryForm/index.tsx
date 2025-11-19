@@ -1,10 +1,10 @@
 import { useForm, Controller } from "react-hook-form";
 import { IconChooser } from "@/components/atomic/IconChooser";
 import { Input } from "@/components/atomic/Input";
+import { useEventTypes } from "@/hooks/api";
 import { TimeInput } from "@/components/atomic/TimeInput";
-import { data } from "@/constants/data";
 import { Calendar, Users, Clock, Tag } from "lucide-react";
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 
 interface FormData {
     eventType: string;
@@ -24,22 +24,37 @@ interface SummaryFormProps {
     onSubmit?: (data: FormData) => void;
 }
 
-export const SummaryForm = ({ venueId = 1, maxCapacity = 0, availableEventTypes = [], unavailableDates = [], onFormChange, initialValues, onSubmit }: SummaryFormProps) => {
+export const SummaryForm = ({
+    venueId = 1,
+    maxCapacity = 0,
+    availableEventTypes = [],
+    unavailableDates = [],
+    onFormChange,
+    initialValues,
+    onSubmit
+}: SummaryFormProps) => {
 
-    const venueData = data.locales.find(l => l.idLocal === venueId);
-    const capacity = maxCapacity || venueData?.aforoMaximo || 0;
+    const { eventTypes, loading: loadingEventTypes } = useEventTypes();
 
-    const eventTypeOptions = availableEventTypes.length > 0
-        ? availableEventTypes.map((tipo, index) => ({
-            value: (index + 1).toString(),
-            label: tipo
-        }))
-        : data.tiposEvento
-            .filter(te => data.localTipoEvento.some(le => le.idLocal === venueId && le.idTipoEvento === te.idTipoEvento))
-            .map(tipo => ({
-                value: tipo.idTipoEvento.toString(),
-                label: tipo.nombreTipo
-            }));
+    const eventTypeOptions = useMemo(() => {
+        if (availableEventTypes.length > 0) {
+            // Si hay nombres específicos, buscar sus IDs
+            return availableEventTypes.map((nombre) => {
+                const eventType = eventTypes.find(et => et.eventTypeName === nombre);
+                return {
+                    value: eventType?.eventTypeId.toString() || "",
+                    label: nombre
+                };
+            }).filter(opt => opt.value); // Filtrar los que no tienen ID
+        }
+
+        // Si no, usar todos los tipos de evento
+        return eventTypes.map(tipo => ({
+            value: tipo.eventTypeId.toString(),
+            label: tipo.eventTypeName
+        }));
+    }, [availableEventTypes, eventTypes]);
+
 
     const getDefaultDate = (): string => {
         const today = new Date();
@@ -92,7 +107,7 @@ export const SummaryForm = ({ venueId = 1, maxCapacity = 0, availableEventTypes 
         }
 
         const selectedDate = new Date(year, month - 1, day);
-        
+
         if (isNaN(selectedDate.getTime())) {
             return "Fecha inválida";
         }
@@ -123,8 +138,8 @@ export const SummaryForm = ({ venueId = 1, maxCapacity = 0, availableEventTypes 
         if (isNaN(num) || num <= 0) {
             return "Debe ingresar un número válido mayor a 0";
         }
-        if (num > capacity) {
-            return `El máximo es ${capacity} personas`;
+        if (maxCapacity > 0 && num > maxCapacity) {
+            return `El máximo es ${maxCapacity} personas`;
         }
         return true;
     };
@@ -140,15 +155,26 @@ export const SummaryForm = ({ venueId = 1, maxCapacity = 0, availableEventTypes 
 
         const initTime = watch('initTime');
         if (initTime && endTime) {
-            const [initHour] = initTime.split(':').map(Number);
-            const [endHour] = endTime.split(':').map(Number);
+            const [initHour, initMin] = initTime.split(':').map(Number);
+            const [endHour, endMin] = endTime.split(':').map(Number);
 
-            if (endHour <= initHour) {
+            const initTotalMinutes = initHour * 60 + (initMin || 0);
+            const endTotalMinutes = endHour * 60 + (endMin || 0);
+
+            if (endTotalMinutes <= initTotalMinutes) {
                 return "La hora de fin debe ser posterior a la hora de inicio";
             }
         }
         return true;
     };
+
+    if (loadingEventTypes) {
+        return (
+            <div className="flex items-center justify-center p-4">
+                <p className="text-sm text-gray-600">Cargando formulario...</p>
+            </div>
+        );
+    }
 
     return (
         <form onSubmit={handleSubmit(handleFormSubmit)} className="flex flex-col gap-3" id="summary-form" noValidate>
@@ -204,7 +230,8 @@ export const SummaryForm = ({ venueId = 1, maxCapacity = 0, availableEventTypes 
                     }}
                     render={({ field }) => (
                         <div className="flex-1">
-                            <label className="text-xs text-bgray block mb-1">Personas (max {capacity})</label>
+                            <label className="text-xs text-bgray block mb-1">
+                                Personas (max {maxCapacity})</label>
                             <Input
                                 name="quantity"
                                 value={field.value}
@@ -214,7 +241,7 @@ export const SummaryForm = ({ venueId = 1, maxCapacity = 0, availableEventTypes 
                                 error={errors.quantity?.message}
                                 IconComponent={Users}
                                 min="1"
-                                max={capacity}
+                                max={maxCapacity > 0 ? maxCapacity : undefined}
                             />
                         </div>
                     )}

@@ -3,14 +3,14 @@ import { useFurnitureService } from '@/api/services/furnitureService';
 import { parseApiError } from '@/api/base';
 import type { Furniture } from '@/api/interfaces';
 
+const furnitureService = useFurnitureService();
 
 /**
  * Hook para obtener todo el mobiliario disponible
  */
 export const useFurniture = () => {
-    const furnitureService = useFurnitureService();
     const [furniture, setFurniture] = useState<Furniture[]>([]);
-    const [loading, setLoading] = useState(false);zzz
+    const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
     const fetchFurniture = useCallback(async () => {
@@ -38,7 +38,6 @@ export const useFurniture = () => {
  * Hook para obtener un mueble específico por ID
  */
 export const useFurnitureById = (furnitureId: number) => {
-    const furnitureService = useFurnitureService();
     const [furniture, setFurniture] = useState<Furniture | null>(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);

@@ -1,49 +1,52 @@
+import { useEffect, memo } from "react";
 import { SummaryForm } from "@/components/organism/SummaryForm";
-import type { Local } from "@/constants/data";
 import type { Furniture } from "@/api/interfaces/furniture";
-import { data } from "@/constants/data";
 import locationIcon from "@/assets/icons/location_blue.svg";
-import { useEffect } from "react";
 
 interface PaymentFormProps {
-    venueData: Local;
+    venueId: number;
+    venueName: string;
+    districtName: string;
+    address: string;
+    pricePerHour: number;
     firstPhoto: string;
     selectedFurniture?: { [key: number]: number };
     furnitureList?: Furniture[];
     onRemoveFurniture?: (furnitureId: number) => void;
-    eventType: string;
+    eventType: string; // eventTypeId como string
+    eventTypeName: string; // Nombre para mostrar
     date: string;
     quantity: string;
     initTime: string;
     endTime: string;
     eventHours: string;
+    subtotalFromUrl: string;
     onTotalAmountChange?: (amount: number) => void;
     onFormSubmit?: () => void;
 }
 
-export const PaymentForm = ({
-    venueData,
+export const PaymentForm = memo(({
+    venueId,
+    venueName,
+    districtName,
+    address,
+    pricePerHour,
     firstPhoto,
     selectedFurniture = {},
     furnitureList = [],
     onRemoveFurniture,
     eventType,
+    eventTypeName,
     date,
     quantity,
     initTime,
     endTime,
     eventHours,
+    subtotalFromUrl,
     onTotalAmountChange,
     onFormSubmit
 }: PaymentFormProps) => {
-
-    const district = data.distritos.find(d => d.idDistrito === venueData.idDistrito)?.nombreDistrito || '';
-    const venueHourPrice = parseFloat(venueData.precioHora.toString());
-    const eventHoursNumber = parseInt(eventHours);
-    const venueSubtotal = venueHourPrice * eventHoursNumber;
-
-    const eventTypeId = data.tiposEvento.find(te => te.nombreTipo === eventType)?.idTipoEvento.toString() || "";
-
+    const venueSubtotal = parseFloat(subtotalFromUrl);
     const furnitureSubtotal = Object.entries(selectedFurniture).reduce((total, [furnitureId, qty]) => {
         const furniture = furnitureList.find(f => f.furnitureId === parseInt(furnitureId));
         return total + (furniture ? furniture.unitPrice * qty : 0);
@@ -60,6 +63,7 @@ export const PaymentForm = ({
     };
 
     const hasFurniture = Object.keys(selectedFurniture).length > 0;
+
     const furnitureItems = Object.entries(selectedFurniture).map(([furnitureId, qty]) => {
         const furniture = furnitureList.find(f => f.furnitureId === parseInt(furnitureId));
         return {
@@ -70,40 +74,48 @@ export const PaymentForm = ({
         };
     }).filter(item => item.furniture);
 
+    console.log('PaymentForm renderizado');
+
     return (
         <div className="flex flex-col p-12">
             <h3 className="text-lg font-semibold mb-6">Detalles de tu reserva</h3>
 
             <div className="mb-5">
-                <img
-                    src={firstPhoto}
-                    alt={venueData.nombreLocal}
-                    className="w-full h-56 object-cover rounded-lg mb-4"
-                />
+                {firstPhoto ? (
+                    <img
+                        src={firstPhoto}
+                        alt={venueName}
+                        className="w-full h-56 object-cover rounded-lg mb-4"
+                    />
+                ) : (
+                    <div className="w-full h-56 bg-gray-200 rounded-lg mb-4 flex items-center justify-center">
+                        <span className="text-gray-400">Sin imagen</span>
+                    </div>
+                )}
                 <div className="flex flex-col">
-                    <h4 className="text-lg font-bold">{venueData.nombreLocal}</h4>
+                    <h4 className="text-lg font-bold">{venueName}</h4>
                     <div className="flex items-center gap-1">
                         <img src={locationIcon} alt="Ubicación" className="h-5" />
-                        <p className="text-xs">{district}, {venueData.direccion}</p>
+                        <p className="text-xs">{address}</p>
                     </div>
                 </div>
             </div>
 
             <SummaryForm
-                venueId={venueData.idLocal}
+                venueId={venueId}
                 initialValues={{
-                    eventType: eventTypeId,
-                    date,
-                    quantity,
-                    initTime,
-                    endTime
+                    eventType: eventType,
+                    date: date,
+                    quantity: quantity,
+                    initTime: initTime,
+                    endTime: endTime
                 }}
                 onSubmit={handleFormSubmit}
             />
 
             <div className="pt-4 space-y-3 mt-6">
                 <div className="flex justify-between mb-5">
-                    <span className="text-sm">S/ {venueHourPrice.toFixed(2)} x <span className="font-semibold">{eventHours} horas</span></span>
+                    <span className="text-sm">S/ {pricePerHour} x <span className="font-semibold">{eventHours} horas</span></span>
                     <span className="font-semibold">S/ {venueSubtotal.toFixed(2)}</span>
                 </div>
 
@@ -136,4 +148,4 @@ export const PaymentForm = ({
             </div>
         </div>
     );
-};
+});

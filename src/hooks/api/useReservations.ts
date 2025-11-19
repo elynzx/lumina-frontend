@@ -9,6 +9,8 @@ import type {
     AvailabilityResponse,
     BudgetCalculation,
     Reservation,
+    CreateReservationRequest,
+    CreateReservationResponse,
 } from '@/api/interfaces';
 
 
@@ -20,9 +22,9 @@ export const useCreateReservation = () => {
     const reservationsService = useReservationService();
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
-    const [reservation, setReservation] = useState<ReservationResponse | null>(null);
+    const [reservation, setReservation] = useState<CreateReservationResponse | null>(null);
 
-    const createReservation = useCallback(async (data: ReservationRequest) => {
+    const createReservation = useCallback(async (data: CreateReservationRequest) => {
         setLoading(true);
         setError(null);
         try {

@@ -18,6 +18,28 @@ export interface ReservationRequest {
     furnitureItems: FurnitureItemRequest[];
 }
 
+export interface CreateReservationRequest {
+    venueId: number;
+    eventTypeId: number;
+    reservationDate: string; // yyyy-MM-dd
+    startTime: string;
+    endTime: string;
+    guestCount: number;
+    venueCost: number;
+    furnitureCost: number;
+    totalCost: number;
+    furnitureItems: FurnitureItemRequest[];
+    paymentMethodId: number;
+    approvalCode: string;
+}
+
+export interface CreateReservationResponse {
+    reservationId: number;
+    approvalCode: string;
+    status: 'CONFIRMED' | 'PENDING' | 'CANCELLED';
+    totalCost: number;
+}
+
 export interface FurnitureItemRequest {
     furnitureId: number;
     quantity: number;

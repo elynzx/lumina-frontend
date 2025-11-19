@@ -17,8 +17,7 @@ interface Reservation {
 }
 
 export const Reservations = () => {
-  const navigate = useNavigate();
-  const customerService = useCustomerService();
+  z
   const [reservations, setReservations] = useState<Reservation[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);

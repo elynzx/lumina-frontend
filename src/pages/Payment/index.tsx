@@ -1,7 +1,4 @@
 import { useParams, useNavigate, useSearchParams } from "react-router-dom";
-import { data } from "@/constants/data";
-import { useCustomerService } from "@/api/services/customerService";
-import type { Furniture } from "@/api/interfaces/furniture";
 import { PaymentSteps } from "./components/PaymentSteps";
 import { PaymentForm } from "./components/PaymentForm";
 import { LoginRequired } from "./components/LoginRequired";
@@ -11,6 +8,7 @@ import { CheckoutStep } from "./components/CheckoutStep";
 import { ConfirmationStep } from "./components/ConfirmationStep";
 import { Button } from "@/components/atomic/Button";
 import { useState, useCallback, useEffect } from "react";
+import { useVenueDetail, useFurniture, useCreateReservation } from "@/hooks/api";
 import Cookies from 'js-cookie';
 
 interface SelectedFurniture {
@@ -26,20 +24,28 @@ interface PaymentMethod {
 }
 
 export const Payment = () => {
-
     const { id } = useParams<{ id: string }>();
     const [searchParams] = useSearchParams();
     const navigate = useNavigate();
-    const customerService = useCustomerService();
     const venueId = parseInt(id || "1");
-    const isUserLogged = true;
+
+    const { venue: venueData, loading: venueLoading, error: venueError } = useVenueDetail(venueId);
+    const { furniture: furnitureList, loading: furnitureLoading } = useFurniture();
+    const { createReservation } = useCreateReservation();
+
+    const eventTypeId = parseInt(searchParams.get("eventType") || "0");
+    const date = searchParams.get("date") || "";
+    const quantity = searchParams.get("quantity") || "";
+    const initTime = searchParams.get("initTime") || "";
+    const endTime = searchParams.get("endTime") || "";
+    const eventHours = searchParams.get("horas") || "0";
+    const subtotalFromUrl = searchParams.get("subtotal") || "0";
 
     const [currentStep, setCurrentStep] = useState(1);
     const [selectedFurniture, setSelectedFurniture] = useState<SelectedFurniture>({});
     const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<PaymentMethod | null>(null);
     const [approvalCode, setApprovalCode] = useState<string>("");
-    const [totalAmount, setTotalAmount] = useState(0);
-    const [furnitureList, setFurnitureList] = useState<Furniture[]>([]);
+    const [totalAmount, setTotalAmount] = useState(parseFloat(subtotalFromUrl));
     const [userData, setUserData] = useState({
         email: "",
         nombres: "",
@@ -48,30 +54,8 @@ export const Payment = () => {
         celular: ""
     });
 
-    const eventTypeId = searchParams.get("eventType") || "";
-    const eventTypeData = data.tiposEvento.find(te => te.idTipoEvento.toString() === eventTypeId);
-    const eventTypeName = eventTypeData?.nombreTipo || "Tipo de evento";
-
-    const date = searchParams.get("date") || "";
-    const quantity = searchParams.get("quantity") || "";
-    const initTime = searchParams.get("initTime") || "";
-    const endTime = searchParams.get("endTime") || "";
-    const eventHours = searchParams.get("horas") || "0";
-
-    // Cargar mobiliarios del backend
-    useEffect(() => {
-        const fetchFurniture = async () => {
-            try {
-                const data = await customerService.getAllFurniture();
-                setFurnitureList(data as unknown as Furniture[]);
-            } catch (err) {
-                console.error('Error al cargar mobiliarios:', err);
-            }
-        };
-
-        fetchFurniture();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+    const authToken = Cookies.get('auth_token');
+    const isUserLogged = !!authToken;
 
     // Obtener datos del usuario logeado desde cookies
     useEffect(() => {
@@ -86,13 +70,6 @@ export const Payment = () => {
                     dni: parsedData.dni || parsedData.documentNumber || "",
                     celular: parsedData.phone || parsedData.celular || parsedData.telefono || ""
                 });
-                console.log('Datos del usuario mapeados:', {
-                    email: parsedData.email,
-                    nombres: parsedData.firstName,
-                    apellidos: parsedData.lastName,
-                    dni: parsedData.dni || parsedData.documentNumber,
-                    celular: parsedData.phone
-                });
             } catch (err) {
                 console.error('Error al parsear datos del usuario:', err);
             }
@@ -103,22 +80,21 @@ export const Payment = () => {
         setSelectedFurniture(selected);
     }, []);
 
-    const venueData = data.locales.find(l => l.idLocal === venueId);
-
-    if (!venueData) {
-        return <div className="p-8 text-center">Local no encontrado.</div>;
-    }
-
-    const firstPhoto = data.fotosLocales.find(f => f.idLocal === venueId)?.urlFoto || '';
-    const district = data.distritos.find(d => d.idDistrito === venueData.idDistrito)?.nombreDistrito || '';
-
-    const handleRemoveFurniture = (furnitureId: number) => {
+    const handleRemoveFurniture = useCallback((furnitureId: number) => {
         setSelectedFurniture(prev => {
             const newSelected = { ...prev };
             delete newSelected[furnitureId];
             return newSelected;
         });
-    };
+    }, []);
+
+    const handleTotalAmountChange = useCallback((amount: number) => {
+        setTotalAmount(amount);
+    }, []);
+
+    const handleFormSubmit = useCallback(() => {
+        setCurrentStep(currentStep + 1);
+    }, [currentStep]);
 
     const handlePaymentMethodSelect = async (method: { id: number; name: string }, code: string) => {
         setSelectedPaymentMethod({
@@ -130,21 +106,18 @@ export const Payment = () => {
         });
         setApprovalCode(code);
 
-        // Crear la reserva en BD
         try {
-            // Verificar si el token existe
             const token = Cookies.get('auth_token');
             console.log('Token en cookies:', token ? 'Existe' : 'NO EXISTE');
 
-            // Convertir fecha de dd/MM/yyyy a yyyy-MM-dd
             const dateParts = date.split('/');
             const formattedDate = `${dateParts[2]}-${dateParts[1]}-${dateParts[0]}`;
+            /* 
+                        const venueHourPrice = parseFloat(venueData.pricePerHour.toString());
+                        const eventHoursNumber = parseInt(eventHours);
+             */
+            const venueCost = parseFloat(subtotalFromUrl);
 
-            const venueHourPrice = parseFloat(venueData.precioHora.toString());
-            const eventHoursNumber = parseInt(eventHours);
-            const venueCost = venueHourPrice * eventHoursNumber;
-
-            // Calcular costos de mobiliarios
             let furnitureCost = 0;
             const furnitureItems = Object.entries(selectedFurniture).map(([furnitureId, qty]) => {
                 const furniture = furnitureList.find(f => f.furnitureId === parseInt(furnitureId));
@@ -160,7 +133,7 @@ export const Payment = () => {
 
             const reservationData = {
                 venueId: venueId,
-                eventTypeId: parseInt(eventTypeId),
+                eventTypeId: eventTypeId,
                 reservationDate: formattedDate,
                 startTime: initTime,
                 endTime: endTime,
@@ -173,28 +146,56 @@ export const Payment = () => {
                 approvalCode: code
             };
 
-            const response = await customerService.createReservation(reservationData);
+            const response = await createReservation(reservationData);
             console.log('Reserva creada exitosamente:', response);
-        } catch (err) {
-            console.error('Error al crear la reserva:', err);
+        } catch (err: any) {
+            console.error('❌ Error al crear reserva:', err);
+            alert('Error al crear la reserva. Por favor, inténtalo de nuevo.');
+            return;
         }
-
         setCurrentStep(4);
     };
 
-    const handleTotalAmountChange = (amount: number) => {
-        setTotalAmount(amount);
-    };
+    if (venueLoading || furnitureLoading) {
+        return (
+            <div className="flex items-center justify-center min-h-screen">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+            </div>
+        );
+    }
 
-    const handleFormSubmit = () => {
-        setCurrentStep(currentStep + 1);
-    };
+    if (venueError || !venueData) {
+        return (
+            <div className="flex items-center justify-center min-h-screen">
+                <div className="text-center">
+                    <p className="text-red-600 text-lg mb-4">{venueError || 'Local no encontrado'}</p>
+                    <button
+                        onClick={() => navigate('/catalogo')}
+                        className="px-6 py-2 bg-blue-600 text-white rounded-lg"
+                    >
+                        Volver al catálogo
+                    </button>
+                </div>
+            </div>
+        );
+    }
+
+    const mappedEventTypes = venueData.availableEventTypes?.map((et) => {
+        if (typeof et === "string") {
+            return { eventTypeId: parseInt(et, 10), eventTypeName: `Tipo ${et}` };
+        }
+        return et;
+    });
+
+    const eventTypeName = mappedEventTypes?.find(
+        (et: { eventTypeId: number; eventTypeName: string }) => et.eventTypeId === eventTypeId
+    )?.eventTypeName || "Tipo de evento";
 
     const reservationDetails = {
-        venueName: venueData.nombreLocal,
+        venueName: venueData.venueName,
         eventType: eventTypeName,
-        district: district,
-        address: venueData.direccion,
+        district: venueData.districtName,
+        address: venueData.address,
         date: date,
         initTime: initTime,
         endTime: endTime,
@@ -277,17 +278,23 @@ export const Payment = () => {
             {currentStep !== 4 && (
                 <div className="w-2/5 px-10 py-10 bg-white hidden lg:flex flex-col border-l border-gray-200 overflow-y-auto">
                     <PaymentForm
-                        venueData={venueData}
-                        firstPhoto={firstPhoto}
+                        venueId={venueId}
+                        venueName={venueData.venueName}
+                        districtName={venueData.districtName}
+                        address={venueData.address}
+                        pricePerHour={venueData.pricePerHour}
+                        firstPhoto={venueData.photos?.[0]}
                         selectedFurniture={selectedFurniture}
                         furnitureList={furnitureList}
                         onRemoveFurniture={handleRemoveFurniture}
-                        eventType={eventTypeName}
+                        eventType={eventTypeId.toString()}
+                        eventTypeName={eventTypeName}
                         date={date}
                         quantity={quantity}
                         initTime={initTime}
                         endTime={endTime}
                         eventHours={eventHours}
+                        subtotalFromUrl={subtotalFromUrl}
                         onTotalAmountChange={handleTotalAmountChange}
                         onFormSubmit={handleFormSubmit}
                     />
