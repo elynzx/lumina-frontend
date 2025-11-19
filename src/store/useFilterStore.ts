@@ -5,8 +5,8 @@ export interface FilterState {
 
   eventTypeId: number | null;
   priceRange: { min: number; max: number } | null;
-  minCapacity: number | null; // Agregado para manejar capacidad mínima
-  maxCapacity: number | null; // Agregado para manejar capacidad máxima
+  minCapacity: number | null;
+  maxCapacity: number | null;
 
   districtId: number | null;
   searchCapacity: number | null;
@@ -20,8 +20,8 @@ export const useFilterStore = create<FilterState>((set) => ({
 
   // Catálogo
   priceRange: null,
-  minCapacity: null, // Inicializado
-  maxCapacity: null, // Inicializado
+  minCapacity: null,
+  maxCapacity: null,
 
   // Home
   districtId: null,
@@ -35,8 +35,8 @@ export const useFilterStore = create<FilterState>((set) => ({
     set({
       eventTypeId: null,
       priceRange: null,
-      minCapacity: null, // Limpiado
-      maxCapacity: null, // Limpiado
+      minCapacity: null,
+      maxCapacity: null,
       districtId: null,
       searchCapacity: null,
     });

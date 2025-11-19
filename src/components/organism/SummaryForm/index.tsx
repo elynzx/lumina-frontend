@@ -38,17 +38,16 @@ export const SummaryForm = ({
 
     const eventTypeOptions = useMemo(() => {
         if (availableEventTypes.length > 0) {
-            // Si hay nombres específicos, buscar sus IDs
+
             return availableEventTypes.map((nombre) => {
                 const eventType = eventTypes.find(et => et.eventTypeName === nombre);
                 return {
                     value: eventType?.eventTypeId.toString() || "",
                     label: nombre
                 };
-            }).filter(opt => opt.value); // Filtrar los que no tienen ID
+            }).filter(opt => opt.value);
         }
 
-        // Si no, usar todos los tipos de evento
         return eventTypes.map(tipo => ({
             value: tipo.eventTypeId.toString(),
             label: tipo.eventTypeName
@@ -93,7 +92,6 @@ export const SummaryForm = ({
 
         let year, month, day;
 
-        // Detectar formato: YYYY-MM-DD o DD/MM/YYYY
         if (value.includes('-')) {
             [year, month, day] = value.split('-').map(Number);
         } else if (value.includes('/')) {
@@ -120,7 +118,6 @@ export const SummaryForm = ({
             return "No se pueden seleccionar fechas anteriores a hoy";
         }
 
-        // Convertir a formato YYYY-MM-DD para comparar con unavailableDates
         const formattedDate = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
         if (unavailableDates.includes(formattedDate)) {
             return "Esta fecha no está disponible";

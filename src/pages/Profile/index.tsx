@@ -62,8 +62,7 @@ export const Profile = () => {
     try {
       // TODO: Implementar endpoint de actualización de perfil en el backend
       // const response = await updateProfile(formData);
-      
-      // Por ahora, solo actualizamos las cookies
+
       Cookies.set("user_data", JSON.stringify(formData), { expires: 7 });
       
       setMessage({
@@ -71,7 +70,7 @@ export const Profile = () => {
         text: "Perfil actualizado correctamente",
       });
 
-      // Limpiar mensaje después de 3 segundos
+
       setTimeout(() => setMessage(null), 3000);
     } catch (err) {
       console.error("Error al actualizar perfil:", err);
@@ -85,8 +84,8 @@ export const Profile = () => {
   };
 
   return (
-    <div className="min-h-screen bg-light-bgray py-12 px-24">
-      <div className="max-w-2xl mx-auto">
+    <div className="min-h-screen py-12 px-24">
+      <div className="max-w-2xl mx-auto ">
         {/* Header */}
         <div className="mb-8">
           <button
@@ -114,7 +113,7 @@ export const Profile = () => {
         )}
 
         {/* Form */}
-        <div className="bg-white rounded-lg shadow-sm p-8">
+        <div className="shadow-sm p-10  border border-bgray rounded-lg ">
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Names Row */}
             <div className="grid grid-cols-2 gap-6">
