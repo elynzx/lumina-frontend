@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import logomark from "@/assets/logo/logotype.svg";
+import logotype from "@/assets/logo/logotype.svg";
 
 interface Props {
     children: React.ReactNode;
@@ -17,7 +17,7 @@ export const Modal = ({ children }: Props) => {
 
             <div className="absolute top-6 left-18">
                 <img
-                    src={logomark}
+                    src={logotype}
                     alt="Logo"
                     className="h-12 cursor-pointer hover:opacity-80 transition-opacity"
                     onClick={handleLogoClick}

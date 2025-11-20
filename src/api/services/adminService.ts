@@ -6,40 +6,39 @@ import type {
     DistrictCreateRequest, 
     EventType, 
     EventTypeCreateRequest, 
-    Furniture, 
-    FurnitureCreateRequest,
+    AdminFurniture as Furniture,
+    CreateFurnitureRequest as FurnitureCreateRequest,
     Customer,
     AdminReservation as Reservation,
-    DashboardStats,
-    BackendResponse
+    DashboardStats
 } from '@/api/interfaces';
 
 export const useAdminService = () => {
     // ==================== DASHBOARD ====================
     const getDashboardStats = async (): Promise<DashboardStats> => {
-        const response = await apiClient.get<BackendResponse<DashboardStats>>('/admin/dashboard/stats');
+        const response = await apiClient.get<any>('/admin/dashboard/stats');
         return response.data;
     };
 
 
     // ==================== LOCALES ====================
     const getAllVenues = async (): Promise<Venue[]> => {
-        const response = await apiClient.get<BackendResponse<Venue[]>>('/admin/venues');
-        return response.data;
+        const response = await apiClient.get<any>('/admin/venues');
+        return response.data || [];
     };
 
     const getVenueById = async (id: number): Promise<Venue> => {
-        const response = await apiClient.get<BackendResponse<Venue>>(`/admin/venues/${id}`);
+        const response = await apiClient.get<any>(`/admin/venues/${id}`);
         return response.data;
     };
 
     const createVenue = async (venue: VenueCreateRequest): Promise<Venue> => {
-        const response = await apiClient.post<BackendResponse<Venue>>('/admin/venues', venue);
+        const response = await apiClient.post<any>('/admin/venues', venue);
         return response.data;
     };
 
     const updateVenue = async (id: number, venue: VenueCreateRequest): Promise<Venue> => {
-        const response = await apiClient.put<BackendResponse<Venue>>(`/admin/venues/${id}`, venue);
+        const response = await apiClient.put<any>(`/admin/venues/${id}`, venue);
         return response.data;
     };
 
@@ -48,28 +47,28 @@ export const useAdminService = () => {
     };
 
     const searchVenues = async (name: string): Promise<Venue[]> => {
-        const response = await apiClient.get<BackendResponse<Venue[]>>(`/admin/venues/search?name=${name}`);
-        return response.data;
+        const response = await apiClient.get<any>(`/admin/venues/search?name=${name}`);
+        return response.data || [];
     };
 
     // ==================== DISTRITOS ====================
     const getAllDistricts = async (): Promise<District[]> => {
-        const response = await apiClient.get<BackendResponse<District[]>>('/admin/districts');
-        return response.data;
+        const response = await apiClient.get<any>('/admin/districts');
+        return response.data || [];
     };
 
     const getDistrictById = async (id: number): Promise<District> => {
-        const response = await apiClient.get<BackendResponse<District>>(`/admin/districts/${id}`);
+        const response = await apiClient.get<any>(`/admin/districts/${id}`);
         return response.data;
     };
 
     const createDistrict = async (district: DistrictCreateRequest): Promise<District> => {
-        const response = await apiClient.post<BackendResponse<District>>('/admin/districts', district);
+        const response = await apiClient.post<any>('/admin/districts', district);
         return response.data;
     };
 
     const updateDistrict = async (id: number, district: DistrictCreateRequest): Promise<District> => {
-        const response = await apiClient.put<BackendResponse<District>>(`/admin/districts/${id}`, district);
+        const response = await apiClient.put<any>(`/admin/districts/${id}`, district);
         return response.data;
     };
 
@@ -78,28 +77,28 @@ export const useAdminService = () => {
     };
 
     const searchDistricts = async (name: string): Promise<District[]> => {
-        const response = await apiClient.get<BackendResponse<District[]>>(`/admin/districts/search?name=${name}`);
-        return response.data;
+        const response = await apiClient.get<any>(`/admin/districts/search?name=${name}`);
+        return response.data || [];
     };
 
     // ==================== TIPOS DE EVENTO ====================
     const getAllEventTypes = async (): Promise<EventType[]> => {
-        const response = await apiClient.get<BackendResponse<EventType[]>>('/admin/event-types');
-        return response.data;
+        const response = await apiClient.get<any>('/admin/event-types');
+        return response.data || [];
     };
 
     const getEventTypeById = async (id: number): Promise<EventType> => {
-        const response = await apiClient.get<BackendResponse<EventType>>(`/admin/event-types/${id}`);
+        const response = await apiClient.get<any>(`/admin/event-types/${id}`);
         return response.data;
     };
 
     const createEventType = async (eventType: EventTypeCreateRequest): Promise<EventType> => {
-        const response = await apiClient.post<BackendResponse<EventType>>('/admin/event-types', eventType);
+        const response = await apiClient.post<any>('/admin/event-types', eventType);
         return response.data;
     };
 
     const updateEventType = async (id: number, eventType: EventTypeCreateRequest): Promise<EventType> => {
-        const response = await apiClient.put<BackendResponse<EventType>>(`/admin/event-types/${id}`, eventType);
+        const response = await apiClient.put<any>(`/admin/event-types/${id}`, eventType);
         return response.data;
     };
 
@@ -108,29 +107,82 @@ export const useAdminService = () => {
     };
 
     const searchEventTypes = async (name: string): Promise<EventType[]> => {
-        const response = await apiClient.get<BackendResponse<EventType[]>>(`/admin/event-types/search?name=${name}`);
-        return response.data;
+        const response = await apiClient.get<any>(`/admin/event-types/search?name=${encodeURIComponent(name)}`);
+        return response.data || [];
     };
 
     // ==================== MOBILIARIO ====================
     const getAllFurniture = async (): Promise<Furniture[]> => {
-        const response = await apiClient.get<BackendResponse<Furniture[]>>('/admin/furniture');
-        return response.data;
+        const response = await apiClient.get<any>('/admin/furniture');
+        return (response.data || []).map((item: Furniture) => ({
+            furnitureId: item.furnitureId,
+            furnitureName: item.furnitureName,
+            description: item.description,
+            unitPrice: item.unitPrice || 0,
+            totalStock: item.totalStock || 0,
+            photoUrl: item.photoUrl || '',
+            createdAt: item.createdAt || '',
+            totalReservations: item.totalReservations || 0
+        }));
     };
 
     const getFurnitureById = async (id: number): Promise<Furniture> => {
-        const response = await apiClient.get<BackendResponse<Furniture>>(`/admin/furniture/${id}`);
-        return response.data;
+        const response = await apiClient.get<any>(`/admin/furniture/${id}`);
+        const item: Furniture = response.data;
+        return {
+            furnitureId: item.furnitureId,
+            furnitureName: item.furnitureName,
+            description: item.description,
+            unitPrice: item.unitPrice || 0,
+            totalStock: item.totalStock || 0,
+            photoUrl: item.photoUrl || '',
+            createdAt: item.createdAt || '',
+            totalReservations: item.totalReservations || 0
+        };
     };
 
     const createFurniture = async (furniture: FurnitureCreateRequest): Promise<Furniture> => {
-        const response = await apiClient.post<BackendResponse<Furniture>>('/admin/furniture', furniture);
-        return response.data;
+        const requestBody: FurnitureCreateRequest = {
+            furnitureName: furniture.furnitureName,
+            description: furniture.description,
+            unitPrice: furniture.unitPrice,
+            totalStock: furniture.totalStock,
+            photoUrl: furniture.photoUrl
+        };
+        const response = await apiClient.post<any>('/admin/furniture', requestBody);
+        const item: Furniture = response.data;
+        return {
+            furnitureId: item.furnitureId,
+            furnitureName: item.furnitureName,
+            description: item.description,
+            unitPrice: item.unitPrice || 0,
+            totalStock: item.totalStock || 0,
+            photoUrl: item.photoUrl || '',
+            createdAt: item.createdAt || '',
+            totalReservations: item.totalReservations || 0
+        };
     };
 
     const updateFurniture = async (id: number, furniture: FurnitureCreateRequest): Promise<Furniture> => {
-        const response = await apiClient.put<BackendResponse<Furniture>>(`/admin/furniture/${id}`, furniture);
-        return response.data;
+        const requestBody: FurnitureCreateRequest = {
+            furnitureName: furniture.furnitureName,
+            description: furniture.description,
+            unitPrice: furniture.unitPrice,
+            totalStock: furniture.totalStock,
+            photoUrl: furniture.photoUrl
+        };
+        const response = await apiClient.put<any>(`/admin/furniture/${id}`, requestBody);
+        const item: Furniture = response.data;
+        return {
+            furnitureId: item.furnitureId,
+            furnitureName: item.furnitureName,
+            description: item.description,
+            unitPrice: item.unitPrice || 0,
+            totalStock: item.totalStock || 0,
+            photoUrl: item.photoUrl || '',
+            createdAt: item.createdAt || '',
+            totalReservations: item.totalReservations || 0
+        };
     };
 
     const deleteFurniture = async (id: number): Promise<void> => {
@@ -138,29 +190,43 @@ export const useAdminService = () => {
     };
 
     const searchFurniture = async (name: string): Promise<Furniture[]> => {
-        const response = await apiClient.get<BackendResponse<Furniture[]>>(`/admin/furniture/search?name=${name}`);
-        return response.data;
+        const response = await apiClient.get<any>(`/admin/furniture/search?name=${encodeURIComponent(name)}`);
+        return (response.data || []).map((item: Furniture) => ({
+            furnitureId: item.furnitureId,
+            furnitureName: item.furnitureName,
+            description: item.description,
+            unitPrice: item.unitPrice || 0,
+            totalStock: item.totalStock || 0,
+            photoUrl: item.photoUrl || '',
+            createdAt: item.createdAt || '',
+            totalReservations: item.totalReservations || 0
+        }));
     };
 
     // ==================== CLIENTES ====================
     const getAllCustomers = async (): Promise<Customer[]> => {
-        const response = await apiClient.get<BackendResponse<Customer[]>>('/admin/users/clients');
-        return response.data;
+        const response = await apiClient.get<any>('/admin/users/clients');
+        return response.data || [];
     };
 
     const searchCustomers = async (keyword: string): Promise<Customer[]> => {
-        const response = await apiClient.get<BackendResponse<Customer[]>>(`/admin/users/customers/search?keyword=${keyword}`);
-        return response.data;
+        try {
+            const response = await apiClient.get<any>(`/admin/users/customers/search?keyword=${encodeURIComponent(keyword)}`);
+            return response.data || [];
+        } catch (error) {
+            console.error('Error en searchCustomers:', error);
+            throw error;
+        }
     };
 
     // ==================== RESERVAS ====================
     const getAllReservations = async (): Promise<Reservation[]> => {
-        const response = await apiClient.get<BackendResponse<Reservation[]>>('/admin/reservations');
-        return response.data;
+        const response = await apiClient.get<any>('/admin/reservations');
+        return response.data || [];
     };
 
     const updateReservationStatus = async (id: number, status: string): Promise<Reservation> => {
-        const response = await apiClient.put<BackendResponse<Reservation>>(
+        const response = await apiClient.put<any>(
             `/admin/reservations/${id}/status?status=${status}`
         );
         return response.data;

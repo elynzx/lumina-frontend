@@ -1,5 +1,6 @@
 import { apiClient } from '@/api/base';
 import type { District, DistrictCard } from '@/api/interfaces';
+import { ENDPOINTS } from '@/api/config/endpoints';
 
 /**
  * Servicio para gestionar distritos (Vista Cliente)
@@ -11,13 +12,8 @@ export const useDistrictService = () => {
    * @returns Lista básica de distritos (id y nombre)
    */
   const getAllDistricts = async (): Promise<District[]> => {
-    try {
-      const response = await apiClient.get<District[]>('/districts');
-      return response.data;
-    } catch (error) {
-      console.error('Error al obtener distritos:', error);
-      throw error;
-    }
+    const response = await apiClient.get<District[]>(ENDPOINTS.DISTRICTS.BASE);
+    return response.data;
   };
 
   /**
@@ -25,13 +21,8 @@ export const useDistrictService = () => {
    * @returns Distritos con información visual para tarjetas
    */
   const getDistrictCards = async (): Promise<DistrictCard[]> => {
-    try {
-      const response = await apiClient.get<DistrictCard[]>('/districts/cards');
-      return response.data;
-    } catch (error) {
-      console.error('Error al obtener tarjetas de distritos:', error);
-      throw error;
-    }
+    const response = await apiClient.get<DistrictCard[]>(ENDPOINTS.DISTRICTS.CARDS);
+    return response.data;
   };
 
   return {

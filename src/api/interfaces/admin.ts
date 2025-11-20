@@ -80,19 +80,20 @@ export interface DistrictCreateRequest {
 export interface EventType {
     eventTypeId: number;
     eventTypeName: string;
-    photoUrl?: string;
+    description?: string;
 }
 
 export interface EventTypeCreateRequest {
     eventTypeName: string;
+    description?: string;
 }
 
 export interface Furniture {
     furnitureId: number;
     furnitureName: string;
     description: string;
-    pricePerUnit: number;
-    availableStock: number;
+    unitPrice: number;
+    totalStock: number;
 }
 
 export interface FurnitureCreateRequest {

@@ -9,19 +9,22 @@ import type {
     AvailabilityResponse,
     BudgetCalculation,
     Reservation,
+    CreateReservationRequest,
+    CreateReservationResponse,
 } from '@/api/interfaces';
 
-const reservationsService = useReservationService();
+
 
 /**
  * Hook para crear una nueva reserva
  */
 export const useCreateReservation = () => {
+    const reservationsService = useReservationService();
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
-    const [reservation, setReservation] = useState<ReservationResponse | null>(null);
+    const [reservation, setReservation] = useState<CreateReservationResponse | null>(null);
 
-    const createReservation = useCallback(async (data: ReservationRequest) => {
+    const createReservation = useCallback(async (data: CreateReservationRequest) => {
         setLoading(true);
         setError(null);
         try {
@@ -44,6 +47,7 @@ export const useCreateReservation = () => {
  * Hook para verificar disponibilidad de un local
  */
 export const useCheckAvailability = () => {
+    const reservationsService = useReservationService();
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [availability, setAvailability] = useState<AvailabilityResponse | null>(null);
@@ -71,6 +75,7 @@ export const useCheckAvailability = () => {
  * Hook para calcular presupuesto de una reserva
  */
 export const useCalculateBudget = () => {
+    const reservationsService = useReservationService();
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [budget, setBudget] = useState<BudgetCalculation | null>(null);
@@ -98,13 +103,14 @@ export const useCalculateBudget = () => {
  * Hook para obtener detalles de una reserva
  */
 export const useReservationDetails = (reservationId: number) => {
+    const reservationsService = useReservationService();
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [reservation, setReservation] = useState<ReservationSuccess | null>(null);
 
     const fetchReservation = useCallback(async () => {
         if (!reservationId) return;
-        
+
         setLoading(true);
         setError(null);
         try {
@@ -125,6 +131,7 @@ export const useReservationDetails = (reservationId: number) => {
  * Hook para obtener mis reservas
  */
 export const useMyReservations = () => {
+    const reservationsService = useReservationService();
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [reservations, setReservations] = useState<Reservation[]>([]);
@@ -150,6 +157,7 @@ export const useMyReservations = () => {
  * Hook para cancelar una reserva
  */
 export const useCancelReservation = () => {
+    const reservationsService = useReservationService();
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
 

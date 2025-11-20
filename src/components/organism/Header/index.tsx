@@ -1,9 +1,11 @@
 import { Button } from "@/components/atomic/Button";
+import { Dropdown } from "@/components/atomic/Dropdown";
 import logomark from "@/assets/logo/logomark.svg"
 import logotype from "@/assets/logo/logotype.svg"
 import { useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/api/useAuth";
 import { useAuthStore } from "@/store/useAuthStore";
+import { User, Calendar, LogOut } from "lucide-react";
 
 export const Header = () => {
 
@@ -60,12 +62,34 @@ export const Header = () => {
 
       <div className="flex gap-10 items-center justify-end">
         {userIsAuthenticated ? (
-          <>
-            <span className="text-white font-medium">
-              Hola {currentUser?.firstName} {currentUser?.lastName}
-            </span>
-            <Button text="Cerrar Sesión" onClick={handleLogout} variant="secondary" />
-          </>
+          <Dropdown
+            trigger={
+              <span className="text-white font-medium">
+                {currentUser?.firstName} {currentUser?.lastName}
+              </span>
+            }
+            items={[
+              {
+                label: "Mis Reservas",
+                onClick: () => navigate("/reservations"),
+                icon: <Calendar size={16} />,
+              },
+              {
+                label: "Mi Perfil",
+                onClick: () => navigate("/profile"),
+                icon: <User size={16} />,
+              },
+              {
+                divider: true,
+              },
+              {
+                label: "Cerrar Sesión",
+                onClick: handleLogout,
+                icon: <LogOut size={16} />,
+              },
+            ]}
+            align="right"
+          />
         ) : (
           <>
             <button onClick={handleLoginClick} className="text-white hover:underline">

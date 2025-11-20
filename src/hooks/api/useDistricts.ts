@@ -3,12 +3,12 @@ import { useDistrictService } from '@/api/services/districtService';
 import { parseApiError } from '@/api/base';
 import type { District, DistrictCard } from '@/api/interfaces';
 
-const districtService = useDistrictService();
 
 /**
  * Hook para obtener todos los distritos
  */
 export const useDistricts = () => {
+    const districtService = useDistrictService();
     const [districts, setDistricts] = useState<District[]>([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
@@ -38,6 +38,7 @@ export const useDistricts = () => {
  * Hook para obtener tarjetas de distritos (para vista de cliente)
  */
 export const useDistrictCards = () => {
+    const districtService = useDistrictService();
     const [districtCards, setDistrictCards] = useState<DistrictCard[]>([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);

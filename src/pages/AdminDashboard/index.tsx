@@ -7,6 +7,9 @@ import { DistrictsView } from './views/DistrictsView';
 import { ReservationsView } from './views/ReservationsView';
 import { VenuesView } from './views/VenuesView';
 import { ReportsView } from './views/ReportsView';
+import { CustomersView } from './views/CustomersView';
+import { FurnitureView } from './views/FurnitureView';
+import { EventTypesView } from './views/EventTypesView';
 import logomark from '@/assets/logo/logomark.svg';
 
 type MenuItem = 'dashboard' | 'reservas' | 'locales' | 'mobiliario' | 'distritos' | 'tipos-evento' | 'clientes' | 'reportes';
@@ -200,17 +203,26 @@ export const AdminDashboard = () => {
                 {/* Vista Locales */}
                 {activeMenu === 'locales' && <VenuesView />}
 
+                {/* Vista Mobiliario */}
+                {activeMenu === 'mobiliario' && <FurnitureView />}
+
                 {/* Vista Distritos */}
                 {activeMenu === 'distritos' && <DistrictsView />}
+
+                {/* Vista Tipos de Evento */}
+                {activeMenu === 'tipos-evento' && <EventTypesView />}
+
+                {/* Vista Clientes */}
+                {activeMenu === 'clientes' && <CustomersView />}
 
                 {/* Vista Reportes */}
                 {activeMenu === 'reportes' && <ReportsView />}
 
                 {/* Otras vistas (placeholder) */}
-                {activeMenu !== 'dashboard' && activeMenu !== 'reservas' && activeMenu !== 'locales' && activeMenu !== 'distritos' && activeMenu !== 'reportes' && (
+                {activeMenu !== 'dashboard' && activeMenu !== 'reservas' && activeMenu !== 'locales' && activeMenu !== 'mobiliario' && activeMenu !== 'distritos' && activeMenu !== 'tipos-evento' && activeMenu !== 'clientes' && activeMenu !== 'reportes' && (
                     <div className="bg-white rounded-lg shadow p-8 text-center">
                         <h2 className="text-2xl font-bold text-gray-800 mb-4">
-                            {activeMenu.charAt(0).toUpperCase() + activeMenu.slice(1).replace('-', ' ')}
+                            {String(activeMenu).charAt(0).toUpperCase() + String(activeMenu).slice(1).replace('-', ' ')}
                         </h2>
                         <p className="text-gray-600">Esta sección está en desarrollo</p>
                     </div>

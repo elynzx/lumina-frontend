@@ -72,7 +72,7 @@ export const DashboardView = () => {
                 <div className="bg-white rounded-lg shadow-md p-6 border-l-4 border-green-500">
                     <div className="flex items-center justify-between">
                         <div>
-                            <p className="text-sm font-medium text-gray-600 uppercase">Reservas Hoy</p>
+                            <p className="text-sm font-medium text-gray-600 uppercase">Reservas para Hoy</p>
                             <p className="text-3xl font-bold text-gray-800 mt-2">{stats.todayReservations}</p>
                         </div>
                         <div className="bg-green-100 rounded-full p-3">

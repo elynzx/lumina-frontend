@@ -1,14 +1,14 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useVenueService } from '@/api/services/venueService';
 import { parseApiError } from '@/api/base';
-import type { VenueCard, VenueDetail, VenueFilters, VenueSlider } from '@/api/interfaces';
+import type { VenueCard, VenueFilters, VenueSlider, VenueDetail } from '@/api/interfaces';
 
 /**
  * Hook para obtener todos los locales
  */
 export const useVenues = () => {
-    const [venues, setVenues] = useState<VenueCard[]>([]);
     const venueService = useVenueService();
+    const [venues, setVenues] = useState<VenueCard[]>([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
@@ -67,14 +67,12 @@ export const useFeaturedVenues = () => {
  * Hook para obtener detalle de un local
  */
 export const useVenueDetail = (venueId: number) => {
-  const venueService = useVenueService();
+    const venueService = useVenueService();
     const [venue, setVenue] = useState<VenueDetail | null>(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
     const fetchVenueDetail = useCallback(async () => {
-        if (!venueId) return;
-        
         setLoading(true);
         setError(null);
         try {
@@ -120,3 +118,35 @@ export const useSearchVenues = () => {
 
     return { venues, loading, error, searchVenues };
 };
+
+/**
+ * Hook para obtener fechas no disponibles de un local
+ */
+export const useUnavailableDates = (venueId: number) => {
+    const venueService = useVenueService();
+    const [unavailableDates, setUnavailableDates] = useState<string[]>([]);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState<string | null>(null);
+
+    const fetchUnavailableDates = useCallback(async () => {
+        setLoading(true);
+        setError(null);
+        try {
+            const data = await venueService.getUnavailableDates(venueId);
+            setUnavailableDates(data);
+        } catch (err) {
+            const apiError = parseApiError(err as Error);
+            setError(apiError.message);
+        } finally {
+            setLoading(false);
+        }
+    }, [venueId]);
+
+    useEffect(() => {
+        fetchUnavailableDates();
+    }, [fetchUnavailableDates]);
+
+    return { unavailableDates, loading, error, refetch: fetchUnavailableDates };
+};
+
+

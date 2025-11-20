@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { ProductCard } from "../ProductCard";
 import { useVenues } from "@/hooks/api";
+import { memo, useCallback } from "react";
 
 interface Venue {
   venueId: number;
@@ -16,12 +17,12 @@ interface ProductsSectionProps {
   venues: Venue[];
 }
 
-export const ProductsSection = ({ venues }: ProductsSectionProps) => {
+export const ProductsSection = memo(({ venues }: ProductsSectionProps) => {
   const navigate = useNavigate();
 
-  const handleReserveClick = (localeId: number) => {
-    navigate(`/producto/${localeId}`);
-  };
+  const handleReserveClick = useCallback((venueId: number) => {
+    navigate(`/producto/${venueId}`);
+  }, [navigate]);
 
   if (venues.length === 0) {
     return (
@@ -42,7 +43,7 @@ export const ProductsSection = ({ venues }: ProductsSectionProps) => {
     <div className="catalog-grid">
       {venues?.map((venue) => (
         <ProductCard
-          key={venue.venueName}
+          key={venue.venueId}
           imgUrl={venue.mainPhotoUrl}
           title={venue.venueName}
           district={venue.districtName}
@@ -55,4 +56,4 @@ export const ProductsSection = ({ venues }: ProductsSectionProps) => {
       ))}
     </div>
   );
-};
+});

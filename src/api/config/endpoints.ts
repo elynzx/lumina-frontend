@@ -8,21 +8,31 @@ export const ENDPOINTS = {
         ADMIN_LOGIN: '/auth/admin/login',
     },
     
+    // Usuarios / Users
+    USERS: {
+        BASE: '/users',
+        ME: '/users/me',
+        UPDATE_PROFILE: '/users/me',
+        CHANGE_PASSWORD: '/users/me/change-password',
+    },
+
     // Locales / Venues
     VENUES: {
         BASE: '/venues',
         BY_ID: (id: number) => `/venues/${id}`,
-        FEATURED: '/venues/featured',
+        FEATURED: '/venues/slider',
         SEARCH: '/venues/search',
-        AVAILABILITY: (id: number) => `/venues/${id}/availability`,
+        UNAVAILABLE_DATES: (id: number) => `/venues/${id}/unavailable-dates`,
     },
     
     // Reservaciones / Reservations
     RESERVATIONS: {
         BASE: '/reservations',
         BY_ID: (id: number) => `/reservations/${id}`,
+        DETAILS: (id: number) => `/reservations/${id}/details`,
+        CREATE: '/reservations',
         MY_RESERVATIONS: '/reservations/my-reservations',
-        CHECK_AVAILABILITY: '/reservations/check-availability',
+        CHECK_AVAILABILITY: '/reservations/availability',
         CALCULATE_BUDGET: '/reservations/calculate-budget',
         CANCEL: (id: number) => `/reservations/${id}/cancel`,
     },
@@ -31,6 +41,7 @@ export const ENDPOINTS = {
     FURNITURE: {
         BASE: '/furniture',
         BY_ID: (id: number) => `/furniture/${id}`,
+        CHECK_AVAILABILITY: (id: number, quantity: number, date: string) => `/furniture/${id}/availability?quantity=${quantity}&date=${date}`,
     },
     
     // Distritos / Districts
@@ -78,4 +89,5 @@ export const ENDPOINTS = {
             BY_ID: (id: number) => `/admin/customers/${id}`,
         },
     },
+
 } as const;

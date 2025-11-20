@@ -27,7 +27,7 @@ export const PopularVenuesSection = () => {
   }
 
   if (error || venues.length === 0) {
-    return null; // No mostramos la sección si hay error
+    return null;
   }
 
   return (

@@ -1,70 +1,80 @@
-import { useState, useEffect } from "react";
-import { useSearchParams, useNavigate } from "react-router-dom";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import { FilterBar } from "./components/FilterBar";
 import { ProductsSection } from "./components/ProductsSection";
 import { useVenues, useSearchVenues, useEventTypes } from "@/hooks/api";
+import { useFilterStore } from "@/store/useFilterStore"
 
 export const Catalog = () => {
-    const [searchParams] = useSearchParams();
-    const navigate = useNavigate();
+    const districtId = useFilterStore((state) => state.districtId);
+    const eventTypeId = useFilterStore((state) => state.eventTypeId);
+    const priceRange = useFilterStore((state) => state.priceRange);
+    const minCapacity = useFilterStore((state) => state.minCapacity); // Agregado
+    const maxCapacity = useFilterStore((state) => state.maxCapacity); // Agregado para incluir maxCapacity
+
     const { venues: allVenues, loading: loadingAll, error: errorAll } = useVenues();
     const { venues: filteredVenues, loading: loadingFiltered, error: errorFiltered, searchVenues } = useSearchVenues();
     const { eventTypes } = useEventTypes();
     const [displayedVenues, setDisplayedVenues] = useState<any[]>([]);
+    const memoizedEventTypes = useMemo(() => eventTypes ?? [], [eventTypes]);
+
+    const hasActiveFilters = useMemo(() => {
+        return !!(districtId || eventTypeId || minCapacity || priceRange);
+    }, [districtId, eventTypeId, minCapacity, priceRange]);
+
+    const validFilters = useMemo(() => {
+        const filters = {
+            districtId: districtId ?? undefined,
+            eventTypeId: eventTypeId ?? undefined,
+            minCapacity: minCapacity ?? undefined, // Usar minCapacity directamente
+            maxCapacity: maxCapacity ?? undefined, // Agregado para incluir maxCapacity
+            minPrice: priceRange?.min ?? undefined,
+            maxPrice: priceRange?.max === Infinity ? undefined : priceRange?.max ?? undefined,
+        };
+        console.log("🛠 Generando filtros válidos:", filters);
+        return Object.fromEntries(
+            Object.entries(filters).filter(([, value]) =>
+                value !== undefined && value !== null && !Number.isNaN(value)
+            )
+        );
+    }, [districtId, eventTypeId, minCapacity, maxCapacity, priceRange]);
 
     useEffect(() => {
-        const hasFilters = searchParams.toString().length > 0;
-        if (hasFilters) {
-            const districtId = searchParams.get("districtId");
-            const eventTypeId = searchParams.get("eventTypeId");
-            const minCapacity = searchParams.get("minCapacity");
-            const minPrice = searchParams.get("minPrice");
-            const maxPrice = searchParams.get("maxPrice");
-
-            searchVenues({
-                districtId: districtId ? parseInt(districtId) : undefined,
-                eventTypeId: eventTypeId ? parseInt(eventTypeId) : undefined,
-                minCapacity: minCapacity ? parseInt(minCapacity) : undefined,
-                minPrice: minPrice ? parseFloat(minPrice) : undefined,
-                maxPrice: maxPrice ? parseFloat(maxPrice) : undefined,
-            });
+        if (hasActiveFilters && Object.keys(validFilters).length > 0) {
+            console.log('🔍 Enviando filtros al backend:', validFilters);
+            searchVenues(validFilters);
         }
-        console.log("Parámetros recibidos:", {
-            districtId: searchParams.get("districtId"),
-            eventTypeId: searchParams.get("eventTypeId"),
-            minCapacity: searchParams.get("minCapacity")
-        });
-    }, [searchParams]);
+    }, [validFilters, hasActiveFilters, searchVenues]);
 
     useEffect(() => {
-        const hasFilters = searchParams.toString().length > 0;
-        if (hasFilters) {
+        if (hasActiveFilters) {
             setDisplayedVenues(filteredVenues ?? []);
         } else {
             setDisplayedVenues(allVenues ?? []);
         }
-    }, [filteredVenues, allVenues, searchParams]);
+    }, [filteredVenues, allVenues, hasActiveFilters]);
 
-    /* const handleFilterChange = (params: Record<string, any>) => {
-        const urlParams = new URLSearchParams();
-        Object.entries(params).forEach(([key, value]) => {
-            if (value !== undefined && value !== "" && value !== null) urlParams.set(key, value.toString());
-        });
-        //navigate(`/catalogo?${urlParams.toString()}`);
-    }; */
-
-    if (loadingAll || loadingFiltered) {
+    if (loadingAll && !allVenues.length) {
         return <div className="section-container">Cargando locales...</div>;
     }
-    if (errorAll || errorFiltered) {
-        return <div className="section-container text-red-500">Error al cargar locales</div>;
+    if (errorAll) {
+        return <div className="section-container text-red-500">Error al cargar todos los locales. Por favor, intenta nuevamente más tarde.</div>;
+    }
+
+    if (errorFiltered) {
+        return <div className="section-container text-red-500">Error al buscar locales con los filtros aplicados. Por favor, ajusta los filtros o intenta nuevamente.</div>;
     }
 
     return (
         <div className="section-container">
             <h2 className="text-title">Los mejores locales</h2>
-            <FilterBar eventTypes={eventTypes ?? []} />
-            <ProductsSection venues={displayedVenues} />
+            <FilterBar eventTypes={memoizedEventTypes} />
+            {loadingFiltered ? (
+                <div className="flex items-center justify-center py-16">
+                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+                </div>
+            ) : (
+                <ProductsSection venues={displayedVenues} />
+            )}
         </div>
-    )
+    );
 };

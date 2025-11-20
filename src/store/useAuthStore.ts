@@ -5,10 +5,8 @@ import type { User } from '@/api/interfaces/auth';
 interface AuthState {
   loading: boolean;
   setLoading: (value: boolean) => void;
-  // Computed properties que leen directamente de cookies
   isAuthenticated: () => boolean;
   user: () => User | null;
-  // Función para forzar re-render cuando cambian las cookies
   refresh: () => void;
 }
 
@@ -39,10 +37,6 @@ export const useAuthStore = create<AuthState>((set) => ({
     }
   },
   
-  /**
-   * Función para forzar re-render de componentes cuando cambian las cookies
-   * Útil después de login/logout para actualizar la UI inmediatamente
-   */
   refresh: () => {
     set({}); // Fuerza re-render sin cambiar estado
   },

@@ -1,6 +1,7 @@
 import { Button } from "@/components/atomic/Button";
 import locationIcon from "@/assets/icons/location.svg"
 import capacityIcon from "@/assets/icons/capacity.svg"
+import { memo } from "react"
 
 interface Props {
   imgUrl: string
@@ -14,7 +15,7 @@ interface Props {
   onClickAction: () => void
 }
 
-export const ProductCard = ({
+export const ProductCard =memo( ({
   imgUrl,
   onClick,
   title,
@@ -36,7 +37,7 @@ export const ProductCard = ({
       <div className="flex-grow h-[45%] gap-0.5 flex flex-col justify-center px-6">
         <h3 className="font-bold text-left mb-2">{title}</h3>
         <div className="flex items-center gap-2">
-          <img src={locationIcon} alt="location icon" className="w-5" /><p className="text-xs text-left"><span>{district}</span>, {address}</p>
+          <img src={locationIcon} alt="location icon" className="w-5" /><p className="text-xs text-left">{address}</p>
         </div>
         <div className="flex items-center gap-2">
           <img src={capacityIcon} alt="capacity icon" className="w-5" /><p className="text-xs text-left">{capacity} personas</p>
@@ -49,4 +50,4 @@ export const ProductCard = ({
       </div>
     </div>
   )
-};
+});

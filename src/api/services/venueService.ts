@@ -5,6 +5,7 @@ import type {
   VenueDetail,
   VenueFilters
 } from '@/api/interfaces';
+import { ENDPOINTS } from '@/api/config/endpoints';
 
 /**
  * Servicio para gestionar locales de eventos (Vista Cliente)
@@ -16,13 +17,8 @@ export const useVenueService = () => {
    * @returns Lista de locales con estado AVAILABLE
    */
   const getAllVenues = async (): Promise<VenueCard[]> => {
-    try {
-      const response = await apiClient.get<VenueCard[]>('/venues');
-      return response.data;
-    } catch (error) {
-      console.error('Error al obtener locales:', error);
-      throw error;
-    }
+    const response = await apiClient.get<VenueCard[]>(ENDPOINTS.VENUES.BASE);
+    return response.data;
   };
 
   /**
@@ -30,13 +26,8 @@ export const useVenueService = () => {
    * @returns Lista de locales destacados (máximo 5)
    */
   const getFeaturedVenues = async (): Promise<VenueSlider[]> => {
-    try {
-      const response = await apiClient.get<VenueSlider[]>('/venues/slider');
-      return response.data;
-    } catch (error) {
-      console.error('Error al obtener locales destacados:', error);
-      throw error;
-    }
+    const response = await apiClient.get<VenueSlider[]>(ENDPOINTS.VENUES.FEATURED);
+    return response.data;
   };
 
   /**
@@ -46,13 +37,8 @@ export const useVenueService = () => {
    * @returns Detalle completo del local
    */
   const getVenueById = async (id: number): Promise<VenueDetail> => {
-    try {
-      const response = await apiClient.get<VenueDetail>(`/venues/${id}`);
-      return response.data;
-    } catch (error) {
-      console.error(`Error al obtener local ${id}:`, error);
-      throw error;
-    }
+    const response = await apiClient.get<VenueDetail>(ENDPOINTS.VENUES.BY_ID(id));
+    return response.data;
   };
 
   /**
@@ -62,22 +48,30 @@ export const useVenueService = () => {
    * @returns Locales que cumplen los criterios
    */
   const searchVenues = async (filters: VenueFilters): Promise<VenueCard[]> => {
-    try {
-      const params = new URLSearchParams();
+    const params = new URLSearchParams();
 
-      Object.entries(filters).forEach(([key, value]) => {
-        if (value !== undefined && value !== null && value !== "") {
-          params.append(key, value.toString());
-        }
-      });
-      const response = await apiClient.get<VenueCard[]>(
-        `/venues/search?${params.toString()}`
-      );
-      return response.data;
-    } catch (error) {
-      console.error('Error en búsqueda de locales:', error);
-      throw error;
-    } 
+    Object.entries(filters).forEach(([key, value]) => {
+      if (value !== undefined && value !== null && value !== "") {
+        params.append(key, value.toString());
+      }
+    });
+    const response = await apiClient.get<VenueCard[]>(
+      `${ENDPOINTS.VENUES.SEARCH}?${params.toString()}`
+    );
+    return response.data;
+
+  };
+
+  /**
+   * Obtener fechas no disponibles para un local específico
+   * @param venueId - ID del local
+   * @returns Lista de fechas no disponibles (YYYY-MM-DD)
+   */
+  const getUnavailableDates = async (venueId: number): Promise<string[]> => {
+    const response = await apiClient.get<string[]>(
+      ENDPOINTS.VENUES.UNAVAILABLE_DATES(venueId)
+    );
+    return response.data || [];
   };
 
   return {
@@ -85,5 +79,6 @@ export const useVenueService = () => {
     getFeaturedVenues,
     getVenueById,
     searchVenues,
+    getUnavailableDates,
   };
 };
