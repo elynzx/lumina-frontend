@@ -1,69 +1,136 @@
-# React + TypeScript + Vite
+# Lumina Eventos – Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Aplicación web desarrollada para el Sistema de alquiler de locales para eventos, encargada de proporcionar una interfaz de usuario moderna, intuitiva y responsiva para clientes y administradores.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Descripción
 
-## Expanding the ESLint configuration
+El frontend de **Lumina Eventos** es la interfaz visual que permite a los usuarios interactuar con la plataforma. Está diseñado para ofrecer una experiencia fluida y eficiente, permitiendo a los clientes buscar, reservar y gestionar locales para eventos (matrimonios, cumpleaños, conferencias, etc.), mientras que los administradores pueden gestionar el catálogo de locales, mobiliario, clientes y reservas. 
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+La aplicación está construida siguiendo principios de diseño modular y buenas prácticas de desarrollo, utilizando React y TypeScript para garantizar escalabilidad, mantenibilidad y rendimiento.
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+---
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+## Características Principales
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+### Para Clientes:
+- Registro y autenticación con JWT.
+- Búsqueda de locales con filtros avanzados (distrito, tipo de evento, aforo, precio).
+- Reserva de locales con selección de fecha y hora.
+- Selección de mobiliario adicional (sillas, mesas, luces).
+- Proceso de pago integrado (Yape, Plin, MercadoPago).
+- Descarga de comprobantes en PDF.
+- Gestión de perfil personal (actualización de datos, visualización de reservas).
+
+### Para Administradores:
+- CRUD completo de locales.
+- CRUD completo de mobiliario.
+- Gestión de clientes.
+- Visualización y gestión de reservas.
+- Dashboard con estadísticas clave.
+- Cambio de estados (locales, reservas).
+
+---
+
+## Tecnologías Utilizadas
+
+### Frontend:
+- **React**: Biblioteca para la construcción de interfaces de usuario.
+- **TypeScript**: Tipado estático para mayor seguridad y mantenibilidad.
+- **Vite**: Herramienta de construcción rápida y moderna.
+- **Zustand**: Gestión de estado global.
+- **Tailwind CSS**: Framework para diseño responsivo.
+- **react-hook-form**: Manejo de formularios reactivos con validaciones.
+- **fetch API**: Consumo de APIs RESTful.
+- **React Router**: Sistema de rutas dinámico y protegido por roles.
+
+### Dependencias principales:
+- react
+- react-router-dom
+- zustand
+- clsx
+- react-hook-form
+- tailwindcss
+
+---
+
+## Seguridad
+- **Autenticación**: Implementada con JWT (JSON Web Token) para proteger las rutas y garantizar el acceso seguro.
+- **Roles**: Protección de rutas y funcionalidades según el rol del usuario (CLIENTE, ADMIN).
+- **Validaciones**: Validaciones en formularios para garantizar la integridad de los datos ingresados por los usuarios.
+- **CORS**: Configurado en el backend para permitir solicitudes desde el frontend.
+
+---
+
+## Arquitectura del Proyecto
+
+El proyecto sigue una arquitectura modular basada en Atomic Design, lo que permite una alta reutilización de componentes y facilita el mantenimiento.
+
+### Estructura de Carpetas:
+```plaintext
+src/
+├── api/               # Configuración de endpoints y lógica de API
+├── assets/            # Recursos estáticos como imágenes y fuentes
+├── components/        # Componentes reutilizables
+│   ├── atomic/        # Componentes básicos (botones, inputs, etc.)
+│   ├── molecules/     # Combinaciones simples de componentes
+│   ├── organism/      # Componentes complejos (formularios, modales, etc.)
+├── constants/         # Constantes globales
+├── hooks/             # Hooks personalizados
+│   └── api/           # Hooks para consumir APIs
+├── pages/             # Páginas principales (Home, Login, Payment, etc.)
+├── store/             # Gestión del estado global con Zustand
+├── styles/            # Archivos CSS y configuración de Tailwind
+├── types/             # Definiciones de tipos de TypeScript
+├── utils/             # Funciones utilitarias (validaciones, alertas, etc.)
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+---
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## Flujo de Trabajo
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+1. **Inicio**:
+   - El usuario accede a la página principal y explora el catálogo de productos.
+2. **Selección de Productos**:
+   - El usuario selecciona un producto y lo añade al carrito.
+3. **Formulario de Reserva**:
+   - El usuario completa un formulario con detalles como fecha, cantidad de personas, etc.
+4. **Pago**:
+   - El usuario realiza el pago a través de una pasarela integrada.
+5. **Confirmación**:
+   - El sistema confirma la reserva y envía una notificación.
+
+---
+
+## Diseño Responsivo
+- La aplicación está diseñada para ser completamente responsiva, garantizando una experiencia óptima en dispositivos móviles, tabletas y escritorios.
+- Se utiliza **Tailwind CSS** para implementar un diseño moderno y adaptable.
+
+---
+
+## Integración con el Backend
+- El frontend consume los servicios RESTful proporcionados por el backend de **Lumina Eventos**.
+- Los endpoints están centralizados en un archivo de configuración (`src/api/config/endpoints.ts`) para facilitar el mantenimiento y la reutilización.
+
+### Propuesta de Diseño
+
+A continuación, se muestran las imágenes de la propuesta de diseño para la plataforma **Lumina Eventos**:
+
+1. **Paso 1: Mis Datos**  
+   ![Paso 1: Mis Datos](./src/assets/images/design/Paso%201-%20Mis%20Datos.png)
+
+2. **Paso 2**  
+   ![Paso 2](./src/assets/images/design/Paso%202.png)
+
+3. **Paso 3**  
+   ![Paso 3](./src/assets/images/design/Paso%203.png)
+
+4. **Paso 4**  
+   ![Paso 4](./src/assets/images/design/Paso%204.png)
+
+5. **Pantalla de Pago**  
+   ![Pantalla de Pago](./src/assets/images/design/Payment-1.png)
+
+6. **Detalles del Producto**  
+   ![Detalles del Producto](./src/assets/images/design/Product%20details.png)
