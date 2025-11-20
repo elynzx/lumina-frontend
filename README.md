@@ -117,20 +117,17 @@ src/
 
 A continuación, se muestran las imágenes de la propuesta de diseño para la plataforma **Lumina Eventos**:
 
-1. **Paso 1: Mis Datos**  
+1. **Home**  
+   ![Home](./src/assets/images/design/Home.png)
+
+2. **Detalles del Producto**  
+   ![Detalles del Producto](./src/assets/images/design/Product%20details.png)
+
+3. **Paso 1: Mis Datos**  
    ![Paso 1: Mis Datos](./src/assets/images/design/Paso%201-%20Mis%20Datos.png)
 
-2. **Paso 2**  
+4. **Paso 2**  
    ![Paso 2](./src/assets/images/design/Paso%202.png)
 
-3. **Paso 3**  
-   ![Paso 3](./src/assets/images/design/Paso%203.png)
-
-4. **Paso 4**  
+5. **Confirmación de reserva**  
    ![Paso 4](./src/assets/images/design/Paso%204.png)
-
-5. **Pantalla de Pago**  
-   ![Pantalla de Pago](./src/assets/images/design/Payment-1.png)
-
-6. **Detalles del Producto**  
-   ![Detalles del Producto](./src/assets/images/design/Product%20details.png)
