@@ -97,7 +97,7 @@ export const ReservationDetails = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-light-bgray py-12 px-24 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-lineal py-12 px-24 flex items-center justify-center">
         <p className="text-gray-600">Cargando detalles de la reserva...</p>
       </div>
     );
@@ -105,7 +105,7 @@ export const ReservationDetails = () => {
 
   if (error || !reservation) {
     return (
-      <div className="min-h-screen bg-light-bgray py-12 px-24">
+      <div className="min-h-screen  py-12 px-24">
         <div className="max-w-4xl mx-auto">
           <button
             onClick={() => navigate("/reservations")}

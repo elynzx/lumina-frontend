@@ -233,8 +233,8 @@ export const FurnitureView = () => {
                                     <td className="px-6 py-4 text-sm text-gray-900">{item.furnitureId}</td>
                                     <td className="px-6 py-4 text-sm font-semibold text-gray-900">{item.furnitureName}</td>
                                     <td className="px-6 py-4 text-sm text-gray-900">{item.description}</td>
-                                    <td className="px-6 py-4 text-sm text-gray-900">{formatPrice(item.pricePerUnit)}</td>
-                                    <td className="px-6 py-4 text-sm text-gray-900">{item.availableStock}</td>
+                                    <td className="px-6 py-4 text-sm text-gray-900">{formatPrice(item.unitPrice)}</td>
+                                    <td className="px-6 py-4 text-sm text-gray-900">{item.totalStock}</td>
                                     <td className="px-6 py-4 text-center">
                                         <div className="flex justify-center gap-2">
                                             <button

@@ -92,8 +92,8 @@ export interface Furniture {
     furnitureId: number;
     furnitureName: string;
     description: string;
-    pricePerUnit: number;
-    availableStock: number;
+    unitPrice: number;
+    totalStock: number;
 }
 
 export interface FurnitureCreateRequest {

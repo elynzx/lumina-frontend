@@ -17,7 +17,8 @@ interface Reservation {
 }
 
 export const Reservations = () => {
-  z
+  const navigate = useNavigate();
+  const customerService = useCustomerService();
   const [reservations, setReservations] = useState<Reservation[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -71,7 +72,7 @@ export const Reservations = () => {
   };
 
   return (
-    <div className="min-h-screen bg-light-bgray py-12 px-24">
+    <div className="min-h-screen py-12 px-24">
       <div className="max-w-6xl mx-auto">
         {/* Header */}
         <div className="mb-8">
