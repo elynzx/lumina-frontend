@@ -19,7 +19,7 @@ La aplicación está construida siguiendo principios de diseño modular y buenas
 - Búsqueda de locales con filtros avanzados (distrito, tipo de evento, aforo, precio).
 - Reserva de locales con selección de fecha y hora.
 - Selección de mobiliario adicional (sillas, mesas, luces).
-- Proceso de pago integrado (Yape, Plin, MercadoPago).
+- Proceso de pago simulado para futura integración (Pago con tarjeta, transferencia y PagoEfectivo).
 - Descarga de comprobantes en PDF.
 - Gestión de perfil personal (actualización de datos, visualización de reservas).
 
@@ -97,15 +97,14 @@ src/
 3. **Formulario de Reserva**:
    - El usuario completa un formulario con detalles como fecha, cantidad de personas, etc.
 4. **Pago**:
-   - El usuario realiza el pago a través de una pasarela integrada.
+   - El usuario realiza el pago a través de una pasarela.
 5. **Confirmación**:
    - El sistema confirma la reserva y envía una notificación.
 
 ---
 
 ## Diseño Responsivo
-- La aplicación está diseñada para ser completamente responsiva, garantizando una experiencia óptima en dispositivos móviles, tabletas y escritorios.
-- Se utiliza **Tailwind CSS** para implementar un diseño moderno y adaptable.
+- Se utiliza **Tailwind CSS** para implementar un diseño moderno y adaptable a tablets y dispositivos móviles.
 
 ---
 
