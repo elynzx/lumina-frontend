@@ -45,7 +45,12 @@ export const ProductCard =memo( ({
         <div className="flex justify-between items-center gap-2 mt-2">
           <p className="text-xs text-left">
             <span className="font-bold text-2xl">s/.{pricePerHour}</span> por hora</p>
-          <Button text={buttonText} onClick={onClickAction} />
+          <div onClick={(e) => e.stopPropagation()}>
+            <Button 
+              text={buttonText} 
+              onClick={onClickAction} 
+            />
+          </div>
         </div>
       </div>
     </div>

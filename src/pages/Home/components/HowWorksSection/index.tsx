@@ -7,7 +7,7 @@ import plusIcon from "@/assets/icons/plus.svg"
 const cards = [
     {
         title: "Busca",
-        description: "Encuentra el espacio filtrando por tipo de evento o zona.",
+        description: "Encuentra el espacio ideal filtrando por tipo de evento o zona.",
         icon: searchIcon,
         alt: "search icon"
     },
@@ -19,7 +19,7 @@ const cards = [
     },
     {
         title: "Equipa",
-        description: "Agrega equipamiento como sillas, mesas y más.",
+        description: "Selecciona el equipamiento como sillas, mesas y más.",
         icon: plusIcon,
         alt: "plus icon"
     },

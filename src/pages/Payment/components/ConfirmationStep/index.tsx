@@ -1,6 +1,8 @@
 import { Button } from "@/components/atomic/Button";
-import checkIcon from "@/assets/icons/check_circle.svg";
-import { MapPin, Calendar, Clock, Users, Mail, CreditCard, AlertCircle, Clock3, CircleCheckBig } from "lucide-react";
+import { MapPin, Calendar, Clock, Users, Mail, AlertCircle, Clock3, CircleCheckBig, CreditCard } from "lucide-react";
+import { usePaymentStore } from "@/store/usePaymentStore";
+import { useFurniture } from '@/hooks/api';
+import { generateReservationPdf } from '@/utils/pdf/generateReservationPdf';
 
 interface PaymentMethod {
   id: number;
@@ -60,6 +62,23 @@ export const ConfirmationStep = ({
 
   const isDeferredPayment = paymentMethod?.id === 2 || paymentMethod?.id === 3;
 
+  const { selectedFurniture } = usePaymentStore();
+  const { furniture: furnitureList } = useFurniture();
+
+  const handleDownloadPdf = async () => {
+    try {
+      await generateReservationPdf({
+        reservationDetails,
+        paymentMethod,
+        selectedFurniture: selectedFurniture as any,
+        furnitureList,
+        approvalCode,
+      });
+    } catch (err) {
+      alert('No fue posible generar el PDF. Intenta nuevamente o revisa la consola.');
+    }
+  };
+
   return (
     <div className="flex flex-col items-center gap-4 py-8 w-full max-w-2xl mx-auto">
 
@@ -83,7 +102,7 @@ export const ConfirmationStep = ({
         <h3 className="font-semibold text-center mb-3">Detalle de reserva</h3>
 
         <div className="flex gap-4">
-          <div className="space-y-1 border-r border-gray-200 flex-1">
+          <div className="flex-1 space-y-1 border-r border-gray-200 pr-6">
 
             <div>
               <h4 className="font-bold">{reservationDetails.venueName}</h4>
@@ -124,17 +143,20 @@ export const ConfirmationStep = ({
 
           </div>
 
-          <div className="flex flex-col bg-gray-50 rounded-lg p-12 text-center gap-4 justify-center">
-            <span className="text-sm font-semibold text-gray-700">
+          <div className="w-64 flex-shrink-0 bg-gray-50 rounded-lg p-6 text-center">
+            <span className="text-sm font-semibold text-gray-700 block">
               {paymentMethod?.id === 1 ? "Monto pagado" : "Monto a pagar"}
             </span>
-            <span className="text-2xl font-bold text-blue">
+            <span className="text-2xl font-bold text-blue block mt-2">
               S/ {reservationDetails.totalAmount.toFixed(2)}
             </span>
 
-            <div className="flex items-center gap-2 text-sm text-gray-600">
-              <CreditCard size={16} className="shrink-0" />
-              <span>Medio de pago: {paymentMethod?.name}</span>
+            <div className="mt-4 text-sm text-gray-600">
+
+              <div className="font-medium">
+                <CreditCard size={16} className="inline-block text-gray-600 mr-1 mb-0.5 shrink-0" />
+                Medio de pago:</div>
+              <div className="mt-1 font-semibold text-gray-800">{paymentMethod?.name || '—'}</div>
             </div>
           </div>
 
@@ -188,13 +210,13 @@ export const ConfirmationStep = ({
       <div className="w-full flex gap-4">
         <Button
           text="Descargar constancia"
-          onClick={() => window.print()}
+          onClick={handleDownloadPdf}
           fullWidth
         />
         <Button
           text="Realizar otra reserva"
           variant="tertiary"
-          onClick={() => window.location.href = '/'}
+          onClick={() => window.location.href = '/catalogo'}
           fullWidth
         />
       </div>

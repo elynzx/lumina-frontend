@@ -1,6 +1,8 @@
 import { ScrollableSection } from '@/components/molecules/ScrollableSection';
 import { CategoryCard } from '../CategoryCard'
 import { useEventTypes } from '@/hooks/api';
+import { useNavigate } from 'react-router-dom';
+import { useFilterStore } from '@/store/useFilterStore';
 
 // Imágenes por defecto hasta que se agregue photoUrl al backend
 const DEFAULT_IMAGES: Record<string, string> = {
@@ -17,7 +19,26 @@ const getEventImage = (photoUrl: string | undefined, eventTypeName: string): str
 }
 
 export const TypeEventSection = () => {
+  const navigate = useNavigate();
+  const { setFilters, clearFilters } = useFilterStore();
   const { eventTypes, loading, error } = useEventTypes();
+
+  const handleEventTypeClick = (eventTypeId: number) => {
+    // Limpiar filtros previos
+    clearFilters();
+    
+    // Establecer filtro por tipo de evento
+    setFilters({
+      eventTypeId: eventTypeId,
+      districtId: null,
+      minCapacity: null,
+      maxCapacity: null,
+      priceRange: null,
+    });
+
+    // Navegar al catálogo
+    navigate("/catalogo");
+  };
 
   if (loading) {
     return (
@@ -33,19 +54,20 @@ export const TypeEventSection = () => {
   }
 
   return (
-    <div className="section-container">
-      <h2 className="text-title">Tipos de Eventos</h2>
+    <div className="section-container slide-in-bottom">
+      <h2 className="text-title fade-in-up">Tipos de Eventos</h2>
       <ScrollableSection>
-        {eventTypes.map((eventType) => (
-          <div key={eventType.eventTypeId} className="flex-shrink-0">
+        {eventTypes.map((eventType, index) => (
+          <div key={eventType.eventTypeId} className={`flex-shrink-0 fade-in-right stagger-${Math.min(index + 1, 5)}`}>
             <CategoryCard
               title={eventType.eventTypeName}
               description={eventType.description}
               imgUrl={getEventImage(eventType.photoUrl, eventType.eventTypeName)}
+              onClick={() => handleEventTypeClick(eventType.eventTypeId)}
             />
           </div>
         ))}
       </ScrollableSection>
     </div>
-  )
+  );
 };

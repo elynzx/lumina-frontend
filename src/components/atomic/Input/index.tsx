@@ -3,6 +3,7 @@ import { DayPicker } from "react-day-picker";
 import type { LucideIcon } from 'lucide-react';
 
 import "react-day-picker/style.css";
+import "@/styles/calendar.css";
 
 interface Props {
     name: string;
@@ -18,6 +19,7 @@ interface Props {
     min?: string | number;
     max?: string | number;
     disabledDates?: string[];
+    restrictedDates?: string[];
 }
 
 export const Input = forwardRef<HTMLInputElement, Props>(({
@@ -34,6 +36,7 @@ export const Input = forwardRef<HTMLInputElement, Props>(({
     min,
     max,
     disabledDates = [],
+    restrictedDates = [],
 }, ref) => {
 
     const [viewCalendar, setViewCalendar] = useState(false);
@@ -127,44 +130,27 @@ export const Input = forwardRef<HTMLInputElement, Props>(({
         };
     }, []);
 
-    useEffect(() => {
-        if (viewCalendar && type === 'date') {
-            // Aplicar clase 'reserved' a los botones de fechas reservadas
-            const applyReservedClass = () => {
-                const buttons = document.querySelectorAll('button.rdp-day_button:disabled');
-                buttons.forEach((button) => {
-                    const buttonText = button.textContent?.trim();
-                    if (buttonText) {
-                        const day = parseInt(buttonText, 10);
-                        const year = new Date().getFullYear();
-                        const month = new Date().getMonth() + 1;
-                        const formattedDate = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-                        
-                        if (disabledDates.includes(formattedDate)) {
-                            (button as HTMLElement).classList.add('reserved');
-                        } else {
-                            (button as HTMLElement).classList.remove('reserved');
-                        }
-                    }
-                });
-            };
-            
-            // Aplicar clase múltiples veces para asegurar que se aplique
-            applyReservedClass();
-            const timeout1 = setTimeout(applyReservedClass, 50);
-            const timeout2 = setTimeout(applyReservedClass, 100);
-            
-            return () => {
-                clearTimeout(timeout1);
-                clearTimeout(timeout2);
-            };
-        }
-    }, [viewCalendar, type, disabledDates]);
+    // Helpers to parse YYYY-MM-DD into a local Date (avoid timezone shifts)
+    const parseISODateToLocal = (iso: string): Date => {
+        const parts = iso.split('-').map(Number);
+        if (parts.length !== 3) return new Date(iso);
+        const [y, m, d] = parts;
+        return new Date(y, m - 1, d);
+    };
+
+    // Prepare DayPicker modifiers and disabled array
+    const reservedDates = disabledDates.map(d => parseISODateToLocal(d));
+    const restrictedDatesParsed = restrictedDates.map(d => parseISODateToLocal(d));
+    const minDateObj = new Date();
+    minDateObj.setDate(minDateObj.getDate() + 2);
+    minDateObj.setHours(0, 0, 0, 0);
+
+    const disabledArray: Array<Date | { before: Date }> = [{ before: minDateObj }, ...reservedDates];
 
     return (
         <div ref={containerRef} className="flex flex-col w-full relative">
             {label && <label htmlFor={name} className="mb-2 text-sm text-gray-600">{label}</label>}
-            <div className={`w-full h-12 px-4 flex items-center gap-2 border-[1px] rounded-lg focus-within:outline-none focus-within:ring-2 ${error
+            <div className={`w-full h-10 px-4 flex items-center gap-2 border-[1px] rounded-lg focus-within:outline-none focus-within:ring-2 ${error
                 ? 'border-red-500 focus-within:ring-red-500 focus-within:border-red-500'
                 : 'border-blue focus-within:ring-blue focus-within:border-blue'
                 }`}>
@@ -199,63 +185,22 @@ export const Input = forwardRef<HTMLInputElement, Props>(({
             {error && <span className="text-red-500 text-xs mt-1">{error}</span>}
             {viewCalendar && type === "date" && (
                 <div className="absolute top-full left-0 mt-2 z-10 bg-white shadow-lg rounded-lg border border-gray-200 p-5">
-                    <style>{`
-                        .rdp {
-                            --rdp-cell-size: 40px;
-                        }
-                        /* Selector para botones deshabilitados */
-                        button.rdp-day_button:disabled,
-                        button[aria-disabled="true"],
-                        .rdp-day_disabled {
-                            background-color: #d1d5db;
-                            color: #6b7280;
-                            cursor: not-allowed !important;
-                            font-weight: normal;
-                            border-radius: 6px !important;
-                            border: none !important;
-                        }
-                        button.rdp-day_button:disabled:hover,
-                        button[aria-disabled="true"]:hover,
-                        .rdp-day_disabled:hover {
-                            background-color: #9ca3af;
-                            box-shadow: none !important;
-                        }
-                        /* Clase especial para fechas reservadas */
-                        button.rdp-day_button.reserved {
-                            background-color: #ef4444 !important;
-                            color: white !important;
-                            font-weight: bold !important;
-                        }
-                        button.rdp-day_button.reserved:hover {
-                            background-color: #dc2626 !important;
-                            box-shadow: 0 0 0 2px #fca5a5 !important;
-                        }
-                    `}</style>
+                    
+                    {/* Styles moved to `src/styles/calendar.css` and imported at the top of this file */}
                     <DayPicker
                         mode="single"
                         selected={dateSelected}
                         onSelect={handleChangeCalendar}
-                        disabled={(date) => {
-                            // Crear fecha de hoy sin hora
-                            const today = new Date();
-                            today.setHours(0, 0, 0, 0);
-                            
-                            // Crear fecha a comparar sin hora
-                            const checkDate = new Date(date);
-                            checkDate.setHours(0, 0, 0, 0);
-                            
-                            // Deshabilitar solo fechas ANTERIORES a hoy (no incluyendo hoy)
-                            if (checkDate < today) return true;
-                            
-                            // Deshabilitar fechas en la lista de no disponibles
-                            const formattedDate = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
-                            return disabledDates.includes(formattedDate);
-                        }}
+                        disabled={disabledArray}
+                        modifiers={{ reserved: reservedDates, restricted: restrictedDatesParsed }}
+                        modifiersClassNames={{ reserved: 'reserved', restricted: 'restricted' }}
                         defaultMonth={dateSelected || new Date()}
                     />
-                    <div className="mt-3 text-xs text-gray-600 bg-red-50 p-2 rounded border border-red-200">
-                        <span className="inline-block w-3 h-3 bg-red-500 rounded mr-2"></span>
-                        Fechas en rojo = Ya reservadas
+                    <div className="mt-3 text-xs text-gray-600 bg-blue-50 p-2 rounded border border-blue-200">
+                        <div>
+                            <span className="inline-block w-3 h-3 bg-red-500 rounded mr-2"></span>
+                            Fechas en rojo = Ocupadas
+                        </div>
                     </div>
                 </div>
             )}

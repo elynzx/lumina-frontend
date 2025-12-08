@@ -7,8 +7,8 @@ import { Register } from "@/pages/Register";
 import { Catalog } from "@/pages/Catalog";
 import { ProductDetail } from "@/pages/ProductDetail";
 import { Payment } from "@/pages/Payment";
-import { Reservations } from "@/pages/Reservations";
-import { ReservationDetails } from "@/pages/ReservationDetails";
+import { MyReservations } from "@/pages/MyReservations";
+import { ReservationDetails } from "@/pages/MyReservations/components/ReservationDetails";
 import { Profile } from "@/pages/Profile";
 import { AdminLogin } from "@/pages/AdminLogin";
 import { AdminDashboard } from "@/pages/AdminDashboard";
@@ -65,7 +65,7 @@ export default function App() {
         { path: "/registro", element: <Register /> },
         { path: "/catalogo", element: <Catalog /> },
         { path: "/producto/:id", element: <ProductDetail /> },
-        { path: "/reservations", element: <Reservations /> },
+        { path: "/reservations", element: <MyReservations /> },
         { path: "/reservations/:reservationId", element: <ReservationDetails /> },
         { path: "/profile", element: <Profile /> },
       ],

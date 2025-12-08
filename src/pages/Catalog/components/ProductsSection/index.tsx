@@ -51,6 +51,7 @@ export const ProductsSection = memo(({ venues }: ProductsSectionProps) => {
           capacity={venue.maxCapacity}
           pricePerHour={venue.pricePerHour}
           buttonText="Reservar"
+          onClick={() => handleReserveClick(venue.venueId)}
           onClickAction={() => handleReserveClick(venue.venueId)}
         />
       ))}

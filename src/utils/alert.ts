@@ -18,7 +18,7 @@ export const showAlert = ({
   timer 
 }: AlertOptions): Promise<boolean> => {
   return new Promise((resolve) => {
-    // Crear el overlay
+    //Overlay
     const overlay = document.createElement('div');
     overlay.style.cssText = `
       position: fixed;
@@ -34,14 +34,14 @@ export const showAlert = ({
       animation: fadeIn 0.3s ease;
     `;
 
-    // Crear el modal
+    //Modal
     const modal = document.createElement('div');
     modal.style.cssText = `
       background: white;
       border-radius: 12px;
-      padding: 32px;
-      max-width: 400px;
-      width: 90%;
+      padding: 36px;
+      max-width: 550px;
+      width: 100%;
       box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
       text-align: center;
       animation: slideIn 0.3s ease;
@@ -108,7 +108,7 @@ export const showAlert = ({
       </div>
     `;
 
-    // Agregar animaciones CSS
+    // Animaciones CSS
     const style = document.createElement('style');
     style.textContent = `
       @keyframes fadeIn {

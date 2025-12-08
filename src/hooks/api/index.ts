@@ -17,3 +17,6 @@ export * from './useEventTypes';
 
 // Reservations
 export * from './useReservations';
+
+// User Profile
+export * from './useUserProfile';

@@ -1,0 +1,280 @@
+@layer utilities {
+    /* Animaciones de entrada suave */
+    .fade-in {
+        animation: fadeIn 0.6s ease-out;
+    }
+
+    .fade-in-up {
+        animation: fadeInUp 0.8s ease-out;
+    }
+
+    .fade-in-left {
+        animation: fadeInLeft 0.8s ease-out;
+    }
+
+    .fade-in-right {
+        animation: fadeInRight 0.8s ease-out;
+    }
+
+    /* Animación de escala al hover */
+    .hover-scale {
+        transition: transform 0.3s ease-in-out;
+    }
+
+    .hover-scale:hover {
+        transform: scale(1.05);
+    }
+
+    /* Animación de desplazamiento infinito */
+    .scroll-infinite {
+        animation: scrollInfinite 20s linear infinite;
+    }
+
+    .scroll-infinite:hover {
+        animation-play-state: paused;
+    }
+
+    /* Animación de bounce suave */
+    .bounce-soft {
+        animation: bounceSoft 2s ease-in-out infinite;
+    }
+
+    /* Animación de flotación */
+    .float {
+        animation: float 3s ease-in-out infinite;
+    }
+
+    /* Animación de pulsación para botones */
+    .pulse-glow {
+        animation: pulseGlow 2s ease-in-out infinite;
+    }
+
+    /* Animación de aparición escalonada para cards */
+    .stagger-1 { animation-delay: 0.1s; }
+    .stagger-2 { animation-delay: 0.2s; }
+    .stagger-3 { animation-delay: 0.3s; }
+    .stagger-4 { animation-delay: 0.4s; }
+    .stagger-5 { animation-delay: 0.5s; }
+
+    /* Animación de slide para secciones */
+    .slide-in-bottom {
+        animation: slideInBottom 0.8s ease-out;
+    }
+
+    .slide-in-top {
+        animation: slideInTop 0.8s ease-out;
+    }
+
+    /* Efectos de hover para cards */
+    .card-hover {
+        transition: transform 0.3s ease, box-shadow 0.3s ease, filter 0.3s ease;
+    }
+
+    .card-hover:hover {
+        transform: translateY(-8px) scale(1.02);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        filter: brightness(1.05);
+    }
+
+    /* Animación de loading shimmer */
+    .shimmer {
+        background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+        background-size: 200% 100%;
+        animation: shimmer 2s infinite;
+    }
+
+    /* Animaciones específicas para slideshow */
+    .slide-zoom-in {
+        animation: slideZoomIn 1s ease-out;
+    }
+
+    .slide-fade {
+        animation: slideFade 0.8s ease-in-out;
+    }
+
+    .parallax-bg {
+        transition: transform 0.6s ease-out;
+    }
+
+    .parallax-bg:hover {
+        transform: scale(1.05);
+    }
+
+    /* Efectos de overlay dinámico */
+    .dynamic-overlay {
+        background: linear-gradient(
+            45deg,
+            rgba(0,0,0,0.7) 0%,
+            rgba(0,0,0,0.4) 50%,
+            transparent 100%
+        );
+        transition: background 0.8s ease-in-out;
+    }
+
+    /* Animación de Ken Burns para imágenes */
+    .ken-burns {
+        animation: kenBurns 20s ease-in-out infinite alternate;
+    }
+}
+
+/* Definiciones de keyframes */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeInLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes fadeInRight {
+    from {
+        opacity: 0;
+        transform: translateX(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes scrollInfinite {
+    0% {
+        transform: translateX(0);
+    }
+    100% {
+        transform: translateX(-50%);
+    }
+}
+
+@keyframes bounceSoft {
+    0%, 20%, 50%, 80%, 100% {
+        transform: translateY(0);
+    }
+    40% {
+        transform: translateY(-10px);
+    }
+    60% {
+        transform: translateY(-5px);
+    }
+}
+
+@keyframes float {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
+@keyframes pulseGlow {
+    0%, 100% {
+        box-shadow: 0 0 5px rgba(59, 130, 246, 0.5);
+    }
+    50% {
+        box-shadow: 0 0 20px rgba(59, 130, 246, 0.8), 0 0 30px rgba(59, 130, 246, 0.6);
+    }
+}
+
+@keyframes slideInBottom {
+    from {
+        opacity: 0;
+        transform: translateY(50px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideInTop {
+    from {
+        opacity: 0;
+        transform: translateY(-50px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes shimmer {
+    0% {
+        background-position: -200% 0;
+    }
+    100% {
+        background-position: 200% 0;
+    }
+}
+
+@keyframes slideZoomIn {
+    0% {
+        transform: scale(1.2);
+        opacity: 0;
+    }
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+@keyframes slideFade {
+    0% {
+        opacity: 0;
+        transform: translateX(30px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes kenBurns {
+    0% {
+        transform: scale(1) translateX(0) translateY(0);
+    }
+    25% {
+        transform: scale(1.1) translateX(-2%) translateY(-1%);
+    }
+    50% {
+        transform: scale(1.15) translateX(1%) translateY(-2%);
+    }
+    75% {
+        transform: scale(1.1) translateX(-1%) translateY(1%);
+    }
+    100% {
+        transform: scale(1.2) translateX(2%) translateY(-1%);
+    }
+}
+
+/* Responsividad para las animaciones */
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}

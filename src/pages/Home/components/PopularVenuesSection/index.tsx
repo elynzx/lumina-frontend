@@ -31,12 +31,27 @@ export const PopularVenuesSection = () => {
   }
 
   return (
-    <div className="relative w-full h-[620px] overflow-hidden">
-      {/* Imagen de fondo */}
+    <div className="relative w-full h-[550px] overflow-hidden">
+      {/* Imagen izquierda - ancho fijo */}
       <div
-        className="absolute inset-0 w-full h-full bg-cover bg-center bg-no-repeat transition-all duration-700"
+        className="absolute top-0 left-0 w-[65%] h-full transition-all duration-700"
         style={{
-          backgroundImage: `url(${venues[currentSlide]?.mainPhoto})`
+          backgroundImage: `url(${venues[currentSlide]?.mainPhoto})`,
+          backgroundPosition: 'right bottom',
+          backgroundSize: '100% 680px',
+          backgroundRepeat: 'no-repeat'
+        }}
+      />
+
+      {/* Imagen derecha duplicada - 35% */}
+      <div
+        className="absolute top-0 right-0 w-[35%] h-full bg-cover bg-center bg-no-repeat transition-all duration-700"
+        style={{
+          backgroundImage: `url(${venues[currentSlide]?.mainPhoto})`,
+          backgroundPosition: 'right bottom',
+          backgroundSize: '100% 680px',
+          backgroundRepeat: 'no-repeat',
+          filter: 'blur(2px)'
         }}
       />
 

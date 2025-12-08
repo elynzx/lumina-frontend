@@ -1,0 +1,63 @@
+/* Calendar styles for DayPicker modifiers (extracted from Input component)
+   Includes: cell size, reserved (red) and restricted (gray) styles,
+   and disabled-day fallbacks.
+*/
+
+.rdp {
+  --rdp-cell-size: 40px;
+}
+
+/* Restricted (48h) days look disabled but styled slightly differently */
+.rdp-day_button.restricted,
+button.rdp-day_button.restricted {
+  background-color: #d1d5db !important;
+  color: #6b7280 !important;
+  cursor: not-allowed !important;
+  font-weight: normal !important;
+  border-radius: 6px !important;
+  border: none !important;
+}
+button.rdp-day_button.restricted:hover {
+  background-color: #9ca3af !important;
+  box-shadow: none !important;
+}
+
+/* Default disabled styling for DayPicker */
+button.rdp-day_button:disabled,
+button[aria-disabled="true"],
+.rdp-day_disabled {
+  background-color: #d1d5db;
+  color: #6b7280;
+  cursor: not-allowed !important;
+  font-weight: normal;
+  border-radius: 6px !important;
+  border: none !important;
+}
+button.rdp-day_button:disabled:hover,
+button[aria-disabled="true"]:hover,
+.rdp-day_disabled:hover {
+  background-color: #9ca3af;
+  box-shadow: none !important;
+}
+
+/* Reserved (booked) days — prominent red */
+button.rdp-day_button.reserved {
+  background-color: #ef4444 !important;
+  color: white !important;
+  font-weight: bold !important;
+}
+button.rdp-day_button.reserved:hover {
+  background-color: #dc2626 !important;
+  box-shadow: 0 0 0 2px #fca5a5 !important;
+}
+
+/* Force reserved style even when the button is disabled or aria-disabled */
+button.rdp-day_button.reserved[aria-disabled="true"],
+button.rdp-day_button.reserved:disabled,
+.rdp-day.reserved .rdp-day_button {
+  background-color: #ef4444 !important;
+  color: white !important;
+  font-weight: bold !important;
+  border: none !important;
+  box-shadow: none !important;
+}

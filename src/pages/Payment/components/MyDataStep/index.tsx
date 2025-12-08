@@ -24,7 +24,6 @@ export const MyDataStep = ({ userData }: MyDataStepProps) => {
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState(userData || defaultUserData);
 
-  // Actualizar formData cuando userData cambia
   useEffect(() => {
     if (userData && Object.values(userData).some(val => val)) {
       setFormData(userData);

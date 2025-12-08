@@ -1,4 +1,3 @@
-import logomark from "@/assets/logo/logomark.svg"
 import logotype from "@/assets/logo/logopayment.svg"
 import { ConfirmDialog } from "@/components/molecules/ConfirmDialog";
 import { useState } from "react";
@@ -30,7 +29,7 @@ export const PaymentSteps = ({ currentStep }: PaymentStepsProps) => {
 
     return (
         <>
-            <div className="flex gap-6 flex-col mb-2">
+            <div className="flex gap-4 flex-col ">
                 <img
                     src={logotype}
                     className="h-10"
@@ -42,20 +41,20 @@ export const PaymentSteps = ({ currentStep }: PaymentStepsProps) => {
                 <div className="w-full flex justify-center">
                     <div className="w-full max-w-2xl relative">
 
-                        <div className="absolute top-4 left-8 right-12 h-1 bg-bgray rounded-full"></div>
+                        <div className="absolute top-3 left-8 right-12 h-1 bg-bgray rounded-full"></div>
 
                         <div className="flex justify-between relative z-10 px-4">
                             {steps.map((step) => (
                                 <div key={step.id} className="flex flex-col items-center">
 
-                                    <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm shrink-0 ${currentStep >= step.id
+                                    <div className={`w-7 h-7 rounded-full flex items-center justify-center font-bold text-xs shrink-0 ${currentStep >= step.id
                                         ? 'bg-blue text-white'
                                         : 'bg-bgray text-white'
                                         }`}>
                                         {currentStep > step.id ? '✓' : step.id}
                                     </div>
 
-                                    <h3 className={`text-xs text-center mt-3 whitespace-nowrap ${currentStep >= step.id ? 'text-blue' : 'text-gray-400'
+                                    <h3 className={`text-xs text-center mt-2 whitespace-nowrap ${currentStep >= step.id ? 'text-blue' : 'text-gray-400'
                                         }`}>
                                         {step.title}
                                     </h3>

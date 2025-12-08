@@ -200,6 +200,7 @@ const RegisterForm = ({
                             {...field}
                             placeholder="Crear contraseña"
                             error={errors.newPassword?.message}
+                            autoComplete="off"
                         />
                     )}
                 />

@@ -1,73 +1,125 @@
-import { useState, useEffect } from "react";
-import { useCustomerService } from "@/api/services/customerService";
-
-interface SelectedFurniture {
-  [key: number]: number;
-}
-
-interface EditingFurniture {
-  [key: number]: boolean;
-}
-
-interface FurnitureData {
-  furnitureId: number;
-  furnitureName: string;
-  description: string;
-  unitPrice: number;
-  photoUrl?: string;
-  totalStock?: number;
-}
+import { useState, useCallback, useEffect } from "react";
+import { usePaymentStore } from "@/store/usePaymentStore";
+import { useFurniture } from "@/hooks/api";
+import { TabNavigation } from './components/TabNavigation';
+import { TablesSection } from './components/TablesSection';
+import { ChairsSection } from './components/ChairsSection';
+import { ServicesSection } from './components/ServicesSection';
+import { SelectionSummary } from './components/SelectionSummary';
 
 interface FurnitureStepProps {
-  onFurnitureSelectionChange?: (selected: SelectedFurniture) => void;
-  selectedFurnitureItems?: SelectedFurniture;
+  guestCount?: number;
 }
 
-export const FurnitureStep = ({ onFurnitureSelectionChange, selectedFurnitureItems = {} }: FurnitureStepProps) => {
-  const customerService = useCustomerService();
-  const [selectedFurniture, setSelectedFurniture] = useState<SelectedFurniture>(selectedFurnitureItems);
-  const [editingFurniture, setEditingFurniture] = useState<EditingFurniture>({});
-  const [furniture, setFurniture] = useState<FurnitureData[]>([]);
-  const [loading, setLoading] = useState(true);
+const PEOPLE_PER_TABLE = 10;
 
-  // Cargar mobiliarios del backend
-  useEffect(() => {
-    const fetchFurniture = async () => {
-      try {
-        const data = await customerService.getAllFurniture();
-        setFurniture(data as unknown as FurnitureData[]);
-        console.log('Mobiliarios cargados:', data);
-      } catch (err) {
-        console.error('Error al cargar mobiliarios:', err);
-      } finally {
-        setLoading(false);
+export const FurnitureStep = ({ guestCount = 0 }: FurnitureStepProps) => {
+  const { furniture, loading, error } = useFurniture();
+  const {
+    selectedFurniture,
+    selectedModels,
+    setSelectedFurniture,
+    setSelectedModels
+  } = usePaymentStore();
+
+  const [editingFurniture, setEditingFurniture] = useState<{ [key: number]: boolean }>({});
+  const [activeTab, setActiveTab] = useState<'tables' | 'chairs' | 'services'>('tables');
+
+  const tableItems = furniture.filter(item =>
+    item.furnitureName.toLowerCase().includes('mesa')
+  );
+
+  const chairItems = furniture.filter(item =>
+    item.furnitureName.toLowerCase().includes('silla')
+  );
+
+  const serviceItems = furniture.filter(item =>
+    !item.furnitureName.toLowerCase().includes('mesa') &&
+    !item.furnitureName.toLowerCase().includes('silla') &&
+    !item.furnitureName.toLowerCase().includes('servicios obligatorios')
+  );
+
+  const recommendedTables = Math.ceil(guestCount / PEOPLE_PER_TABLE);
+  const totalSelectedItems = Object.values(selectedFurniture).reduce((a, b) => a + b, 0);
+
+  const getRecommendationText = useCallback(() => {
+    if (guestCount === 0) return "";
+    const tables = recommendedTables;
+    return `Recomendación: ${tables} ${tables === 1 ? 'mesa' : 'mesas'} para ${guestCount} personas (${PEOPLE_PER_TABLE} personas por mesa)`;
+  }, [guestCount, recommendedTables]);
+
+  const getMinQuantity = useCallback((furnitureId: number) => {
+    const isTableItem = tableItems.some(item => item.furnitureId === furnitureId);
+    const isChairItem = chairItems.some(item => item.furnitureId === furnitureId);
+
+    if (isTableItem && recommendedTables > 0) {
+      return recommendedTables;
+    } else if (isChairItem && recommendedTables > 0) {
+      return recommendedTables * 10;
+    }
+    return 0;
+  }, [tableItems, chairItems, recommendedTables]);
+
+  const handleModelSelection = (furnitureId: number, isTable: boolean) => {
+    let newSelectedFurniture = { ...selectedFurniture };
+
+    if (isTable) {
+      if (selectedModels.selectedTableId && selectedModels.selectedTableId !== furnitureId) {
+        delete newSelectedFurniture[selectedModels.selectedTableId];
       }
-    };
 
-    fetchFurniture();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+      if (recommendedTables > 0) {
+        newSelectedFurniture[furnitureId] = recommendedTables;
+      }
 
-  useEffect(() => {
-    setSelectedFurniture(selectedFurnitureItems);
-  }, [selectedFurnitureItems]);
+      setSelectedFurniture(newSelectedFurniture);
+      setSelectedModels({ ...selectedModels, selectedTableId: furnitureId });
+    } else {
+      if (selectedModels.selectedChairId && selectedModels.selectedChairId !== furnitureId) {
+        delete newSelectedFurniture[selectedModels.selectedChairId];
+      }
 
-  useEffect(() => {
-    onFurnitureSelectionChange?.(selectedFurniture);
-  }, [selectedFurniture, onFurnitureSelectionChange]);
+      const recommendedChairs = recommendedTables * 10;
+      if (recommendedChairs > 0) {
+        newSelectedFurniture[furnitureId] = recommendedChairs;
+      }
+
+      setSelectedFurniture(newSelectedFurniture);
+      setSelectedModels({ ...selectedModels, selectedChairId: furnitureId });
+    }
+  };
 
   const handleQuantityChange = (furnitureId: number, quantity: number) => {
-    if (quantity < 0) return;
+    const isTableItem = tableItems.some(item => item.furnitureId === furnitureId);
+    const isChairItem = chairItems.some(item => item.furnitureId === furnitureId);
+
+    let minQuantity = 0;
+    if (isTableItem && recommendedTables > 0) {
+      minQuantity = recommendedTables;
+    } else if (isChairItem && recommendedTables > 0) {
+      minQuantity = recommendedTables * 10;
+    }
+
+    if (quantity < minQuantity) {
+      quantity = minQuantity;
+    }
 
     if (quantity === 0) {
       const newSelected = { ...selectedFurniture };
       delete newSelected[furnitureId];
       setSelectedFurniture(newSelected);
+
+      if (selectedModels.selectedTableId === furnitureId) {
+        setSelectedModels({ ...selectedModels, selectedTableId: null });
+      }
+      if (selectedModels.selectedChairId === furnitureId) {
+        setSelectedModels({ ...selectedModels, selectedChairId: null });
+      }
     } else {
-      setSelectedFurniture(prev => ({
-        ...prev,
+      setSelectedFurniture({
+        ...selectedFurniture,
         [furnitureId]: quantity
-      }));
+      });
     }
   };
 
@@ -78,19 +130,94 @@ export const FurnitureStep = ({ onFurnitureSelectionChange, selectedFurnitureIte
     }));
   };
 
-  const handleInputChange = (furnitureId: number, value: string) => {
-    const numValue = parseInt(value) || 0;
-    handleQuantityChange(furnitureId, Math.max(0, numValue));
-  };
-
-  const handleBlur = (furnitureId: number) => {
+  const handleBlur = useCallback((furnitureId: number) => {
     setEditingFurniture(prev => ({
       ...prev,
       [furnitureId]: false
     }));
-  };
+  }, []);
 
-  const totalSelectedItems = Object.values(selectedFurniture).reduce((a, b) => a + b, 0);
+  useEffect(() => {
+    if (!furniture || furniture.length === 0) return;
+    const mandatory = furniture.find(f => f.furnitureName.toLowerCase().includes('servicios obligatorios'));
+    if (mandatory && !selectedFurniture[mandatory.furnitureId]) {
+      setSelectedFurniture({ ...selectedFurniture, [mandatory.furnitureId]: 1 });
+    }
+  }, [furniture]);
+
+  useEffect(() => {
+    if (guestCount === 0) return;
+    const newRecommendedTables = Math.ceil(guestCount / PEOPLE_PER_TABLE);
+    const newRecommendedChairs = newRecommendedTables * 10;
+    let newSelectedFurniture = { ...selectedFurniture };
+    let hasChanges = false;
+    if (selectedModels.selectedTableId && newSelectedFurniture[selectedModels.selectedTableId]) {
+      newSelectedFurniture[selectedModels.selectedTableId] = newRecommendedTables;
+      hasChanges = true;
+    }
+    if (selectedModels.selectedChairId && newSelectedFurniture[selectedModels.selectedChairId]) {
+      newSelectedFurniture[selectedModels.selectedChairId] = newRecommendedChairs;
+      hasChanges = true;
+    }
+    if (hasChanges) {
+      setSelectedFurniture(newSelectedFurniture);
+    }
+  }, [guestCount, selectedModels.selectedTableId, selectedModels.selectedChairId]);
+
+  const renderTabContent = () => {
+    switch (activeTab) {
+      case 'tables':
+        return (
+          <TablesSection
+            tableItems={tableItems}
+            selectedFurniture={selectedFurniture}
+            selectedModels={selectedModels}
+            editingFurniture={editingFurniture}
+            recommendedTables={recommendedTables}
+            guestCount={guestCount}
+            onModelSelection={handleModelSelection}
+            onQuantityChange={handleQuantityChange}
+            onEditClick={handleEditClick}
+            onBlur={handleBlur}
+            getMinQuantity={getMinQuantity}
+            getRecommendationText={getRecommendationText}
+          />
+        );
+      case 'chairs':
+        return (
+          <ChairsSection
+            chairItems={chairItems}
+            selectedFurniture={selectedFurniture}
+            selectedModels={selectedModels}
+            editingFurniture={editingFurniture}
+            recommendedTables={recommendedTables}
+            guestCount={guestCount}
+            onModelSelection={handleModelSelection}
+            onQuantityChange={handleQuantityChange}
+            onEditClick={handleEditClick}
+            onBlur={handleBlur}
+            getMinQuantity={getMinQuantity}
+          />
+        );
+      case 'services':
+        return (
+          <ServicesSection
+            serviceItems={serviceItems}
+            selectedFurniture={selectedFurniture}
+            selectedModels={selectedModels}
+            editingFurniture={editingFurniture}
+            guestCount={guestCount}
+            onModelSelection={handleModelSelection}
+            onQuantityChange={handleQuantityChange}
+            onEditClick={handleEditClick}
+            onBlur={handleBlur}
+            getMinQuantity={getMinQuantity}
+          />
+        );
+      default:
+        return null;
+    }
+  };
 
   if (loading) {
     return (
@@ -103,94 +230,45 @@ export const FurnitureStep = ({ onFurnitureSelectionChange, selectedFurnitureIte
     );
   }
 
-  return (
-    <div className="flex flex-col gap-6">
-      <div>
-        <h2 className="text-xl font-bold mb-2">Mobiliarios</h2>
-        <p className="text-xs text-gray-600">Servicio adicional de mobiliarios.</p>
-      </div>
-
-      <div className="overflow-y-auto max-h-100 pr-4">
-        <div className="flex flex-col gap-2">
-          {furniture.map((item) => (
-            <div
-              key={item.furnitureId}
-              className="flex items-center gap-4 px-4 py-3 border border-gray-200 rounded-lg hover:shadow-sm transition-shadow"
-            >
-              <img
-                src={item.photoUrl}
-                alt={item.furnitureName}
-                className="w-18 h-18 object-cover rounded-lg shrink-0 bg-gray-100"
-              />
-
-              <div className="flex-1 min-w-0 ml-4">
-                <h3 className="text-sm font-bold truncate">
-                  {item.furnitureName}
-                </h3>
-                <p className="text-xs mt-1">
-                  S/ {item.unitPrice.toFixed(2)} por unidad
-                </p>
-                <p className="text-xs text-gray-600 mt-1 line-clamp-2">
-                  {item.description}
-                </p>
-              </div>
-
-              <div className="flex items-center gap-2 shrink-0 mr-2">
-                <button
-                  onClick={() => handleQuantityChange(
-                    item.furnitureId,
-                    (selectedFurniture[item.furnitureId] || 0) - 1
-                  )}
-                  className="w-7 h-7 flex items-center justify-center rounded-lg text-white bg-blue font-bold hover:bg-blue/80"
-                >
-                  -
-                </button>
-
-                {editingFurniture[item.furnitureId] ? (
-                  <input
-                    type="text"
-                    inputMode="numeric"
-                    value={selectedFurniture[item.furnitureId] || 0}
-                    onChange={(e) => {
-                      const value = e.target.value;
-                      if (value === '' || /^\d+$/.test(value)) {
-                        handleInputChange(item.furnitureId, value);
-                      }
-                    }}
-                    onBlur={() => handleBlur(item.furnitureId)}
-                    autoFocus
-                    className="w-12 text-center text-md border rounded-lg py-1 focus:outline-none focus:border-bgray"
-                  />
-                ) : (
-                  <span
-                    onClick={() => handleEditClick(item.furnitureId)}
-                    className="w-12 text-center text-md font-semibold cursor-pointer hover:bg-gray-100 rounded px-1 py-1"
-                  >
-                    {selectedFurniture[item.furnitureId] || 0}
-                  </span>
-                )}
-
-                <button
-                  onClick={() => handleQuantityChange(
-                    item.furnitureId,
-                    (selectedFurniture[item.furnitureId] || 0) + 1
-                  )}
-                  className="w-7 h-7 flex items-center justify-center rounded-lg text-white bg-blue font-bold hover:bg-blue/80"
-                >
-                  +
-                </button>
-              </div>
-            </div>
-          ))}
+  if (error) {
+    return (
+      <div className="flex flex-col gap-6">
+        <div>
+          <h2 className="text-xl font-bold mb-2">Mobiliarios</h2>
+          <p className="text-xs text-red-600">Error al cargar mobiliarios: {error}</p>
         </div>
       </div>
+    );
+  }
 
-      <div className="pt-2 border-t border-gray-200">
-        <p className="text-xs">
-          Items seleccionados: <span className="font-bold">
-            {totalSelectedItems}
-          </span>
-        </p>
+  return (
+    <div className="flex flex-col gap-2 h-100">
+      <div>
+        <h2 className="text-xl font-bold mb-2">Mobiliarios y Servicios</h2>
+        <p className="text-xs text-gray-600">Selecciona el modelo de mesas y sillas para continuar. Puedes añadir servicios adicionales si lo deseas.</p>
+      </div>
+
+      <TabNavigation
+        activeTab={activeTab}
+        onTabChange={setActiveTab}
+        tableCount={tableItems.length}
+        chairCount={chairItems.length}
+        serviceCount={serviceItems.length}
+      />
+
+      <div className="flex flex-col flex-1 min-h-0">
+        <div className="flex-1 overflow-hidden min-h-65">
+          {renderTabContent()}
+        </div>
+
+        <div className="mt-auto">
+          <SelectionSummary
+            totalSelectedItems={totalSelectedItems}
+            guestCount={guestCount}
+            selectedModels={selectedModels}
+            selectedFurniture={selectedFurniture}
+          />
+        </div>
       </div>
     </div>
   );

@@ -1,4 +1,5 @@
 import { useState, forwardRef } from "react";
+import type { ClipboardEvent } from "react";
 
 interface Props {
     name: string;
@@ -8,6 +9,10 @@ interface Props {
     label?: string;
     error?: string;
     disabled?: boolean;
+    autoComplete?: string;
+    onPaste?: (e: ClipboardEvent<HTMLInputElement>) => void;
+    onCopy?: (e: ClipboardEvent<HTMLInputElement>) => void;
+    onCut?: (e: ClipboardEvent<HTMLInputElement>) => void;
 }
 
 export const PasswordInput = forwardRef<HTMLInputElement, Props>(({
@@ -18,6 +23,10 @@ export const PasswordInput = forwardRef<HTMLInputElement, Props>(({
     label,
     error,
     disabled = false,
+    autoComplete,
+    onPaste,
+    onCopy,
+    onCut,
     ...props
 }, ref) => {
     const [showPassword, setShowPassword] = useState(false);
@@ -47,6 +56,10 @@ export const PasswordInput = forwardRef<HTMLInputElement, Props>(({
                     value={value}
                     onChange={handleChange}
                     disabled={disabled}
+                    autoComplete={autoComplete}
+                    onPaste={onPaste}
+                    onCopy={onCopy}
+                    onCut={onCut}
                     {...props}
                 />
                 <button

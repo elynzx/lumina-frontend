@@ -2,12 +2,15 @@ import { VenuePreviewCard } from '../VenuePreviewCard'
 import { Button } from "@/components/atomic/Button";
 import { useVenues } from "@/hooks/api";
 import { useNavigate } from 'react-router-dom';
+import { useFilterStore } from '@/store/useFilterStore';
 
 export const VenuePreviewSection = () => {
   const navigate = useNavigate();
   const { venues, loading, error } = useVenues();
+  const { clearFilters } = useFilterStore();
 
   const handleViewAllVenues = () => {
+    clearFilters(); // Limpia todos los filtros antes de navegar
     navigate('/catalogo');
   };
 

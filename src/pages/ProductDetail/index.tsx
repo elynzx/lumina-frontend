@@ -64,10 +64,10 @@ export const ProductDetail = () => {
 
                     {/* Mapa de ubicación - Se muestra si existe googleMapsUrl o coordenadas */}
                     {(venue.googleMapsUrl || (venue.latitude && venue.longitude)) && (
-                        <div className="w-full">
-                            <h3 className="text-lg font-semibold mb-3">📍 Ubicación</h3>
+                        <div className="w-full mt-4">
+                            <h3 className="text-lg font-semibold mb-3">Ubicación</h3>
                             <iframe
-                                className="w-full h-96 rounded-lg border border-gray-200"
+                                className="w-full h-110 rounded-lg border border-gray-200"
                                 src={venue.googleMapsUrl || `https://www.google.com/maps/embed/v1/place?key=AIzaSyDummyKey&q=${venue.latitude},${venue.longitude}`}
                                 allowFullScreen={true}
                                 loading="lazy"

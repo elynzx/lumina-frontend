@@ -11,6 +11,8 @@ interface Props {
     placeholder?: string;
     icon?: string;
     IconComponent?: LucideIcon;
+    min?: string;
+    max?: string;
 }
 
 export const TimeInput = forwardRef<HTMLInputElement, Props>(({
@@ -23,19 +25,82 @@ export const TimeInput = forwardRef<HTMLInputElement, Props>(({
     error,
     disabled = false,
     placeholder = "Seleccionar",
+    min,
+    max,
     ...props
 }, ref) => {
     const [isOpen, setIsOpen] = useState(false);
     const containerRef = useRef<HTMLDivElement>(null);
 
-    // Generar opciones de hora (solo horas completas)
-    const timeOptions = Array.from({ length: 24 }, (_, index) => {
-        const hour = index.toString().padStart(2, '0');
-        return {
-            value: `${hour}:00`,
-            label: `${hour}:00`
-        };
-    });
+
+    const timeOptions = (() => {
+
+        const baseOptions = Array.from({ length: 24 }, (_, index) => {
+            const hour = index.toString().padStart(2, '0');
+            return {
+                value: `${hour}:00`,
+                label: `${hour}:00`,
+                hour: index
+            };
+        });
+
+        const filteredOptions = baseOptions.filter(option => {
+            const optionHour = option.hour;
+            
+            if (min) {
+                const [minHour] = min.split(':').map(Number);
+                
+                if (max) {
+                    const [maxHour] = max.split(':').map(Number);
+                    if (maxHour < minHour) {
+                        if (optionHour < minHour && optionHour > maxHour) {
+                            return false;
+                        }
+                    } else {
+                        if (optionHour < minHour) return false;
+                    }
+                } else {
+                    if (optionHour < minHour) return false;
+                }
+            }
+            
+            if (max) {
+                const [maxHour] = max.split(':').map(Number);
+                
+                if (min) {
+                    const [minHour] = min.split(':').map(Number);
+                    if (maxHour < minHour) {
+                        return true;
+                    } else {
+                        if (optionHour > maxHour) return false;
+                    }
+                } else {
+                    if (optionHour > maxHour) return false;
+                }
+            }
+            
+            return true;
+        });
+
+        if (min && max) {
+            const [minHour] = min.split(':').map(Number);
+            const [maxHour] = max.split(':').map(Number);
+            
+            if (maxHour < minHour) {
+                const afternoonEvening = filteredOptions.filter(opt => opt.hour >= minHour);
+                const earlyMorning = filteredOptions.filter(opt => opt.hour <= maxHour);
+                
+                const afternoonEveningFormatted = afternoonEvening.map(({ value, label }) => ({ value, label }));
+                const earlyMorningFormatted = earlyMorning.map(({ value, label, hour }) => ({ 
+                    value, 
+                    label: `${label}` 
+                }));
+                
+                return [...afternoonEveningFormatted, ...earlyMorningFormatted];
+            }
+        }
+        return filteredOptions.map(({ value, label }) => ({ value, label }));
+    })();
 
     const handleTimeSelect = (timeValue: string) => {
         onChange?.(timeValue);
@@ -48,7 +113,6 @@ export const TimeInput = forwardRef<HTMLInputElement, Props>(({
         }
     };
 
-    // Cerrar al hacer click fuera
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
             if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
@@ -65,7 +129,7 @@ export const TimeInput = forwardRef<HTMLInputElement, Props>(({
         <div ref={containerRef} className="flex flex-col w-full relative">
             {label && <label htmlFor={name} className="mb-1 text-xs">{label}</label>}
             <div
-                className={`w-full h-12 px-4 flex items-center gap-2 border rounded-lg cursor-pointer transition-all ${error
+                className={`w-full h-10 px-4 flex items-center gap-2 border rounded-lg cursor-pointer transition-all ${error
                     ? 'border-red-500 ring-1 ring-red-500'
                     : 'border-blue hover:ring-2 hover:ring-blue'
                     } ${disabled ? 'cursor-not-allowed bg-gray-100' : 'bg-white'}`}
@@ -97,13 +161,12 @@ export const TimeInput = forwardRef<HTMLInputElement, Props>(({
                 </svg>
             </div>
 
-            {/* Input oculto para react-hook-form */}
             <input
                 ref={ref}
                 name={name}
                 type="hidden"
                 value={value}
-                onChange={() => { }} // Manejado por handleTimeSelect
+                onChange={() => { }}
                 disabled={disabled}
                 {...props}
             />

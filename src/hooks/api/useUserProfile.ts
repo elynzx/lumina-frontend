@@ -38,11 +38,11 @@ export const useUpdateUserProfile = () => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
-    const updateUserProfile = useCallback(async (payload: UserProfile) => {
+    const updateUserProfile = useCallback(async (payload: Partial<UserProfile>) => {
         setLoading(true);
         setError(null);
         try {
-            await userService.updateUserProfile(payload);
+            await userService.updateUserProfile(payload as any);
         } catch (err) {
             const apiError = parseApiError(err as Error);
             setError(apiError.message);

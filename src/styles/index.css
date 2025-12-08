@@ -1,6 +1,7 @@
 @import "tailwindcss";
 @import "./fonts.css";
 @import "./utilities.css";
+@import "./animations.css";
 @import "./theme.css";
 
 :root {
@@ -18,6 +19,7 @@ body {
   min-height: 100vh;
   font-family: var(--font-body);
   color: var(--color-blue);
+  font-size: 14px;
 }
 
 a, button, [role="button"], input[type="button"], input[type="submit"] {
