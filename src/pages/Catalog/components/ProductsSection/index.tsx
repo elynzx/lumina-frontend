@@ -1,6 +1,5 @@
 import { useNavigate } from "react-router-dom";
 import { ProductCard } from "../ProductCard";
-import { useVenues } from "@/hooks/api";
 import { memo, useCallback } from "react";
 
 interface Venue {

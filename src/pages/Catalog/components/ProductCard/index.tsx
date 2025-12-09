@@ -19,7 +19,7 @@ export const ProductCard =memo( ({
   imgUrl,
   onClick,
   title,
-  district,
+  district: _district,
   address,
   capacity,
   pricePerHour,

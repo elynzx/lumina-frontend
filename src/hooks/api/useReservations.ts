@@ -3,7 +3,6 @@ import { useReservationService } from '@/api/services/reservationsService';
 import { parseApiError } from '@/api/base';
 import type {
     ReservationRequest,
-    ReservationResponse,
     ReservationSuccess,
     AvailabilityRequest,
     AvailabilityResponse,

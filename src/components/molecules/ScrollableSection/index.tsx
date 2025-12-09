@@ -10,8 +10,6 @@ interface Props {
 
 export const ScrollableSection = ({
   children,
-  autoScroll = false,
-  scrollSpeed = 2000,
 }: Props) => {
   const scrollRef = useRef<HTMLDivElement>(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);

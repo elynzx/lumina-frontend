@@ -1,4 +1,5 @@
 export type { BackendResponse } from './common';
+import type { ReservationResponse } from './reservation';
 
 export interface DashboardStats {
     totalVenues: number;

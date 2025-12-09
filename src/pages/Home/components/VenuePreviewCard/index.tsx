@@ -16,7 +16,7 @@ export const VenuePreviewCard = ({
   title,
   district,
   details,
-  onClick
+  onClick: _onClick
 }: Props) => {
 
   const navigate = useNavigate()

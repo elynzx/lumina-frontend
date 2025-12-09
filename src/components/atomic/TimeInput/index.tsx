@@ -91,7 +91,7 @@ export const TimeInput = forwardRef<HTMLInputElement, Props>(({
                 const earlyMorning = filteredOptions.filter(opt => opt.hour <= maxHour);
                 
                 const afternoonEveningFormatted = afternoonEvening.map(({ value, label }) => ({ value, label }));
-                const earlyMorningFormatted = earlyMorning.map(({ value, label, hour }) => ({ 
+                const earlyMorningFormatted = earlyMorning.map(({ value, label }) => ({ 
                     value, 
                     label: `${label}` 
                 }));

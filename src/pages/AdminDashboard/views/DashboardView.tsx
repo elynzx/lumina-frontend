@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useAdminService } from '@/api/services/adminService';
 import type { DashboardStats } from '@/api/interfaces/admin';
-import { LineChart, Line, BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Area, AreaChart, ComposedChart } from 'recharts';
+import { BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Area, AreaChart } from 'recharts';
 
 export const DashboardView = () => {
     const [stats, setStats] = useState<DashboardStats | null>(null);
@@ -463,7 +463,7 @@ export const DashboardView = () => {
                                 radius={[8, 8, 0, 0]}
                                 name="Reservas"
                             >
-                                {stats.topVenues.map((entry, index) => (
+                                {stats.topVenues.map((_entry, index) => (
                                     <Cell 
                                         key={`cell-${index}`} 
                                         fill={

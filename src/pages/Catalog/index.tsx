@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useCallback } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { FilterBar } from "./components/FilterBar";
 import { ProductsSection } from "./components/ProductsSection";
 import { useVenues, useSearchVenues, useEventTypes } from "@/hooks/api";

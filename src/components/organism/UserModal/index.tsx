@@ -244,7 +244,7 @@ export const UserModal = ({
     footerLinkText,
     callBackFooter,
     error,
-    disabled = false
+    disabled: _disabled = false
 }: Props) => {
     const [isSubmitting, setIsSubmitting] = useState(false);
 
