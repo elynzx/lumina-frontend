@@ -31,6 +31,7 @@ export interface CreateReservationRequest {
     furnitureItems: FurnitureItemRequest[];
     paymentMethodId: number;
     approvalCode: string;
+    paymentReceiptUrl?: string;
 }
 
 export interface CreateReservationResponse {
@@ -59,6 +60,7 @@ export interface ReservationResponse {
     totalCost: number;
     status: ReservationStatus;
     createdAt: string; // LocalDateTime -> ISO 8601
+    paymentReceiptUrl?: string;
 
     venueId: number;
     venueName: string;

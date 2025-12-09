@@ -211,7 +211,7 @@ export default function CulqiPaymentModal({ isOpen, onClose, amount, onPaymentSu
             ) : (
               <div className="space-y-4">
                 <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 flex items-start gap-2">
-                  <Lock size={16} className="text-blue-600 mt-0.5" />
+                  <Lock size={16} className="text-blue mt-0.5" />
                   <p className="text-xs text-blue-800">
                     <strong>Recuerda activar tu tarjeta para compras por internet</strong>
                   </p>

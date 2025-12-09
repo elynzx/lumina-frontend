@@ -149,7 +149,7 @@ export const Payment = () => {
         navigate(`/producto/${venueId}`);
     };
 
-    const handlePaymentMethodSelect = async (method: { id: number; name: string }, code: string) => {
+    const handlePaymentMethodSelect = async (method: { id: number; name: string }, code: string, receiptUrl?: string) => {
         setSelectedPaymentMethod({
             id: method.id,
             name: method.name,
@@ -189,7 +189,8 @@ export const Payment = () => {
                 totalCost: totalAmount,
                 furnitureItems: furnitureItems,
                 paymentMethodId: method.id,
-                approvalCode: code
+                approvalCode: code,
+                paymentReceiptUrl: receiptUrl
             };
 
             const response = await createReservation(reservationData);
@@ -206,7 +207,7 @@ export const Payment = () => {
     if (venueLoading || furnitureLoading) {
         return (
             <div className="flex items-center justify-center min-h-screen">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue"></div>
             </div>
         );
     }
@@ -218,7 +219,7 @@ export const Payment = () => {
                     <p className="text-red-600 text-lg mb-4">{venueError || 'Local no encontrado'}</p>
                     <button
                         onClick={() => navigate('/catalogo')}
-                        className="px-6 py-2 bg-blue-600 text-white rounded-lg"
+                        className="px-6 py-2 bg-blue text-white rounded-lg"
                     >
                         Volver al catálogo
                     </button>

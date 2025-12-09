@@ -3,8 +3,13 @@ import { useAdminService } from '@/api/services/adminService';
 import type { Venue, VenueCreateRequest, District, EventType } from '@/api/interfaces/admin';
 import { showAlert } from '@/utils/alert';
 import { parseApiError } from '@/api/base';
+import { DistrictsView } from './DistrictsView';
+import { EventTypesView } from './EventTypesView';
+
+type SubView = 'venues' | 'districts' | 'event-types';
 
 export const VenuesView = () => {
+    const [activeSubView, setActiveSubView] = useState<SubView>('venues');
     const [venues, setVenues] = useState<Venue[]>([]);
     const [loading, setLoading] = useState(true);
     const [showModal, setShowModal] = useState(false);
@@ -54,6 +59,15 @@ export const VenuesView = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
+    // Búsqueda en tiempo real
+    const filteredVenues = venues.filter(venue => {
+        if (!searchTerm.trim()) return true;
+        const searchLower = searchTerm.toLowerCase();
+        return venue.venueName?.toLowerCase().includes(searchLower) ||
+               venue.address?.toLowerCase().includes(searchLower) ||
+               venue.districtName?.toLowerCase().includes(searchLower);
+    });
+
     const loadDistricts = async () => {
         try {
             const data = await adminService.getAllDistricts();
@@ -69,24 +83,6 @@ export const VenuesView = () => {
             setEventTypes(data);
         } catch (error) {
             console.error('Error al cargar tipos de evento:', error);
-        }
-    };
-
-    const handleSearch = async () => {
-        if (!searchTerm.trim()) {
-            loadVenues();
-            return;
-        }
-
-        try {
-            setLoading(true);
-            const data = await adminService.searchVenues(searchTerm);
-            const sortedData = data.sort((a, b) => a.venueId - b.venueId);
-            setVenues(sortedData);
-        } catch (error) {
-            console.error('Error en búsqueda:', error);
-        } finally {
-            setLoading(false);
         }
     };
 
@@ -218,44 +214,64 @@ export const VenuesView = () => {
     }
 
     return (
-        <div className="p-8">
-            <div className="mb-6">
-                <h1 className="text-3xl font-bold text-gray-800">Gestión de Locales</h1>
-                <p className="text-gray-600 mt-2">Administra los locales disponibles para eventos</p>
+        <div className="px-8 py-4">
+            {/* Sub-navegación */}
+            <div className="mb-6 flex gap-2 border-b border-gray-200">
+                <button
+                    onClick={() => setActiveSubView('venues')}
+                    className={`px-6 py-3 font-medium transition-all ${
+                        activeSubView === 'venues'
+                            ? 'text-[#FF5050] border-b-2 border-[#FF5050]'
+                            : 'text-gray-600 hover:text-gray-800'
+                    }`}
+                >
+                    Locales
+                </button>
+                <button
+                    onClick={() => setActiveSubView('districts')}
+                    className={`px-6 py-3 font-medium transition-all ${
+                        activeSubView === 'districts'
+                            ? 'text-[#FF5050] border-b-2 border-[#FF5050]'
+                            : 'text-gray-600 hover:text-gray-800'
+                    }`}
+                >
+                    Distritos
+                </button>
+                <button
+                    onClick={() => setActiveSubView('event-types')}
+                    className={`px-6 py-3 font-medium transition-all ${
+                        activeSubView === 'event-types'
+                            ? 'text-[#FF5050] border-b-2 border-[#FF5050]'
+                            : 'text-gray-600 hover:text-gray-800'
+                    }`}
+                >
+                    Tipos de Evento
+                </button>
             </div>
 
-            {/* Barra de búsqueda y botón agregar */}
-            <div className="mb-6 flex gap-4">
-                <div className="flex-1 flex gap-2">
-                    <input
-                        type="text"
-                        placeholder="Buscar local por nombre o dirección..."
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                        onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
-                        className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                    <button
-                        onClick={handleSearch}
-                        className="px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition"
-                    >
-                        Buscar
-                    </button>
-                    {searchTerm && (
-                        <button
-                            onClick={() => {
-                                setSearchTerm('');
-                                loadVenues();
-                            }}
-                            className="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition"
-                        >
-                            Limpiar
-                        </button>
-                    )}
-                </div>
+            {/* Renderizar vista según sub-navegación */}
+            {activeSubView === 'districts' && <DistrictsView />}
+            {activeSubView === 'event-types' && <EventTypesView />}
+            {activeSubView === 'venues' && (
+            <>
+            {/* Título y descripción */}
+            <div className="mb-6">
+                <h2 className="text-2xl font-bold text-gray-800">Locales para Eventos</h2>
+                <p className="text-gray-600 mt-1">Gestiona los locales disponibles para alquiler</p>
+            </div>
+
+            {/* Buscador y botón nuevo */}
+            <div className="mb-6 flex gap-3">
+                <input
+                    type="text"
+                    placeholder="Buscar local por nombre, dirección o distrito..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="w-96 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#4A61A3]"
+                />
                 <button
                     onClick={() => handleOpenModal()}
-                    className="px-6 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition"
+                    className="px-6 py-2 bg-[#4A61A3] text-white rounded-lg hover:bg-[#3d5087] transition font-semibold whitespace-nowrap"
                 >
                     + Nuevo Local
                 </button>
@@ -264,26 +280,26 @@ export const VenuesView = () => {
             {/* Tabla de locales */}
             <div className="bg-white rounded-lg shadow overflow-hidden">
                 <table className="min-w-full divide-y divide-gray-200">
-                    <thead className="bg-gray-50">
+                    <thead className="bg-[#4A61A3]">
                         <tr>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nombre</th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Dirección</th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Capacidad</th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Precio/Hora</th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Distrito</th>
-                            <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Acciones</th>
+                            <th className="px-6 py-4 text-left text-sm font-semibold text-white">ID</th>
+                            <th className="px-6 py-4 text-left text-sm font-semibold text-white">Nombre</th>
+                            <th className="px-6 py-4 text-left text-sm font-semibold text-white">Dirección</th>
+                            <th className="px-6 py-4 text-left text-sm font-semibold text-white">Capacidad</th>
+                            <th className="px-6 py-4 text-left text-sm font-semibold text-white">Precio/Hora</th>
+                            <th className="px-6 py-4 text-left text-sm font-semibold text-white">Distrito</th>
+                            <th className="px-6 py-4 text-center text-sm font-semibold text-white">Acciones</th>
                         </tr>
                     </thead>
                     <tbody className="bg-white divide-y divide-gray-200">
-                        {venues.length === 0 ? (
+                        {filteredVenues.length === 0 ? (
                             <tr>
                                 <td colSpan={7} className="px-6 py-4 text-center text-gray-500">
-                                    No se encontraron locales
+                                    {searchTerm ? 'No se encontraron resultados' : 'No hay locales registrados'}
                                 </td>
                             </tr>
                         ) : (
-                            venues.map((venue) => (
+                            filteredVenues.map((venue) => (
                                 <tr key={venue.venueId} className="hover:bg-gray-50">
                                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{venue.venueId}</td>
                                     <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900">{venue.venueName}</td>
@@ -291,19 +307,27 @@ export const VenuesView = () => {
                                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{venue.maxCapacity} personas</td>
                                     <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900">{formatCurrency(venue.pricePerHour)}</td>
                                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{venue.districtName}</td>
-                                    <td className="px-6 py-4 whitespace-nowrap text-center text-sm">
-                                        <button
-                                            onClick={() => handleOpenModal(venue)}
-                                            className="text-blue-600 hover:text-blue-900 mr-4"
-                                        >
-                                            Editar
-                                        </button>
-                                        <button
-                                            onClick={() => handleDelete(venue.venueId, venue.venueName)}
-                                            className="text-red-600 hover:text-red-900"
-                                        >
-                                            Eliminar
-                                        </button>
+                                    <td className="px-6 py-4 whitespace-nowrap text-center">
+                                        <div className="flex justify-center items-center gap-3">
+                                            <button
+                                                onClick={() => handleOpenModal(venue)}
+                                                className="p-1.5 hover:bg-blue-50 rounded-lg transition-colors"
+                                                title="Editar"
+                                            >
+                                                <svg className="w-5 h-5 text-[#4A61A3]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                                </svg>
+                                            </button>
+                                            <button
+                                                onClick={() => handleDelete(venue.venueId, venue.venueName)}
+                                                className="p-1.5 hover:bg-red-50 rounded-lg transition-colors"
+                                                title="Eliminar"
+                                            >
+                                                <svg className="w-5 h-5 text-[#FF5050]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                                </svg>
+                                            </button>
+                                        </div>
                                     </td>
                                 </tr>
                             ))
@@ -323,7 +347,7 @@ export const VenuesView = () => {
                     onClick={() => setShowModal(false)}
                 >
                     <div
-                        className="bg-white rounded-lg shadow-xl p-8 max-w-6xl w-full mx-4 max-h-[90vh] overflow-y-auto"
+                        className="bg-white rounded-lg shadow-xl p-16 max-w-6xl w-full mx-4 max-h-[90vh] overflow-y-auto"
                         onClick={(e) => e.stopPropagation()}
                     >
                         <div className="flex justify-between items-center mb-6">
@@ -475,12 +499,12 @@ export const VenuesView = () => {
                                     {/* Disponible */}
                                     <div>
                                         <div className="flex items-center">
-                                            <span className="text-sm font-medium text-gray-700 mr-3">Disponible</span>
+                                            <span className="text-sm font-medium text-gray-700 mr-3">Estado: Activo</span>
                                             <button
                                                 type="button"
                                                 onClick={() => setIsAvailable(!isAvailable)}
                                                 className={`relative inline-flex items-center w-14 h-8 rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${
-                                                    isAvailable ? 'bg-blue-600' : 'bg-gray-300'
+                                                    isAvailable ? 'bg-blue' : 'bg-gray-300'
                                                 }`}
                                             >
                                                 <span
@@ -513,7 +537,7 @@ export const VenuesView = () => {
                                                                 setSelectedEventTypes(selectedEventTypes.filter(id => id !== eventType.eventTypeId));
                                                             }
                                                         }}
-                                                        className="mr-3 h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                                                        className="mr-3 h-4 w-4 text-blue border-gray-300 rounded focus:ring-blue-500"
                                                     />
                                                     <span className="text-sm text-gray-700">{eventType.eventTypeName}</span>
                                                 </label>
@@ -589,14 +613,14 @@ export const VenuesView = () => {
 
                                     <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 h-fit">
                                         <div className="flex items-start">
-                                            <svg className="w-5 h-5 text-blue-600 mt-0.5 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <svg className="w-5 h-5 text-blue mt-0.5 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                                             </svg>
                                             <div className="flex-1">
                                                 <p className="text-sm font-semibold text-blue-900 mb-3">Cómo obtener las coordenadas y mapa:</p>
                                                 <ol className="list-decimal ml-4 space-y-2 text-xs text-blue-800">
                                                     <li>
-                                                        Ve a <a href="https://www.google.com/maps" target="_blank" rel="noopener noreferrer" className="text-blue-600 underline hover:text-blue-800 font-medium">Google Maps</a>
+                                                        Ve a <a href="https://www.google.com/maps" target="_blank" rel="noopener noreferrer" className="text-blue underline hover:text-blue-800 font-medium">Google Maps</a>
                                                     </li>
                                                     <li>Busca la dirección del local</li>
                                                     <li>Haz <strong>clic derecho</strong> en el marcador del local</li>
@@ -622,17 +646,17 @@ export const VenuesView = () => {
                                 </div>
                             </div>
 
-                            <div className="flex justify-end gap-3 mt-6">
+                            <div className="flex justify-end gap-6 mt-6">
                                 <button
                                     type="button"
                                     onClick={() => setShowModal(false)}
-                                    className="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition"
+                                    className="px-12 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition"
                                 >
                                     Cancelar
                                 </button>
                                 <button
                                     type="submit"
-                                    className="px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition"
+                                    className="px-12 py-3 bg-admin-primary text-white rounded-lg hover:bg-admin-primary-dark transition"
                                 >
                                     {editingVenue ? 'Actualizar' : 'Crear'}
                                 </button>
@@ -640,6 +664,8 @@ export const VenuesView = () => {
                         </form>
                     </div>
                 </div>
+            )}
+            </>
             )}
         </div>
     );

@@ -3,7 +3,7 @@ import { useAdminService } from '@/api/services/adminService';
 import type { Furniture, FurnitureCreateRequest } from '@/api/interfaces/admin';
 import { showAlert } from '@/utils/alert';
 
-export const FurnitureView = () => {
+export const AdditionalServicesView = () => {
     const [furniture, setFurniture] = useState<Furniture[]>([]);
     const [loading, setLoading] = useState(true);
     const [showModal, setShowModal] = useState(false);
@@ -19,11 +19,13 @@ export const FurnitureView = () => {
 
     const adminService = useAdminService();
 
-    // Filtrar solo mobiliarios (mesas y sillas)
-    const filterFurniture = (items: Furniture[]) => {
+    // Filtrar solo servicios adicionales (no contienen mesa/silla y no son "Servicios Obligatorios")
+    const filterAdditionalServices = (items: Furniture[]) => {
         return items.filter(item => {
             const name = item.furnitureName.toLowerCase();
-            return name.includes('mesa') || name.includes('silla');
+            const isFurniture = name.includes('mesa') || name.includes('silla');
+            const isMandatory = name === 'servicios obligatorios';
+            return !isFurniture && !isMandatory;
         });
     };
 
@@ -31,15 +33,14 @@ export const FurnitureView = () => {
         try {
             setLoading(true);
             const data = await adminService.getAllFurniture();
-            const filtered = filterFurniture(data);
-            // Ordenar por ID ascendente
+            const filtered = filterAdditionalServices(data);
             const sortedData = filtered.sort((a, b) => a.furnitureId - b.furnitureId);
             setFurniture(sortedData);
         } catch (error) {
-            console.error('Error al cargar mobiliario:', error);
+            console.error('Error al cargar servicios adicionales:', error);
             await showAlert({
                 title: 'Error',
-                text: 'No se pudo cargar el mobiliario',
+                text: 'No se pudo cargar los servicios adicionales',
                 icon: 'error'
             });
         } finally {
@@ -85,10 +86,9 @@ export const FurnitureView = () => {
     };
 
     const handleDelete = async (id: number, name: string) => {
-        // Mostrar confirmación
         const confirmed = await showAlert({
             title: '¿Estás seguro?',
-            text: `Se eliminará el mobiliario "${name}". Esta acción no se puede deshacer.`,
+            text: `Se eliminará el servicio "${name}". Esta acción no se puede deshacer.`,
             icon: 'warning',
             showCancelButton: true,
             confirmButtonText: 'Sí, eliminar',
@@ -103,7 +103,7 @@ export const FurnitureView = () => {
             await adminService.deleteFurniture(id);
             await showAlert({
                 title: 'Eliminado',
-                text: `El mobiliario "${name}" ha sido eliminado correctamente`,
+                text: `El servicio "${name}" ha sido eliminado correctamente`,
                 icon: 'success'
             });
             loadFurniture();
@@ -111,7 +111,7 @@ export const FurnitureView = () => {
             console.error('Error al eliminar:', error);
             await showAlert({
                 title: 'Error',
-                text: 'No se pudo eliminar el mobiliario. Puede que tenga reservas asociadas.',
+                text: 'No se pudo eliminar el servicio. Puede que tenga reservas asociadas.',
                 icon: 'error'
             });
         }
@@ -124,14 +124,14 @@ export const FurnitureView = () => {
                 await adminService.updateFurniture(editingFurniture.furnitureId, formData);
                 await showAlert({
                     title: 'Actualizado',
-                    text: 'Mobiliario actualizado correctamente',
+                    text: 'Servicio adicional actualizado correctamente',
                     icon: 'success'
                 });
             } else {
                 await adminService.createFurniture(formData);
                 await showAlert({
                     title: 'Creado',
-                    text: 'Mobiliario creado correctamente',
+                    text: 'Servicio adicional creado correctamente',
                     icon: 'success'
                 });
             }
@@ -141,7 +141,7 @@ export const FurnitureView = () => {
             console.error('Error al guardar:', error);
             await showAlert({
                 title: 'Error',
-                text: 'No se pudo guardar el mobiliario',
+                text: 'No se pudo guardar el servicio adicional',
                 icon: 'error'
             });
         }
@@ -163,18 +163,18 @@ export const FurnitureView = () => {
     }
 
     return (
-        <div className="space-y-6 px-8 py-4">
+        <div className="space-y-6">
             {/* Título y descripción */}
             <div>
-                <h2 className="text-2xl font-bold text-gray-800">Mobiliario</h2>
-                <p className="text-gray-600 mt-1">Gestiona mesas y sillas disponibles para alquiler</p>
+                <h2 className="text-2xl font-bold text-gray-800">Servicios Adicionales</h2>
+                <p className="text-gray-600 mt-1">Gestiona servicios extra como decoración, catering y más</p>
             </div>
 
             {/* Buscador y botón nuevo */}
             <div className="flex gap-3">
                 <input
                     type="text"
-                    placeholder="Buscar mobiliario..."
+                    placeholder="Buscar servicio adicional..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                     className="w-80 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#4A61A3]"
@@ -183,7 +183,7 @@ export const FurnitureView = () => {
                     onClick={handleCreate}
                     className="px-6 py-2 bg-[#4A61A3] text-white rounded-lg hover:bg-[#3d5087] transition font-semibold whitespace-nowrap"
                 >
-                    + Nuevo Mobiliario
+                    + Nuevo Servicio Adicional
                 </button>
             </div>
 
@@ -196,7 +196,6 @@ export const FurnitureView = () => {
                             <th className="px-6 py-4 text-left text-sm font-semibold text-white">Nombre</th>
                             <th className="px-6 py-4 text-left text-sm font-semibold text-white">Descripción</th>
                             <th className="px-6 py-4 text-left text-sm font-semibold text-white">Precio Unitario</th>
-                            <th className="px-6 py-4 text-left text-sm font-semibold text-white">Stock Disponible</th>
                             <th className="px-6 py-4 text-center text-sm font-semibold text-white">Acciones</th>
                         </tr>
                     </thead>
@@ -204,7 +203,7 @@ export const FurnitureView = () => {
                         {filteredFurniture.length === 0 ? (
                             <tr>
                                 <td colSpan={6} className="px-6 py-8 text-center text-gray-500">
-                                    {searchTerm ? 'No se encontraron resultados' : 'No hay mobiliario registrado'}
+                                    {searchTerm ? 'No se encontraron resultados' : 'No hay servicios adicionales registrados'}
                                 </td>
                             </tr>
                         ) : (
@@ -214,7 +213,6 @@ export const FurnitureView = () => {
                                     <td className="px-6 py-4 text-sm font-semibold text-gray-900">{item.furnitureName}</td>
                                     <td className="px-6 py-4 text-sm text-gray-900">{item.description}</td>
                                     <td className="px-6 py-4 text-sm text-gray-900">{formatPrice(item.unitPrice)}</td>
-                                    <td className="px-6 py-4 text-sm text-gray-900">{item.totalStock}</td>
                                     <td className="px-6 py-4 text-center">
                                         <div className="flex justify-center items-center gap-3">
                                             <button
@@ -255,12 +253,12 @@ export const FurnitureView = () => {
                     onClick={() => setShowModal(false)}
                 >
                     <div 
-                        className="bg-white rounded-lg shadow-xl p-8 max-w-3xl w-full mx-4"
+                        className="bg-white rounded-lg shadow-xl p-12 max-w-3xl w-full mx-4"
                         onClick={(e) => e.stopPropagation()}
                     >
                         <div className="flex justify-between items-center mb-6">
                             <h2 className="text-2xl font-bold text-gray-800">
-                                {editingFurniture ? 'Editar Mobiliario' : 'Nuevo Mobiliario'}
+                                {editingFurniture ? 'Editar Servicio Adicional' : 'Nuevo Servicio Adicional'}
                             </h2>
                             <button
                                 onClick={() => setShowModal(false)}
@@ -273,12 +271,11 @@ export const FurnitureView = () => {
                         </div>
                         <form onSubmit={handleSubmit}>
                             <div className="grid grid-cols-2 gap-6">
-                                {/* COLUMNA IZQUIERDA: Foto y datos básicos */}
+                                {/* COLUMNA IZQUIERDA: Foto */}
                                 <div className="space-y-4">
-                                    {/* Área de Foto */}
                                     <div>
                                         <label className="block text-sm font-medium text-gray-700 mb-3">
-                                            Foto del Mobiliario
+                                            Foto del Servicio
                                         </label>
                                         <div className="border-2 border-dashed border-gray-300 rounded-lg p-3 aspect-square flex flex-col items-center justify-center bg-gray-50 hover:bg-gray-100 transition">
                                             {formData.photoUrl ? (
@@ -318,14 +315,14 @@ export const FurnitureView = () => {
                                 <div className="space-y-4">
                                     <div>
                                         <label className="block text-sm font-medium text-gray-700 mb-2">
-                                            Nombre del Mobiliario *
+                                            Nombre del Servicio *
                                         </label>
                                         <input
                                             type="text"
                                             value={formData.furnitureName}
                                             onChange={(e) => setFormData({ ...formData, furnitureName: e.target.value })}
                                             className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
-                                            placeholder="Ej: Sillas"
+                                            placeholder="Ej: DJ"
                                             required
                                             autoFocus
                                         />
@@ -338,7 +335,7 @@ export const FurnitureView = () => {
                                             value={formData.description}
                                             onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                                             className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
-                                            placeholder="Ej: Sillas de plástico"
+                                            placeholder="Ej: Servicio de DJ profesional"
                                             required
                                             rows={3}
                                         />
@@ -358,23 +355,9 @@ export const FurnitureView = () => {
                                             required
                                         />
                                     </div>
-                                    <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                                            Stock Disponible *
-                                        </label>
-                                        <input
-                                            type="number"
-                                            min="0"
-                                            value={formData.totalStock}
-                                            onChange={(e) => setFormData({ ...formData, totalStock: parseInt(e.target.value) || 0 })}
-                                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
-                                            placeholder="0"
-                                            required
-                                        />
-                                    </div>
                                 </div>
                             </div>
-                            <div className="flex gap-4 pt-6 mt-6">
+                            <div className="flex gap-4 pt-6 mt-6 border-t">
                                 <button
                                     type="button"
                                     onClick={() => setShowModal(false)}
@@ -396,4 +379,3 @@ export const FurnitureView = () => {
         </div>
     );
 };
-

@@ -40,7 +40,7 @@ export const AdminLogin = () => {
     return (
         <div className="min-h-screen grid grid-cols-2">
             {/* Lado Izquierdo - Logo */}
-            <div className="bg-gradient-to-br from-purple-600 via-blue-600 to-indigo-700 flex items-center justify-center">
+            <div className="bg-gradient-to-br from-purple-600 via-blue to-indigo-700 flex items-center justify-center">
                 <div className="text-center">
                     <img 
                         src={logomark} 

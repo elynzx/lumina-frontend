@@ -1,22 +1,22 @@
 import { apiClient } from '@/api/base';
 import type { 
-    AdminVenue as Venue,
+    Venue,
     VenueCreateRequest, 
     District, 
     DistrictCreateRequest, 
     EventType, 
     EventTypeCreateRequest, 
-    AdminFurniture as Furniture,
-    CreateFurnitureRequest as FurnitureCreateRequest,
+    Furniture,
+    FurnitureCreateRequest,
     Customer,
-    AdminReservation as Reservation,
+    Reservation,
     DashboardStats
-} from '@/api/interfaces';
+} from '@/api/interfaces/admin';
 
 export const useAdminService = () => {
     // ==================== DASHBOARD ====================
-    const getDashboardStats = async (): Promise<DashboardStats> => {
-        const response = await apiClient.get<any>('/admin/dashboard/stats');
+    const getDashboardStats = async (period: 'week' | 'month' | 'year' = 'month'): Promise<DashboardStats> => {
+        const response = await apiClient.get<any>(`/admin/dashboard/stats?period=${period}`);
         return response.data;
     };
 
@@ -147,7 +147,7 @@ export const useAdminService = () => {
             description: furniture.description,
             unitPrice: furniture.unitPrice,
             totalStock: furniture.totalStock,
-            photoUrl: furniture.photoUrl
+            photoUrl: furniture.photoUrl || ''
         };
         const response = await apiClient.post<any>('/admin/furniture', requestBody);
         const item: Furniture = response.data;
@@ -169,7 +169,7 @@ export const useAdminService = () => {
             description: furniture.description,
             unitPrice: furniture.unitPrice,
             totalStock: furniture.totalStock,
-            photoUrl: furniture.photoUrl
+            photoUrl: furniture.photoUrl || ''
         };
         const response = await apiClient.put<any>(`/admin/furniture/${id}`, requestBody);
         const item: Furniture = response.data;

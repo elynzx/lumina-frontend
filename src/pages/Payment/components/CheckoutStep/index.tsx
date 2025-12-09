@@ -4,6 +4,7 @@ import { CreditCard, Landmark } from "lucide-react";
 import pagoEfectivoIcon from "@/assets/icons/pagoEfectivo.svg";
 import CulqiPaymentModal from "./CulqiPaymentModal";
 import { PagoEfectivoModal } from "./PagoEfectivoModal";
+import { useCloudinary } from "@/hooks/useCloudinary";
 
 interface PaymentMethodDetails {
   id: number;
@@ -12,7 +13,7 @@ interface PaymentMethodDetails {
 }
 
 interface CheckoutStepProps {
-  onPaymentMethodSelect?: (method: { id: number; name: string }, approvalCode: string) => void;
+  onPaymentMethodSelect?: (method: { id: number; name: string }, approvalCode: string, receiptUrl?: string) => void;
   totalAmount?: number;
 }
 
@@ -40,6 +41,7 @@ export const CheckoutStep = ({ onPaymentMethodSelect, totalAmount = 0 }: Checkou
   const [showCulqiModal, setShowCulqiModal] = useState(false);
   const [showPagoEfectivoModal, setShowPagoEfectivoModal] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
+  const { uploadImage, uploading, error: uploadError } = useCloudinary();
 
   const paymentMethods = data.metodosPago.filter(m =>
     m.idMetodoPago === 1 || m.idMetodoPago === 2 || m.idMetodoPago === 3
@@ -51,7 +53,7 @@ export const CheckoutStep = ({ onPaymentMethodSelect, totalAmount = 0 }: Checkou
     return `APR-${timestamp}-${random}`;
   };
 
-  const handleConfirmPayment = (methodId: number) => {
+  const handleConfirmPayment = async (methodId: number) => {
     if (methodId === 1) {
       setShowCulqiModal(true);
       return;
@@ -68,15 +70,33 @@ export const CheckoutStep = ({ onPaymentMethodSelect, totalAmount = 0 }: Checkou
     }
 
     setIsProcessing(true);
-    setTimeout(() => {
+    
+    try {
+      let receiptUrl = undefined;
+      
+      // Si es transferencia bancaria, subir el comprobante a Cloudinary
+      if (methodId === 2 && voucher) {
+        receiptUrl = await uploadImage(voucher);
+        if (!receiptUrl) {
+          alert(uploadError || "Error al subir el comprobante. Por favor, inténtalo de nuevo.");
+          setIsProcessing(false);
+          return;
+        }
+      }
+
       const generatedCode = generateApprovalCode();
       const selectedPaymentMethod = paymentMethods.find(m => m.idMetodoPago === methodId);
       onPaymentMethodSelect?.(
         { id: methodId, name: selectedPaymentMethod?.nombreMetodo || "" },
-        generatedCode
+        generatedCode,
+        receiptUrl
       );
+    } catch (error) {
+      console.error('Error en el pago:', error);
+      alert("Ocurrió un error al procesar el pago. Por favor, inténtalo de nuevo.");
+    } finally {
       setIsProcessing(false);
-    }, 1500);
+    }
   };
 
   const handleCulqiSuccess = (approvalCode: string) => {
@@ -240,12 +260,28 @@ export const CheckoutStep = ({ onPaymentMethodSelect, totalAmount = 0 }: Checkou
                       </p>
                     </div>
 
+                    {uploadError && (
+                      <div className="bg-red-50 border border-red-200 rounded-lg p-3">
+                        <p className="text-xs text-red-800">{uploadError}</p>
+                      </div>
+                    )}
+
                     <button
                       onClick={() => handleConfirmPayment(2)}
-                      disabled={!voucher || isProcessing}
-                      className="w-full py-3 bg-blue text-white rounded-lg font-semibold text-sm disabled:opacity-50 disabled:cursor-not-allowed hover:bg-blue/90 transition-colors"
+                      disabled={!voucher || isProcessing || uploading}
+                      className="w-full py-3 bg-blue text-white rounded-lg font-semibold text-sm disabled:opacity-50 disabled:cursor-not-allowed hover:bg-blue/90 transition-colors flex items-center justify-center gap-2"
                     >
-                      {getButtonText(2)}
+                      {uploading ? (
+                        <>
+                          <svg className="animate-spin h-5 w-5 text-white" fill="none" viewBox="0 0 24 24">
+                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                          </svg>
+                          Subiendo comprobante...
+                        </>
+                      ) : (
+                        getButtonText(2)
+                      )}
                     </button>
                   </div>
                 </div>

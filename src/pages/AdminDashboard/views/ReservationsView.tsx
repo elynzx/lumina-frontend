@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useAdminService } from '@/api/services/adminService';
 import type { Reservation } from '@/api/interfaces/admin';
 import { showAlert } from '@/utils/alert';
+import { ReservationDetailModal } from './ReservationDetailModal';
 
 type ReservationStatus = 'PENDING' | 'CONFIRMED' | 'CANCELLED';
 
@@ -17,6 +18,8 @@ export const ReservationsView = () => {
     const [filterStatus, setFilterStatus] = useState<ReservationStatus | 'ALL'>('ALL');
     const [selectedReservation, setSelectedReservation] = useState<Reservation | null>(null);
     const [showDetailModal, setShowDetailModal] = useState(false);
+    const [showReceiptModal, setShowReceiptModal] = useState(false);
+    const [selectedReceiptUrl, setSelectedReceiptUrl] = useState<string | null>(null);
 
     const adminService = useAdminService();
 
@@ -24,7 +27,6 @@ export const ReservationsView = () => {
         try {
             setLoading(true);
             const data = await adminService.getAllReservations();
-            // Ordenar por ID ascendente (1, 2, 3...)
             const sortedData = data.sort((a, b) => a.reservationId - b.reservationId);
             setReservations(sortedData);
         } catch (error) {
@@ -87,7 +89,7 @@ export const ReservationsView = () => {
     };
 
     const formatTime = (timeString: string) => {
-        return timeString.substring(0, 5); // HH:mm
+        return timeString.substring(0, 5);
     };
 
     const formatCurrency = (amount: number) => {
@@ -97,6 +99,11 @@ export const ReservationsView = () => {
     const handleViewDetail = (reservation: Reservation) => {
         setSelectedReservation(reservation);
         setShowDetailModal(true);
+    };
+
+    const handleViewReceipt = (receiptUrl: string) => {
+        setSelectedReceiptUrl(receiptUrl);
+        setShowReceiptModal(true);
     };
 
     const filteredReservations = filterStatus === 'ALL' 
@@ -120,7 +127,7 @@ export const ReservationsView = () => {
                         onClick={() => setFilterStatus('ALL')}
                         className={`px-4 py-2 rounded-lg font-medium transition ${
                             filterStatus === 'ALL'
-                                ? 'bg-blue-500 text-white'
+                                ? 'bg-admin-primary text-white'
                                 : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
                         }`}
                     >
@@ -140,7 +147,7 @@ export const ReservationsView = () => {
                         onClick={() => setFilterStatus('CONFIRMED')}
                         className={`px-4 py-2 rounded-lg font-medium transition ${
                             filterStatus === 'CONFIRMED'
-                                ? 'bg-green-500 text-white'
+                                ? 'bg-green-700 text-white'
                                 : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
                         }`}
                     >
@@ -150,7 +157,7 @@ export const ReservationsView = () => {
                         onClick={() => setFilterStatus('CANCELLED')}
                         className={`px-4 py-2 rounded-lg font-medium transition ${
                             filterStatus === 'CANCELLED'
-                                ? 'bg-red-500 text-white'
+                                ? 'bg-admin-secondary text-white'
                                 : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
                         }`}
                     >
@@ -171,19 +178,19 @@ export const ReservationsView = () => {
             {/* Tabla */}
             <div className="bg-white rounded-lg shadow overflow-hidden">
                 <div className="overflow-x-auto">
-                    <table className="w-full">
-                        <thead className="bg-gray-400 text-white">
+                    <table className="min-w-full divide-y divide-gray-200">
+                        <thead className="bg-[#4A61A3]">
                             <tr>
-                                <th className="px-4 py-4 text-left text-sm font-semibold">ID</th>
-                                <th className="px-4 py-4 text-left text-sm font-semibold">Fecha</th>
-                                <th className="px-4 py-4 text-left text-sm font-semibold">Local</th>
-                                <th className="px-4 py-4 text-left text-sm font-semibold">Cliente</th>
-                                <th className="px-4 py-4 text-left text-sm font-semibold">Tipo Evento</th>
-                                <th className="px-4 py-4 text-left text-sm font-semibold">Horario</th>
-                                <th className="px-4 py-4 text-left text-sm font-semibold">Invitados</th>
-                                <th className="px-4 py-4 text-left text-sm font-semibold">Total</th>
-                                <th className="px-4 py-4 text-left text-sm font-semibold">Estado</th>
-                                <th className="px-4 py-4 text-center text-sm font-semibold">Acciones</th>
+                                <th className="px-4 py-4 text-left text-sm font-semibold text-white">ID</th>
+                                <th className="px-4 py-4 text-left text-sm font-semibold text-white">Fecha</th>
+                                <th className="px-4 py-4 text-left text-sm font-semibold text-white">Local</th>
+                                <th className="px-4 py-4 text-left text-sm font-semibold text-white">Cliente</th>
+                                <th className="px-4 py-4 text-left text-sm font-semibold text-white">Tipo Evento</th>
+                                <th className="px-4 py-4 text-left text-sm font-semibold text-white">Horario</th>
+                                <th className="px-4 py-4 text-left text-sm font-semibold text-white">Invitados</th>
+                                <th className="px-4 py-4 text-left text-sm font-semibold text-white">Total</th>
+                                <th className="px-4 py-4 text-left text-sm font-semibold text-white">Estado</th>
+                                <th className="px-4 py-4 text-center text-sm font-semibold text-white">Acciones</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-gray-200">
@@ -224,44 +231,17 @@ export const ReservationsView = () => {
                                             </span>
                                         </td>
                                         <td className="px-4 py-4">
-                                            <div className="flex justify-center gap-2 flex-wrap">
+                                            <div className="flex justify-center">
                                                 <button
                                                     onClick={() => handleViewDetail(reservation)}
-                                                    className="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 transition text-xs flex items-center gap-1"
-                                                    title="Ver detalle"
+                                                    className="p-1.5 hover:bg-blue-50 rounded-lg transition-colors"
+                                                    title="Ver detalle completo"
                                                 >
-                                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                                    <svg className="w-5 h-5 text-[#4A61A3]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
                                                     </svg>
-                                                    Detalle
                                                 </button>
-                                                {reservation.status === 'PENDING' && (
-                                                    <>
-                                                        <button
-                                                            onClick={() => handleChangeStatus(reservation.reservationId, 'CONFIRMED')}
-                                                            className="px-3 py-1 bg-green-500 text-white rounded hover:bg-green-600 transition text-xs"
-                                                            title="Confirmar"
-                                                        >
-                                                            ✓ Confirmar
-                                                        </button>
-                                                        <button
-                                                            onClick={() => handleChangeStatus(reservation.reservationId, 'CANCELLED')}
-                                                            className="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 transition text-xs"
-                                                            title="Cancelar"
-                                                        >
-                                                            ✗ Cancelar
-                                                        </button>
-                                                    </>
-                                                )}
-                                                {reservation.status === 'CONFIRMED' && (
-                                                    <button
-                                                        onClick={() => handleChangeStatus(reservation.reservationId, 'CANCELLED')}
-                                                        className="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 transition text-xs"
-                                                        title="Cancelar"
-                                                    >
-                                                        ✗ Cancelar
-                                                    </button>
-                                                )}
                                             </div>
                                         </td>
                                     </tr>
@@ -274,30 +254,32 @@ export const ReservationsView = () => {
 
             {/* Modal de Detalle */}
             {showDetailModal && selectedReservation && (
+                <ReservationDetailModal 
+                    reservation={selectedReservation}
+                    onClose={() => setShowDetailModal(false)}
+                    onStatusChange={handleChangeStatus}
+                    onViewReceipt={handleViewReceipt}
+                />
+            )}
+
+            {/* Modal para Ver Comprobante */}
+            {showReceiptModal && selectedReceiptUrl && (
                 <div 
-                    className="fixed inset-0 flex items-center justify-center overflow-y-auto"
+                    className="fixed inset-0 flex items-center justify-center p-4"
                     style={{ 
-                        zIndex: 9999,
-                        backgroundColor: 'rgba(0, 0, 0, 0.5)'
+                        zIndex: 10000,
+                        backgroundColor: 'rgba(0, 0, 0, 0.75)'
                     }}
-                    onClick={() => setShowDetailModal(false)}
+                    onClick={() => setShowReceiptModal(false)}
                 >
                     <div 
-                        className="bg-white rounded-lg shadow-xl p-8 max-w-3xl w-full mx-4 my-8"
+                        className="bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] overflow-auto"
                         onClick={(e) => e.stopPropagation()}
                     >
-                        {/* Header */}
-                        <div className="flex justify-between items-start mb-6">
-                            <div>
-                                <h2 className="text-2xl font-bold text-gray-800">
-                                    Detalle de Reserva #{selectedReservation.reservationId}
-                                </h2>
-                                <p className="text-sm text-gray-500 mt-1">
-                                    Creada el {formatDate(selectedReservation.createdAt)}
-                                </p>
-                            </div>
+                        <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex justify-between items-center">
+                            <h3 className="text-lg font-semibold text-gray-800">Comprobante de Pago</h3>
                             <button
-                                onClick={() => setShowDetailModal(false)}
+                                onClick={() => setShowReceiptModal(false)}
                                 className="text-gray-400 hover:text-gray-600 transition"
                             >
                                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -305,154 +287,28 @@ export const ReservationsView = () => {
                                 </svg>
                             </button>
                         </div>
-
-                        {/* Estado */}
-                        <div className="mb-6">
-                            <span className={`px-4 py-2 text-sm font-semibold rounded-full ${statusConfig[selectedReservation.status as ReservationStatus].color}`}>
-                                {statusConfig[selectedReservation.status as ReservationStatus].label}
-                            </span>
-                        </div>
-
-                        {/* Información en Grid */}
-                        <div className="grid grid-cols-2 gap-6 mb-6">
-                            {/* Columna Izquierda */}
-                            <div className="space-y-4">
-                                <div>
-                                    <h3 className="text-sm font-semibold text-gray-500 mb-1">Local</h3>
-                                    <p className="text-base font-semibold text-gray-900">{selectedReservation.venueName}</p>
-                                    <p className="text-sm text-gray-600">{selectedReservation.venueAddress}</p>
-                                </div>
-
-                                <div>
-                                    <h3 className="text-sm font-semibold text-gray-500 mb-1">Tipo de Evento</h3>
-                                    <p className="text-base text-gray-900">{selectedReservation.eventTypeName}</p>
-                                </div>
-
-                                <div>
-                                    <h3 className="text-sm font-semibold text-gray-500 mb-1">Fecha del Evento</h3>
-                                    <p className="text-base text-gray-900">{formatDate(selectedReservation.reservationDate)}</p>
-                                </div>
-
-                                <div>
-                                    <h3 className="text-sm font-semibold text-gray-500 mb-1">Horario</h3>
-                                    <p className="text-base text-gray-900">
-                                        {formatTime(selectedReservation.startTime)} - {formatTime(selectedReservation.endTime)}
-                                    </p>
-                                </div>
-
-                                <div>
-                                    <h3 className="text-sm font-semibold text-gray-500 mb-1">Cantidad de Invitados</h3>
-                                    <p className="text-base text-gray-900">{selectedReservation.guestCount} personas</p>
-                                </div>
-                            </div>
-
-                            {/* Columna Derecha */}
-                            <div className="space-y-4">
-                                <div>
-                                    <h3 className="text-sm font-semibold text-gray-500 mb-1">Cliente</h3>
-                                    <p className="text-base font-semibold text-gray-900">{selectedReservation.customerName}</p>
-                                </div>
-
-                                <div>
-                                    <h3 className="text-sm font-semibold text-gray-500 mb-1">Email</h3>
-                                    <p className="text-base text-gray-900">{selectedReservation.customerEmail}</p>
-                                </div>
-
-                                <div>
-                                    <h3 className="text-sm font-semibold text-gray-500 mb-1">Teléfono</h3>
-                                    <p className="text-base text-gray-900">{selectedReservation.customerPhone}</p>
-                                </div>
-
-                                <div className="pt-4 border-t border-gray-200">
-                                    <h3 className="text-sm font-semibold text-gray-500 mb-2">Costos</h3>
-                                    <div className="space-y-1">
-                                        <div className="flex justify-between text-sm">
-                                            <span className="text-gray-600">Costo del Local:</span>
-                                            <span className="font-semibold">{formatCurrency(selectedReservation.venueCost)}</span>
-                                        </div>
-                                        <div className="flex justify-between text-sm">
-                                            <span className="text-gray-600">Costo de Mobiliario:</span>
-                                            <span className="font-semibold">{formatCurrency(selectedReservation.furnitureCost)}</span>
-                                        </div>
-                                        <div className="flex justify-between text-base font-bold pt-2 border-t border-gray-200">
-                                            <span>Total:</span>
-                                            <span className="text-blue-600">{formatCurrency(selectedReservation.totalCost)}</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* Mobiliario (si existe) */}
-                        {selectedReservation.furnitureItems && selectedReservation.furnitureItems.length > 0 && (
-                            <div className="mb-6">
-                                <h3 className="text-lg font-semibold text-gray-800 mb-3">Mobiliario Solicitado</h3>
-                                <div className="bg-gray-50 rounded-lg p-4">
-                                    <table className="w-full">
-                                        <thead>
-                                            <tr className="text-left text-sm text-gray-600">
-                                                <th className="pb-2">Artículo</th>
-                                                <th className="pb-2 text-center">Cantidad</th>
-                                                <th className="pb-2 text-right">Precio Unit.</th>
-                                                <th className="pb-2 text-right">Subtotal</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody className="text-sm">
-                                            {selectedReservation.furnitureItems.map((item, index) => (
-                                                <tr key={index} className="border-t border-gray-200">
-                                                    <td className="py-2">{item.furnitureName}</td>
-                                                    <td className="py-2 text-center">{item.quantity}</td>
-                                                    <td className="py-2 text-right">{formatCurrency(item.unitPrice)}</td>
-                                                    <td className="py-2 text-right font-semibold">{formatCurrency(item.subtotal)}</td>
-                                                </tr>
-                                            ))}
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        )}
-
-                        {/* Botones de Acción */}
-                        <div className="flex justify-end gap-3 pt-4 border-t border-gray-200">
-                            <button
-                                onClick={() => setShowDetailModal(false)}
-                                className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition"
-                            >
-                                Cerrar
-                            </button>
-                            {selectedReservation.status === 'PENDING' && (
-                                <>
-                                    <button
-                                        onClick={() => {
-                                            setShowDetailModal(false);
-                                            handleChangeStatus(selectedReservation.reservationId, 'CONFIRMED');
-                                        }}
-                                        className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition"
-                                    >
-                                        ✓ Confirmar Reserva
-                                    </button>
-                                    <button
-                                        onClick={() => {
-                                            setShowDetailModal(false);
-                                            handleChangeStatus(selectedReservation.reservationId, 'CANCELLED');
-                                        }}
-                                        className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition"
-                                    >
-                                        ✗ Cancelar Reserva
-                                    </button>
-                                </>
-                            )}
-                            {selectedReservation.status === 'CONFIRMED' && (
-                                <button
-                                    onClick={() => {
-                                        setShowDetailModal(false);
-                                        handleChangeStatus(selectedReservation.reservationId, 'CANCELLED');
-                                    }}
-                                    className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition"
+                        <div className="p-6">
+                            <img 
+                                src={selectedReceiptUrl} 
+                                alt="Comprobante de pago" 
+                                className="w-full h-auto rounded-lg shadow-md"
+                            />
+                            <div className="mt-4 flex justify-end gap-3">
+                                <a
+                                    href={selectedReceiptUrl}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="px-4 py-2 bg-admin-primary text-white rounded-lg hover:bg-admin-secondary transition"
                                 >
-                                    ✗ Cancelar Reserva
+                                    Abrir en nueva pestaña
+                                </a>
+                                <button
+                                    onClick={() => setShowReceiptModal(false)}
+                                    className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition"
+                                >
+                                    Cerrar
                                 </button>
-                            )}
+                            </div>
                         </div>
                     </div>
                 </div>

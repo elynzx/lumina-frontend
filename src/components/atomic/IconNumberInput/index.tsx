@@ -16,7 +16,7 @@ export const IconNumberInput = ({
 
   return (
     <div className="relative">
-      <div className="flex items-center border rounded-md bg-white border-blue text-blue focus:border-blue-600">
+      <div className="flex items-center border rounded-md bg-white border-blue text-blue focus:border-blue">
         {icon && (
           <img 
             src={icon} 

@@ -40,35 +40,13 @@ export const EventTypesView = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-    const handleSearch = async () => {
-        if (!searchTerm.trim()) {
-            loadEventTypes();
-            return;
-        }
-        try {
-            setLoading(true);
-            const data = await adminService.searchEventTypes(searchTerm);
-            // Ordenar por ID ascendente
-            const sortedData = data.sort((a, b) => a.eventTypeId - b.eventTypeId);
-            setEventTypes(sortedData);
-        } catch (error) {
-            console.error('Error en búsqueda del backend, usando búsqueda local:', error);
-            // Fallback: búsqueda local si el endpoint falla
-            try {
-                const allEventTypes = await adminService.getAllEventTypes();
-                const searchLower = searchTerm.toLowerCase().trim();
-                const filtered = allEventTypes.filter(item => 
-                    item.eventTypeName?.toLowerCase().includes(searchLower)
-                );
-                const sortedData = filtered.sort((a, b) => a.eventTypeId - b.eventTypeId);
-                setEventTypes(sortedData);
-            } catch (fallbackError) {
-                console.error('Error en búsqueda local:', fallbackError);
-            }
-        } finally {
-            setLoading(false);
-        }
-    };
+    // Búsqueda en tiempo real
+    const filteredEventTypes = eventTypes.filter(eventType => {
+        if (!searchTerm.trim()) return true;
+        const searchLower = searchTerm.toLowerCase();
+        return eventType.eventTypeName?.toLowerCase().includes(searchLower) ||
+               eventType.description?.toLowerCase().includes(searchLower);
+    });
 
     const handleCreate = () => {
         setEditingEventType(null);
@@ -158,33 +136,24 @@ export const EventTypesView = () => {
 
     return (
         <div className="space-y-6">
-            {/* Header con búsqueda y botón crear */}
-            <div className="flex justify-between items-center">
-                <div className="flex gap-2">
-                    <input
-                        type="text"
-                        placeholder="Buscar tipo de evento..."
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                        onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
-                        className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                    <button
-                        onClick={handleSearch}
-                        className="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition"
-                    >
-                        Buscar
-                    </button>
-                    <button
-                        onClick={loadEventTypes}
-                        className="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition"
-                    >
-                        Limpiar
-                    </button>
-                </div>
+            {/* Título y descripción */}
+            <div>
+                <h2 className="text-2xl font-bold text-gray-800">Tipos de Evento</h2>
+                <p className="text-gray-600 mt-1">Gestiona los tipos de eventos disponibles para los locales</p>
+            </div>
+
+            {/* Buscador y botón nuevo */}
+            <div className="flex gap-3">
+                <input
+                    type="text"
+                    placeholder="Buscar tipo de evento..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="w-80 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#4A61A3]"
+                />
                 <button
                     onClick={handleCreate}
-                    className="px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition font-semibold"
+                    className="px-6 py-2 bg-[#4A61A3] text-white rounded-lg hover:bg-[#3d5087] transition font-semibold whitespace-nowrap"
                 >
                     + Nuevo Tipo de Evento
                 </button>
@@ -192,41 +161,47 @@ export const EventTypesView = () => {
 
             {/* Tabla */}
             <div className="bg-white rounded-lg shadow overflow-hidden">
-                <table className="w-full">
-                    <thead className="bg-gray-400 text-white">
+                <table className="min-w-full divide-y divide-gray-200">
+                    <thead className="bg-[#4A61A3]">
                         <tr>
-                            <th className="px-6 py-4 text-left text-sm font-semibold">ID</th>
-                            <th className="px-6 py-4 text-left text-sm font-semibold">Nombre del Tipo de Evento</th>
-                            <th className="px-6 py-4 text-left text-sm font-semibold">Descripción</th>
-                            <th className="px-6 py-4 text-center text-sm font-semibold">Acciones</th>
+                            <th className="px-6 py-4 text-left text-sm font-semibold text-white">ID</th>
+                            <th className="px-6 py-4 text-left text-sm font-semibold text-white">Nombre del Tipo de Evento</th>
+                            <th className="px-6 py-4 text-left text-sm font-semibold text-white">Descripción</th>
+                            <th className="px-6 py-4 text-center text-sm font-semibold text-white">Acciones</th>
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-200">
-                        {eventTypes.length === 0 ? (
+                        {filteredEventTypes.length === 0 ? (
                             <tr>
                                 <td colSpan={4} className="px-6 py-8 text-center text-gray-500">
-                                    No hay tipos de evento registrados
+                                    {searchTerm ? 'No se encontraron resultados' : 'No hay tipos de evento registrados'}
                                 </td>
                             </tr>
                         ) : (
-                            eventTypes.map((eventType) => (
+                            filteredEventTypes.map((eventType) => (
                                 <tr key={eventType.eventTypeId} className="hover:bg-gray-50">
                                     <td className="px-6 py-4 text-sm text-gray-900">{eventType.eventTypeId}</td>
                                     <td className="px-6 py-4 text-sm font-semibold text-gray-900">{eventType.eventTypeName}</td>
                                     <td className="px-6 py-4 text-sm text-gray-900">{eventType.description || 'N/A'}</td>
                                     <td className="px-6 py-4 text-center">
-                                        <div className="flex justify-center gap-2">
+                                        <div className="flex justify-center items-center gap-3">
                                             <button
                                                 onClick={() => handleEdit(eventType)}
-                                                className="px-3 py-1 bg-yellow-500 text-white rounded hover:bg-yellow-600 transition text-sm"
+                                                className="p-1.5 hover:bg-blue-50 rounded-lg transition-colors"
+                                                title="Editar"
                                             >
-                                                Editar
+                                                <svg className="w-5 h-5 text-[#4A61A3]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                                </svg>
                                             </button>
                                             <button
                                                 onClick={() => handleDelete(eventType.eventTypeId, eventType.eventTypeName)}
-                                                className="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 transition text-sm"
+                                                className="p-1.5 hover:bg-red-50 rounded-lg transition-colors"
+                                                title="Eliminar"
                                             >
-                                                Eliminar
+                                                <svg className="w-5 h-5 text-[#FF5050]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                                </svg>
                                             </button>
                                         </div>
                                     </td>
@@ -301,7 +276,7 @@ export const EventTypesView = () => {
                                 </button>
                                 <button
                                     type="submit"
-                                    className="flex-1 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition font-medium"
+                                    className="flex-1 px-4 py-2 bg-admin-primary text-white rounded-lg hover:bg-blue transition font-medium"
                                 >
                                     {editingEventType ? 'Actualizar' : 'Crear'}
                                 </button>

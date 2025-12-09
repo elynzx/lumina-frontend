@@ -5,8 +5,11 @@ export interface DashboardStats {
     todayReservations: number;
     totalUsers: number;
     monthlyRevenue: number;
+    previousMonthRevenue: number;
+    currentPeriodReservations: number;
+    previousPeriodReservations: number;
     pendingReservations: number;
-    recentReservations: Reservation[];
+    recentReservations: ReservationResponse[];
     monthlyRevenue6Months: MonthlyData[];
     monthlyReservations6Months: MonthlyData[];
     reservationsByStatus: { [key: string]: number };
@@ -94,13 +97,17 @@ export interface Furniture {
     description: string;
     unitPrice: number;
     totalStock: number;
+    photoUrl?: string;
+    createdAt?: string;
+    totalReservations?: number;
 }
 
 export interface FurnitureCreateRequest {
     furnitureName: string;
     description: string;
-    pricePerUnit: number;
-    availableStock: number;
+    unitPrice: number;
+    totalStock: number;
+    photoUrl?: string;
 }
 
 export interface Customer {
@@ -135,6 +142,8 @@ export interface Reservation {
     venueAddress?: string;
     eventTypeName?: string;
     furnitureItems?: FurnitureItem[];
+    paymentReceiptUrl?: string;
+    paymentMethodName?: string;
 }
 
 export interface FurnitureItem {

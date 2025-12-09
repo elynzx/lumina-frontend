@@ -17,4 +17,9 @@
   --color-modal-overlay: #363636;
   --color-gradient-radial: radial-gradient(circle at 50% 80%, var(--color-blue) 60%, var(--color-dark-blue) 100%);
   --color-gradient-lineal: linear-gradient(180deg, white 0%, white 30%, var(--color-bgray) 140%);
+
+  /*Administrativo*/
+  --color-admin-primary: #4A61A3;
+  --color-admin-secondary: #FF5050;
+  --color-admin-primary-dark: #3d5087;
 }
