@@ -5,7 +5,7 @@
 import Cookies from 'js-cookie';
 import type { ApiError, BackendResponse, } from '@/api/interfaces/common';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080/api';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080/api';
 
 /**
  * Re-exporta tipos comunes en base a la API

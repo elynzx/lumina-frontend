@@ -55,6 +55,59 @@ La aplicación está construida siguiendo principios de diseño modular y buenas
 
 ---
 
+## Configuración del Proyecto
+
+
+1. **Clonar el repositorio:**
+   ```bash
+   git clone https://github.com/elynzx/alquiler-eventos-frontend.git
+   cd alquiler-eventos-frontend
+   ```
+
+2. **Instalar dependencias:**
+   ```bash
+   npm install
+   ```
+
+3. **Configurar variables de entorno:**
+   ```bash
+   # Copiar el archivo de ejemplo
+   cp .env.example .env
+   
+   # Editar .env con tus valores (opcional)
+   # Por defecto apunta al backend de Railway en producción
+   ```
+
+4. **Ejecutar en desarrollo:**
+   ```bash
+   npm run dev
+   ```
+   La aplicación estará disponible en `http://localhost:5173`
+
+### Variables de Entorno
+
+El proyecto utiliza las siguientes variables de entorno:
+
+- `VITE_API_BASE_URL`: URL del backend API
+  - Desarrollo con backend en Railway: `https://lumina-backend.up.railway.app/api`
+  - Desarrollo con backend local: `http://localhost:8080/api`
+  
+- `VITE_CLOUDINARY_CLOUD_NAME`: Nombre del cloud de Cloudinary para subir imágenes
+- `VITE_CLOUDINARY_UPLOAD_PRESET`: Preset de upload de Cloudinary
+
+**Nota:** El archivo `.env.example` contiene valores por defecto que funcionan con el backend desplegado en Railway.
+
+## Despliegue
+
+El proyecto está configurado para desplegarse en **Vercel**:
+
+1. Conectar el repositorio de GitHub con Vercel
+2. Vercel detectará automáticamente que es un proyecto Vite
+3. Las variables de `.env.production` se usarán automáticamente
+4. El archivo `vercel.json` está configurado para ruteo SPA
+
+---
+
 ## Seguridad
 - **Autenticación**: Implementada con JWT (JSON Web Token) para proteger las rutas y garantizar el acceso seguro.
 - **Roles**: Protección de rutas y funcionalidades según el rol del usuario (CLIENTE, ADMIN).
