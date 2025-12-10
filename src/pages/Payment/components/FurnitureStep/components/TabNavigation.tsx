@@ -25,13 +25,15 @@ export const TabNavigation = ({
         <button
           key={tab.id}
           onClick={() => onTabChange(tab.id)}
-          className={`px-4 py-2 text-xs font-medium border-b-2 transition-colors ${
+          className={`flex-1 px-2 sm:px-4 py-2 text-xs sm:text-sm font-medium border-b-2 transition-colors whitespace-nowrap ${
             activeTab === tab.id
               ? 'border-blue text-blue'
               : 'border-transparent text-gray-500 hover:text-gray-700'
           }`}
         >
-          {tab.label} ({tab.count})
+          <span className="hidden sm:inline">{tab.label}</span>
+          <span className="sm:hidden">{tab.id === 'tables' ? 'Mesas' : tab.id === 'chairs' ? 'Sillas' : 'Servicios'}</span>
+          {' '}({tab.count})
         </button>
       ))}
     </div>

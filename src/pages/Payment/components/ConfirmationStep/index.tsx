@@ -98,11 +98,11 @@ export const ConfirmationStep = ({
         </p>
       </div>
 
-      <div className="w-full bg-white border-2 border-gray-200 rounded-lg p-6">
-        <h3 className="font-semibold text-center mb-3">Detalle de reserva</h3>
+      <div className="w-full bg-white border-2 border-gray-200 rounded-lg p-6 sm:px-10 sm:py-6">
+        <h3 className="font-semibold text-center sm:text-lg mb-6">Detalle de reserva</h3>
 
-        <div className="flex gap-4">
-          <div className="flex-1 space-y-1 border-r border-gray-200 pr-6">
+        <div className="sm:flex gap-4 ">
+          <div className="flex-1 space-y-1 sm:border-r sm:border-gray-200 pr-6">
 
             <div>
               <h4 className="font-bold">{reservationDetails.venueName}</h4>
@@ -143,7 +143,7 @@ export const ConfirmationStep = ({
 
           </div>
 
-          <div className="w-64 flex-shrink-0 bg-gray-50 rounded-lg p-6 text-center">
+          <div className=" mt-4 sm:mt-0 sm:w-64 flex-shrink-0 bg-gray-50 rounded-lg p-4 sm:p-6 text-center">
             <span className="text-sm font-semibold text-gray-700 block">
               {paymentMethod?.id === 1 ? "Monto pagado" : "Monto a pagar"}
             </span>
@@ -207,7 +207,7 @@ export const ConfirmationStep = ({
         </div>
       )}
 
-      <div className="w-full flex gap-4">
+      <div className="w-full flex gap-4 flex-col sm:flex-row ">
         <Button
           text="Descargar constancia"
           onClick={handleDownloadPdf}

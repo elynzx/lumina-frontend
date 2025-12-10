@@ -242,7 +242,7 @@ export const FurnitureStep = ({ guestCount = 0 }: FurnitureStepProps) => {
   }
 
   return (
-    <div className="flex flex-col gap-2 h-100">
+    <div className="flex flex-col gap-2 h-130 sm:h-100">
       <div>
         <h2 className="text-xl font-bold mb-2">Mobiliarios y Servicios</h2>
         <p className="text-xs text-gray-600">Selecciona el modelo de mesas y sillas para continuar. Puedes añadir servicios adicionales si lo deseas.</p>
@@ -257,11 +257,11 @@ export const FurnitureStep = ({ guestCount = 0 }: FurnitureStepProps) => {
       />
 
       <div className="flex flex-col flex-1 min-h-0">
-        <div className="flex-1 overflow-hidden min-h-65">
+        <div className="sm:flex-1 overflow-hidden sm:min-h-65">
           {renderTabContent()}
         </div>
 
-        <div className="mt-auto">
+        <div className="sm:mt-auto">
           <SelectionSummary
             totalSelectedItems={totalSelectedItems}
             guestCount={guestCount}

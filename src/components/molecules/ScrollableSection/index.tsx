@@ -40,21 +40,21 @@ export const ScrollableSection = ({
   };
 
   return (
-    <div className="relative w-full max-w-[1200px] mx-auto">
+    <div className="relative w-full max-w-[1200px] mx-auto overflow-hidden">
 
       {canScrollLeft && (
         <button
           onClick={scrollLeft}
-          className="absolute left-4 top-1/2 transform -translate-y-1/2 z-20 p-3 rounded-full shadow-lg transition-all bg-white hover:bg-gray-100 border border-gray-200 hover-scale"
+          className="absolute left-2 sm:left-4 top-1/2 transform -translate-y-1/2 z-20 p-2 sm:p-3 rounded-full shadow-lg transition-all bg-white hover:bg-gray-100 border border-gray-200 hover-scale"
         >
-          <img src={leftArrowIcon} alt="Scroll left" className="w-5 h-5" />
+          <img src={leftArrowIcon} alt="Scroll left" className="w-4 h-4 sm:w-5 sm:h-5" />
         </button>
       )}
 
       <div
         ref={scrollRef}
         onScroll={handleScroll}
-        className="flex gap-6 overflow-x-auto scrollbar-hide px-8 py-8"
+        className="flex gap-4 sm:gap-6 overflow-x-auto scrollbar-hide px-4 sm:px-8 py-6 sm:py-8"
         style={{
           scrollbarWidth: 'none',
           msOverflowStyle: 'none',
@@ -67,9 +67,9 @@ export const ScrollableSection = ({
       {canScrollRight && (
         <button
           onClick={scrollRight}
-          className="absolute right-4 top-1/2 transform -translate-y-1/2 z-20 p-3 rounded-full shadow-lg transition-all bg-white hover:bg-gray-100 border border-gray-200 hover-scale"
+          className="absolute right-2 sm:right-4 top-1/2 transform -translate-y-1/2 z-20 p-2 sm:p-3 rounded-full shadow-lg transition-all bg-white hover:bg-gray-100 border border-gray-200 hover-scale"
         >
-          <img src={rightArrowIcon} alt="Scroll right" className="w-5 h-5" />
+          <img src={rightArrowIcon} alt="Scroll right" className="w-4 h-4 sm:w-5 sm:h-5" />
         </button>
       )}
     </div>

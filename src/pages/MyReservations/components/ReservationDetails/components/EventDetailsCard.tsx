@@ -22,7 +22,7 @@ export const EventDetailsCard = ({
   return (
     <div>
       <h2 className="text-xl font-bold mb-4">Detalles de Reserva</h2>
-      <div className="grid grid-cols-2 gap-5">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
         {/* Date */}
         <div className="flex items-start gap-3">
           <Calendar size={20} className="text-blue mt-1" />

@@ -31,48 +31,49 @@ const socialMediaLinks: ListItem[] = [
 ];
 
 export const Footer = () => (
-  <div className="bg-gradient-lineal w-full h-[320px] grid grid-cols-3 px-[150px] py-12 justify-items-center">
-    <div className="flex flex-col items-start">
-      <h4 className="font-bold mb-4">Contáctanos</h4>
-      <ul className="space-y-2">
+  <div className="bg-gradient-lineal w-full min-h-[320px] h-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 px-6 sm:px-12 md:px-20 lg:px-[150px] py-8 md:py-12 justify-items-start md:justify-items-center">
+    <div className="flex flex-col items-start w-full">
+      <h4 className="font-bold mb-4 text-base md:text-lg">Contáctanos</h4>
+      <ul className="space-y-2 w-full">
         {contactList.map((item, index) => (
-          <li key={index} className="text-sm">
-            <img src={item.icon} alt={item.title} className="w-7 inline-block mr-2" />
-            {item.title}
+          <li key={index} className="text-xs sm:text-sm flex items-start gap-2">
+            <img src={item.icon} alt={item.title} className="w-5 sm:w-7 flex-shrink-0 mt-0.5" />
+            <span className="break-words">{item.title}</span>
           </li>
         ))}
       </ul>
     </div>
 
-    <div className="flex flex-col items-start">
-      <h4 className="font-bold mb-4">Información</h4>
-      <ul className="space-y-2">
+    <div className="flex flex-col items-start w-full">
+      <h4 className="font-bold mb-4 text-base md:text-lg">Información</h4>
+      <ul className="space-y-2 w-full">
         {informationList.map((item, index) => (
           <li key={index}>
             {item.url ? (
-              <a href={item.url} className="text-sm hover:underline">
+              <a href={item.url} className="text-xs sm:text-sm hover:underline">
                 {item.title}
               </a>
             ) : (
-              <span className="text-sm">{item.title}</span>
+              <span className="text-xs sm:text-sm">{item.title}</span>
             )}
           </li>
         ))}
       </ul>
     </div>
 
-    <div className="flex flex-col items-start">
-      <h4 className="font-bold mb-4">Síguenos</h4>
-      <ul className="space-y-2 mb-4 flex gap-2">
+    <div className="flex flex-col items-start w-full md:col-span-2 lg:col-span-1">
+      <h4 className="font-bold mb-4 text-base md:text-lg">Síguenos</h4>
+      <ul className="flex gap-3 sm:gap-4 mb-4">
         {socialMediaLinks.map((item, index) => (
           <li key={index}>
-            <img src={item.icon} alt={item.title} className="w-10 inline-block mr-2" />
             <a
               href={item.url}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-sm hover:underline"
+              className="hover:opacity-80 transition-opacity"
+              title={item.title}
             >
+              <img src={item.icon} alt={item.title} className="w-8 sm:w-10" />
             </a>
           </li>
         ))}

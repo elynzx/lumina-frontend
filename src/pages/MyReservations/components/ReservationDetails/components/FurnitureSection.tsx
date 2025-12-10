@@ -65,7 +65,7 @@ export const FurnitureSection = ({ furnitureItems }: FurnitureSectionProps) => {
               )}
             </button>
             {expandedSections.tables && (
-              <div className="p-4 bg-white space-y-3">
+              <div className="sm:p-4 bg-white space-y-3">
                 {tablesAndChairs.map((item, index) => (
                   <div key={index} className="flex items-center justify-between gap-4 p-3 bg-gray-50 rounded-lg">
                     <div className="flex items-center gap-3 flex-1">
@@ -83,7 +83,7 @@ export const FurnitureSection = ({ furnitureItems }: FurnitureSectionProps) => {
                         </p>
                       </div>
                     </div>
-                    <p className="font-bold text-base text-blue">S/ {item.subtotal.toFixed(2)}</p>
+                    <p className="font-bold sm:text-base text-blue">S/ {item.subtotal.toFixed(2)}</p>
                   </div>
                 ))}
               </div>
@@ -106,7 +106,7 @@ export const FurnitureSection = ({ furnitureItems }: FurnitureSectionProps) => {
               )}
             </button>
             {expandedSections.additional && (
-              <div className="p-4 bg-white space-y-3">
+              <div className="sm:p-4 bg-white space-y-3">
                 {additionalServices.map((item, index) => (
                   <div key={index} className="flex items-center justify-between gap-4 p-3 bg-gray-50 rounded-lg">
                     <div className="flex items-center gap-3 flex-1">
@@ -117,7 +117,7 @@ export const FurnitureSection = ({ furnitureItems }: FurnitureSectionProps) => {
                         </p>
                       </div>
                     </div>
-                    <p className="font-bold text-base text-blue">S/ {item.subtotal.toFixed(2)}</p>
+                    <p className="font-bold sm:text-base text-blue">S/ {item.subtotal.toFixed(2)}</p>
                   </div>
                 ))}
               </div>
@@ -140,15 +140,15 @@ export const FurnitureSection = ({ furnitureItems }: FurnitureSectionProps) => {
               )}
             </button>
             {expandedSections.mandatory && (
-              <div className="p-4 bg-white space-y-3">
+              <div className="py-4 sm:p-4 bg-white space-y-6 sm:space-y-3">
                 {Object.entries(mandatoryServices).map(([key, service]) => (
-                  <div key={key} className="p-3 bg-blue-50 border border-blue-100 rounded-lg">
+                  <div key={key} className="px-4 sm:p-3 sm:bg-blue-50 sm:border sm:border-blue-100 sm:rounded-lg">
                     <div className="flex items-center justify-between">
                       <div className="flex-1">
                         <p className="text-sm font-bold text-gray-900">{service.name}</p>
                         <p className="text-xs text-gray-600 mt-1">{service.description}</p>
                       </div>
-                      <span className="text-base font-bold text-blue ml-3">
+                      <span className="sm:text-base font-bold text-blue ml-3">
                         S/ {service.price.toFixed(2)}
                       </span>
                     </div>

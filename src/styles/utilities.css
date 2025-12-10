@@ -48,10 +48,20 @@
     }
 
     .text-title {
-        font-size: 34px;
-        line-height: 40px;
+        font-size: 28px;
+        line-height: 28px;
         font-weight: 600;
         letter-spacing: 0;
+        text-align: center;
+    }
+
+    @media (min-width: 768px) {
+        .text-title {
+            text-align: left;
+            font-size: 34px;
+            line-height: 40px;
+            font-weight: 600;
+        }
     }
 
     .card-title {

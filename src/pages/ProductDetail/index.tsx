@@ -27,12 +27,12 @@ export const ProductDetail = () => {
     const venuePhotos = venue.photos || [];
 
     return (
-        <div className="flex flex-col px-16 py-6 gap-8 justify-center items-center">
+        <div className="flex flex-col px-4 sm:px-8 lg:px-16 py-6 gap-8 justify-center items-center">
             <PhotosLayout imgUrls={venuePhotos} description="Local para eventos" />
 
-            <div className="w-full max-w-6xl flex gap-10">
+            <div className="w-full max-w-6xl flex flex-col lg:flex-row gap-6 lg:gap-10">
                 <div className="flex-1 flex flex-col gap-6">
-                    <div className="flex justify-between items-start">
+                    <div className="flex flex-col sm:flex-row justify-between sm:items-start">
                         <div className="flex flex-col gap-2">
                             <h1 className="text-3xl font-bold">{venue.venueName}</h1>
                             <div className="flex items-center gap-2">
@@ -44,7 +44,7 @@ export const ProductDetail = () => {
                                 <p>4.8<span className="text-gray-600 text-sm"> (128 reseñas)</span></p>
                             </div>
                         </div>
-                        <div className="flex gap-4">
+                        <div className="flex px-16 mt-4 sm:mt-0 sm:px-0 sm:gap-4 ">
                             <div className="flex items-center flex-col p-3">
                                 <img src={capacityIcon} alt="capacidad" className="w-8 mb-1" />
                                 <span className="text-xs">Máx. {venue.maxCapacity}</span>
@@ -78,7 +78,7 @@ export const ProductDetail = () => {
                     )}
                 </div>
 
-                <div className="w-full max-w-[38%] flex flex-col gap-6 sticky top-20">
+                <div className="w-full lg:max-w-[38%] flex flex-col gap-6 lg:sticky lg:top-20">
                     <BudgetForm
                         venueId={venueId}
                         pricePerHour={venue.pricePerHour}

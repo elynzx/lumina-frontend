@@ -125,7 +125,7 @@ const RegisterForm = ({
 
     return (
         <>
-            <div className="w-full flex justify-between gap-4">
+            <div className="w-full flex flex-col sm:flex-row justify-between gap-4">
                 <Controller
                     name="firstName"
                     control={control}
@@ -151,7 +151,7 @@ const RegisterForm = ({
                     )}
                 />
             </div>
-            <div className="w-full flex justify-between gap-4">
+            <div className="w-full flex flex-col sm:flex-row justify-between gap-4">
                 <Controller
                     name="documentNumber"
                     control={control}
