@@ -266,9 +266,9 @@ export const Payment = () => {
     };
 
     return (
-        <div className="min-h-screen flex max-h-screen">
+        <div className="min-h-screen flex flex-col lg:flex-row lg:max-h-screen">
 
-            <div className="flex-1 bg-light-bgray px-24 overflow-y-auto flex flex-col">
+            <div className="flex-1 bg-light-bgray px-4 sm:px-8 lg:px-24 overflow-y-auto flex flex-col">
                 <div className="flex flex-col gap-6 flex-1 mt-6 mb-10">
                     <PaymentSteps currentStep={currentStep} />
 
@@ -299,7 +299,7 @@ export const Payment = () => {
                 </div>
             </div>
             {currentStep !== 4 && (
-                <div className="w-[35%] px-10 py-10 bg-white hidden lg:flex flex-col border-l border-gray-200 overflow-y-auto">
+                <div className="w-full lg:w-[35%] px-4 sm:px-6 lg:px-10 py-6 lg:py-10 bg-white flex flex-col lg:border-l border-gray-200 overflow-y-auto">
                     <PaymentForm
                         venueId={venueId}
                         venueName={venueData.venueName}

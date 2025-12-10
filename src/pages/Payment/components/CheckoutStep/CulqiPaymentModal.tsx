@@ -149,7 +149,7 @@ export default function CulqiPaymentModal({ isOpen, onClose, amount, onPaymentSu
 
   return (
     <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+      <div className="bg-white rounded-lg max-w-2xl w-full max-h-[80vh] sm:max-h-[90vh] overflow-y-auto">
 
         <div className="bg-[#2c2c2c] text-white p-4 flex items-center justify-between rounded-t-lg">
           <div className="flex items-center gap-3">
@@ -172,7 +172,7 @@ export default function CulqiPaymentModal({ isOpen, onClose, amount, onPaymentSu
           <CreditCard className="text-[#00a19b]" size={28} />
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-0">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-0 ">
 
           <div className="bg-[#fafafa] p-6 border-r">
             <div className="space-y-4">
@@ -182,7 +182,7 @@ export default function CulqiPaymentModal({ isOpen, onClose, amount, onPaymentSu
               </div>
             </div>
 
-            <div className="mt-auto pt-80">
+            <div className="mt-auto pt-15 sm:pt-80">
               <div className="text-xs text-gray-500 text-center">Powered by</div>
               <div className="flex items-center justify-center gap-2 mt-2">
                 <div className="w-8 h-8 border-4 border-[#00a19b] rounded-full relative">
@@ -219,7 +219,7 @@ export default function CulqiPaymentModal({ isOpen, onClose, amount, onPaymentSu
 
                 <div>
                   <label className="block text-xs font-medium text-gray-700 mb-1">
-                    Número de tarjeta
+                    Número de tarjeta <span className="text-red-500">*</span>
                   </label>
                   <div className="relative">
                     <input
@@ -254,7 +254,7 @@ export default function CulqiPaymentModal({ isOpen, onClose, amount, onPaymentSu
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className="block text-xs font-medium text-gray-700 mb-1">
-                      Vencimiento
+                      Vencimiento <span className="text-red-500">*</span>
                     </label>
                     <input
                       type="text"
@@ -272,7 +272,7 @@ export default function CulqiPaymentModal({ isOpen, onClose, amount, onPaymentSu
                   </div>
                   <div>
                     <label className="block text-xs font-medium text-gray-700 mb-1">
-                      Código de seguridad
+                      Código de seguridad <span className="text-red-500">*</span>
                     </label>
                     <input
                       type="text"
@@ -292,7 +292,7 @@ export default function CulqiPaymentModal({ isOpen, onClose, amount, onPaymentSu
 
                 <div>
                   <label className="block text-xs font-medium text-gray-700 mb-1">
-                    Titular de la tarjeta
+                    Titular de la tarjeta <span className="text-red-500">*</span>
                   </label>
                   <input
                     type="text"
@@ -310,7 +310,7 @@ export default function CulqiPaymentModal({ isOpen, onClose, amount, onPaymentSu
 
                 <div>
                   <label className="block text-xs font-medium text-gray-700 mb-1">
-                    Correo electrónico
+                    Correo electrónico <span className="text-red-500">*</span>
                   </label>
                   <input
                     type="email"

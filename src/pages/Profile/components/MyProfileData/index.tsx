@@ -107,7 +107,7 @@ export const MyProfileData = () => {
       <div className="flex justify-center items-start gap-6 mt-4">
         <form className="flex flex-col gap-6 w-full max-w-xl">
           {/* Nombres - Apellidos */}
-          <div className="grid grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             <Controller
               name="firstName"
               control={control}
@@ -174,7 +174,7 @@ export const MyProfileData = () => {
           />
 
           {/* DNI - Celular */}
-          <div className="grid grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             <div className="flex items-center gap-4">
               <label className=" w-20 shrink-0">DNI:</label>
               <input

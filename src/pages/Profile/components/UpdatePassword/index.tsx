@@ -57,7 +57,7 @@ export const UpdatePassword = () => {
         </div>
       )}
 
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 w-full items-center px-30">
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 w-full items-center sm:px-30">
         <div>
           <label className="block text-sm font-medium text-gray-900 mb-2">
             Contraseña Actual

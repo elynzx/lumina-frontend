@@ -13,42 +13,42 @@ export const Profile = () => {
   const [activeTab, setActiveTab] = useState<TabType>("myData");
 
   return (
-    <div className="min-h-screen py-12 px-24">
+    <div className="min-h-screen py-8 sm:py-12 px-4 sm:px-8 lg:px-24">
       <div className="max-w-6xl mx-auto">
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold">Mi Perfil</h1>
+        <div className="mb-6 sm:mb-8">
+          <h1 className="text-3xl sm:text-4xl font-bold">Mi Perfil</h1>
           <p className="text-gray-600 mt-2">Gestiona tu información personal y seguridad</p>
         </div>
 
-        <div className="flex gap-20">
-          {/* Vertical Tabs */}
-          <div className="w-64 flex flex-col gap-2">
+        <div className="flex flex-col lg:flex-row gap-6 lg:gap-20">
+
+          <div className="w-full sm:h-14 lg:w-64 flex flex-row lg:flex-col gap-2">
             <button
               onClick={() => setActiveTab("myData")}
-              className={`w-full flex items-center gap-3 px-4 py-4 text-left transition-all ${
+              className={`flex-1 lg:w-full flex items-center justify-center lg:justify-start gap-3 px-4 py-4 transition-all ${
                 activeTab === "myData"
-                  ? "border-l-4 border-blue text-blue font-semibold"
-                  : "border-l-4 border-transparent text-gray-600 hover:text-gray-900 hover:border-gray-300"
+                  ? "border-b-4 lg:border-b-0 lg:border-l-4 border-blue text-blue font-semibold"
+                  : "border-b-4 lg:border-b-0 lg:border-l-4 border-transparent text-gray-600 hover:text-gray-900 hover:border-gray-300"
               }`}
             >
               <User size={20} />
-              <span className="font-medium">Mis Datos</span>
+              <span className="font-medium hidden sm:inline">Mis Datos</span>
             </button>
             <button
               onClick={() => setActiveTab("changePassword")}
-              className={`w-full flex items-center gap-3 px-4 py-4 text-left transition-all ${
+              className={`flex-1 lg:w-full flex items-center justify-center lg:justify-start gap-3 px-4 py-4 transition-all ${
                 activeTab === "changePassword"
-                  ? "border-l-4 border-blue text-blue font-semibold"
-                  : "border-l-4 border-transparent text-gray-600 hover:text-gray-900 hover:border-gray-300"
+                  ? "border-b-4 lg:border-b-0 lg:border-l-4 border-blue text-blue font-semibold"
+                  : "border-b-4 lg:border-b-0 lg:border-l-4 border-transparent text-gray-600 hover:text-gray-900 hover:border-gray-300"
               }`}
             >
               <Lock size={20} />
-              <span className="font-medium">Cambiar Contraseña</span>
+              <span className="font-medium hidden sm:inline">Cambiar Contraseña</span>
             </button>
           </div>
 
           {/* Content Area */}
-          <div className="flex-1 bg-white border-2 border-gray-100 p-12 rounded-lg shadow-sm hover:shadow-md transition-shadow ">
+          <div className="flex-1 bg-white border-2 border-gray-100 p-6 sm:p-8 lg:p-12 rounded-lg shadow-sm hover:shadow-md transition-shadow">
             {activeTab === "myData" && <MyProfileData />}
             {activeTab === "changePassword" && <UpdatePassword />}
           </div>

@@ -3,7 +3,7 @@ import { SearchFilter } from "../SearchFilter";
 
 export const HomeBanner = () => {
   return (
-    <div className="relative w-full h-[820px] overflow-hidden">
+    <div className="relative w-full h-[700px] sm:h-[600px] md:h-[700px] lg:h-[820px] overflow-hidden">
       <div
         className="absolute inset-0 w-full h-full bg-cover bg-center bg-no-repeat"
         style={{
@@ -18,7 +18,7 @@ export const HomeBanner = () => {
         }}
       />
 
-      <div className="absolute bottom-60 left-0 right-0 px-8">
+      <div className="absolute bottom-20 sm:bottom-32 md:bottom-40 lg:bottom-60 left-0 right-0 px-4 sm:px-6 md:px-8">
         <SearchFilter />
       </div>
     </div>

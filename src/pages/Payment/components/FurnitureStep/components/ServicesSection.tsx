@@ -43,7 +43,7 @@ export const ServicesSection = ({
   }
 
   return (
-    <div className="h-full overflow-y-auto pr-2">
+    <div className="h-full overflow-y-auto pr-1 sm:pr-2">
       <div className="mt-2 mb-4">
         <div className="flex flex-col gap-2">
           {serviceItems.map((item) => {

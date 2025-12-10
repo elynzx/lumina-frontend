@@ -114,12 +114,12 @@ export const ReservationDetails = () => {
   }
 
   return (
-    <div className="min-h-screen py-12 px-24">
+    <div className="min-h-screen px-8 py-8 sm:py-12 sm:px-24">
       <div className="max-w-5xl mx-auto">
         {/* Back Button */}
         <button
           onClick={() => navigate("/reservations")}
-          className="flex items-center gap-2 text-blue hover:text-blue/80 font-semibold text-sm mb-6"
+          className="flex mt-4 sm:mt-0 items-center gap-2 text-blue hover:text-blue/80 font-semibold text-sm mb-8 sm:mb-6"
         >
           <span>←</span>
           <span>Volver a Mis Reservas</span>
@@ -139,9 +139,9 @@ export const ReservationDetails = () => {
         </div>
 
         {/* Main Content */}
-        <div className="grid grid-cols-3 gap-6 mb-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
           {/* Left Column - Event Details */}
-          <div className="col-span-2 space-y-6">
+          <div className="lg:col-span-2 space-y-6">
             {/* Venue Photo */}
             {reservation.venuePhotos && reservation.venuePhotos.length > 0 && (
               <div className="rounded-lg overflow-hidden shadow-sm">

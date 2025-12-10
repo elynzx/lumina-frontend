@@ -8,7 +8,7 @@ interface Props {
 }
 
 export const NumberField = ({ title, icon, value, onChange, showBorder = true, placeholder }: Props) => (
-  <div className={`flex flex-col ${showBorder ? 'border-r border-gray-300 pr-6' : ''}`}>
+  <div className={`flex flex-col border-b border-gray-300 sm:border-0 ${showBorder ? 'sm:border-r sm:border-gray-300 pr-6' : ''}`}>
     <h4 className="text-sm text-center text-gray-700 mb-2">{title}</h4>
     <div className="flex items-center gap-3 mb-2">
       <img src={icon} alt={title} className="w-6 h-6 text-gray-400" />

@@ -75,7 +75,7 @@ export const FilterBar = memo(({ eventTypes }: Props) => {
   }, [setFilters]);
 
   return (
-    <div className="flex justify-end items-center gap-4 mb-8 p-4 rounded-lg">
+    <div className="flex flex-col sm:flex-row justify-center sm:justify-end items-stretch sm:items-center gap-3 sm:gap-4 mb-8 p-4 rounded-lg">
       <Button
         text="Ver Todo"
         variant="primary"

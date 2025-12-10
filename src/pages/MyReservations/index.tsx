@@ -21,7 +21,7 @@ export const MyReservations = () => {
   };
 
   return (
-    <div className="min-h-screen py-12 px-24">
+    <div className="min-h-screen py-8 sm:py-12 px-4 sm:px-8 lg:px-24">
       <div className="max-w-6xl mx-auto">
         
         <div className="mb-8">

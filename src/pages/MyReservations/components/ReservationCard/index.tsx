@@ -46,7 +46,7 @@ const getStatusLabel = (status: string) => {
 export const ReservationCard = ({ reservation, onViewDetails }: ReservationCardProps) => {
   return (
     <div className="bg-white border-2 border-gray-100 rounded-lg shadow-sm px-6 py-4 hover:shadow-md transition-shadow">
-      <div className="flex items-start justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between">
         <div className="flex-1">
 
           <div className="mb-4">
@@ -59,7 +59,6 @@ export const ReservationCard = ({ reservation, onViewDetails }: ReservationCardP
           </div>
 
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
-
             <DetailItem
               label="Fecha"
               value={new Date(reservation.reservationDate).toLocaleDateString(
@@ -92,9 +91,9 @@ export const ReservationCard = ({ reservation, onViewDetails }: ReservationCardP
         </div>
 
         {/* Status and Action */}
-        <div className="flex flex-col items-end gap-5 ml-4 mt-4">
+        <div className="flex flex-col items-center sm:items-end gap-5 ml-4 mt-4">
           <span
-            className={`px-3 py-1 rounded-full text-xs font-semibold ${getStatusColor(
+            className={`px-3 py-1 rounded-full  text-xs font-semibold ${getStatusColor(
               reservation.status
             )}`}
           >

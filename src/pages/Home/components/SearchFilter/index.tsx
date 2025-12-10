@@ -68,7 +68,7 @@ export const SearchFilter = () => {
   const isLoading = eventTypesLoading || districtsLoading;
 
   return (
-    <div className="bg-white rounded-lg p-4 shadow-lg grid grid-cols-4 gap-6 max-w-4xl mx-auto">
+    <div className="bg-white rounded-lg p-6 sm:p-6 md:p-8 shadow-lg grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5 md:gap-6 w-[80%] sm:w-full max-w-4xl mx-auto">
       <Dropdown
         title={SearchFilterContent.titles.eventType}
         icon={searchIcon}
@@ -94,7 +94,7 @@ export const SearchFilter = () => {
         placeholder={SearchFilterContent.placeholders.district}
       />
 
-      <div className="flex flex-col justify-center items-center">
+      <div className="flex flex-col justify-center items-center mt-2 md:mt-0">
         <Button
           variant="tertiary"
           text={isLoading ? "Cargando..." : "Buscar "}
