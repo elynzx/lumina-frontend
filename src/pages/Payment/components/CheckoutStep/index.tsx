@@ -108,7 +108,7 @@ export const CheckoutStep = ({ onPaymentMethodSelect, totalAmount = 0 }: Checkou
     );
   };
 
-  const handlePagoEfectivoGenerated = (cip: string, expiryDate: string) => {
+  const handlePagoEfectivoGenerated = (cip: string, _expiryDate: string) => {
     console.log("PagoEfectivo generated:", cip);
     const selectedPaymentMethod = paymentMethods.find(m => m.idMetodoPago === 3);
     onPaymentMethodSelect?.(
