@@ -259,9 +259,9 @@ export const UserModal = ({
 
     return (
         <Modal>
-            <div className="flex flex-col items-center">
-                <h2 className="text-title mb-8">{title}</h2>
-                {subtitle && <p className="text-blue text-[16px] mb-8">{subtitle}</p>}
+            <div className="flex flex-col items-center mt-3 px-3 sm:mt-0 sm:px-0">
+                <h2 className="text-title mb-4 sm:mb-8">{title}</h2>
+                {subtitle && <p className="text-blue text-center text-[14px] sm:text-[16px] mb-3 sm:mb-8">{subtitle}</p>}
 
                 {error && (
                     <div className="w-full mb-4 p-3 bg-red-50 border border-red-200 rounded-lg flex items-start gap-2">

@@ -16,7 +16,7 @@ export const Header = () => {
   const { logout } = useAuth();
   const { user, isAuthenticated } = useAuthStore();
   const isHome = location.pathname === "/";
-  
+
   // Obtenemos los valores actuales llamando a las funciones del store
   const currentUser = user();
   const userIsAuthenticated = isAuthenticated();
@@ -47,13 +47,14 @@ export const Header = () => {
     setIsMobileMenuOpen(false);
   };
 
+  const hideLogo = location.pathname === "/login" || location.pathname === "/registro";
+
   return (
     <>
       {/* Mobile Header */}
       <header
-        className={`w-full md:hidden flex items-center justify-between px-4 py-4 ${
-          isHome ? 'bg-header-home absolute top-0 left-0 z-50' : 'bg-gradient-radial'
-        }`}
+        className={`w-full md:hidden flex items-center justify-between px-4 py-4 ${isHome ? 'bg-header-home absolute top-0 left-0 z-50' : 'bg-gradient-radial'
+          }`}
       >
         <button onClick={handleHomeClick} className="z-50">
           <img src={isHome ? logotype : logomark} alt="Logo" className="h-8 ml-7" />
@@ -69,9 +70,8 @@ export const Header = () => {
 
       {/* Desktop/Tablet Header */}
       <header
-        className={`w-full hidden md:grid grid-cols-[1fr_auto_1fr] items-center px-8 md:px-16 lg:px-24 xl:px-[180px] py-6 ${
-          isHome ? 'bg-header-home absolute top-0 left-0 z-50' : 'bg-gradient-radial'
-        }`}
+        className={`w-full hidden md:grid grid-cols-[1fr_auto_1fr] items-center px-8 md:px-16 lg:px-24 xl:px-[180px] py-6 ${isHome ? 'bg-header-home absolute top-0 left-0 z-50' : 'bg-gradient-radial'
+          }`}
       >
         {/* Left Navigation */}
         <nav className="flex gap-6 items-center justify-start">
@@ -80,9 +80,11 @@ export const Header = () => {
         </nav>
 
         {/* Center Logo */}
-        <button onClick={handleHomeClick} className="flex justify-center">
-          <img src={isHome ? logotype : logomark} alt="Logo" className="h-10" />
-        </button>
+        {!hideLogo && (
+          <button onClick={handleHomeClick} className="flex justify-center">
+            <img src={isHome ? logotype : logomark} alt="Logo" className="h-10" />
+          </button>
+        )}
 
         {/* Right Auth */}
         <div className="flex gap-6 lg:gap-10 items-center justify-end">
@@ -96,12 +98,12 @@ export const Header = () => {
               items={[
                 {
                   label: "Mis Reservas",
-                  onClick: () => navigate("/reservations"),
+                  onClick: () => navigate("/reservas"),
                   icon: <Calendar size={16} />,
                 },
                 {
                   label: "Mi Perfil",
-                  onClick: () => navigate("/profile"),
+                  onClick: () => navigate("/perfil"),
                   icon: <User size={16} />,
                 },
                 {
@@ -151,7 +153,7 @@ export const Header = () => {
               <>
                 <button
                   onClick={() => {
-                    navigate("/reservations");
+                    navigate("/reservas");
                     setIsMobileMenuOpen(false);
                   }}
                   className="flex items-center gap-3 text-white text-lg font-medium hover:text-gray-200 transition-colors"
@@ -161,7 +163,7 @@ export const Header = () => {
                 </button>
                 <button
                   onClick={() => {
-                    navigate("/profile");
+                    navigate("/perfil");
                     setIsMobileMenuOpen(false);
                   }}
                   className="flex items-center gap-3 text-white text-lg font-medium hover:text-gray-200 transition-colors"

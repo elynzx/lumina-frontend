@@ -33,6 +33,10 @@ export const Login = () => {
 
     }
 
+    const handleClickForgotPassword = () => {
+        navigate("/recuperar-contrasena");
+    };
+
     const handleClickLogin = async (data: LoginFormData | RegisterFormData) => {
         try {
             setError("");
@@ -62,7 +66,7 @@ export const Login = () => {
                 onClickAction={handleClickLogin}
                 isLogin={true}
                 buttonText={isLoading ? "Iniciando..." : "Iniciar sesión"}
-                callBackPassword={() => { console.log("Olvide mi contraseña") }}
+                callBackPassword={handleClickForgotPassword}
                 footerText="¿No tienes una cuenta?"
                 footerLinkText="Regístrate"
                 callBackFooter={handleClickAction}

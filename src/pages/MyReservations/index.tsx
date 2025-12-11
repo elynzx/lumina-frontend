@@ -17,7 +17,7 @@ export const MyReservations = () => {
   }, [refetch]);
 
   const handleViewDetails = (reservationId: number) => {
-    navigate(`/reservations/${reservationId}`);
+    navigate(`/reservas/${reservationId}`);
   };
 
   return (

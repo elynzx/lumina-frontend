@@ -4,6 +4,7 @@ import { useRoutes } from "react-router-dom";
 import { Home } from "@/pages/Home";
 import { Login } from "@/pages/Login";
 import { Register } from "@/pages/Register";
+import { ForgotPassword } from "./pages/ForgotPassword";    
 import { Catalog } from "@/pages/Catalog";
 import { ProductDetail } from "@/pages/ProductDetail";
 import { Payment } from "@/pages/Payment";
@@ -62,12 +63,13 @@ export default function App() {
       children: [
         { path: "/", element: <Home /> },
         { path: "/login", element: <Login /> },
+        { path: "/recuperar-contrasena", element: <ForgotPassword />},
         { path: "/registro", element: <Register /> },
         { path: "/catalogo", element: <Catalog /> },
         { path: "/producto/:id", element: <ProductDetail /> },
-        { path: "/reservations", element: <MyReservations /> },
-        { path: "/reservations/:reservationId", element: <ReservationDetails /> },
-        { path: "/profile", element: <Profile /> },
+        { path: "/reservas", element: <MyReservations /> },
+        { path: "/reservas/:reservationId", element: <ReservationDetails /> },
+        { path: "/perfil", element: <Profile /> },
       ],
     },
     {

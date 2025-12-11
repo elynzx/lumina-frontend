@@ -4,8 +4,96 @@ import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import * as XLSX from 'xlsx';
 import { showAlert } from '@/utils/alert';
+import logomark from '@/assets/logo/logomark.svg';
 
 type Period = 'hoy' | 'semana' | 'mes' | 'año' | 'personalizado';
+
+const COLOR_BLUE = '#084579';
+
+const toRgb = (hex: string) => {
+    const m = hex.replace('#', '');
+    const r = parseInt(m.substring(0, 2), 16);
+    const g = parseInt(m.substring(2, 4), 16);
+    const b = parseInt(m.substring(4, 6), 16);
+    return [r, g, b];
+};
+
+const formatLongDate = (dateStr: string) => {
+    if (!dateStr) return '';
+    const d = new Date(dateStr);
+    return d.toLocaleDateString('es-ES', {
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric',
+    });
+};
+
+const formatRangeLabel = (start: string, end: string) => {
+    if (!start || !end) return '';
+    return `Reporte del ${formatLongDate(start)} al ${formatLongDate(end)}`;
+};
+
+const loadLogoDataUrl = async (): Promise<string | null> => {
+    let logoDataUrl: string | null = null;
+    try {
+        const resp = await fetch(logomark);
+        const svgText = await resp.text();
+        const svg64 = btoa(unescape(encodeURIComponent(svgText)));
+        const imageSrc = `data:image/svg+xml;base64,${svg64}`;
+        const img = new Image();
+        img.src = imageSrc;
+        await new Promise((res, rej) => {
+            img.onload = res;
+            img.onerror = rej;
+        });
+        const canvas = document.createElement('canvas');
+        canvas.width = img.width || 100;
+        canvas.height = img.height || 100;
+        const ctx = canvas.getContext('2d');
+        if (ctx) {
+            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+            logoDataUrl = canvas.toDataURL('image/png');
+        }
+    } catch (error) {
+        console.error('Error loading logo for report', error);
+    }
+    return logoDataUrl;
+};
+
+const createStyledReportDoc = async (_title: string, rangeText: string) => {
+    const doc = new jsPDF();
+    const pageWidth = doc.internal.pageSize.getWidth();
+    const margin = 14;
+
+    const [r, g, b] = toRgb(COLOR_BLUE);
+    doc.setFillColor(r, g, b);
+    doc.rect(0, 0, pageWidth, 28, 'F');
+
+    const logoDataUrl = await loadLogoDataUrl();
+    if (logoDataUrl) {
+        doc.addImage(logoDataUrl, 'PNG', margin, 6, 14, 14);
+    }
+
+    doc.setTextColor(255, 255, 255);
+    doc.setFontSize(14);
+    doc.text('Lumina Eventos', margin + (logoDataUrl ? 18 : 0), 16);
+
+    const createdAt = new Date();
+    const createdLabel = `Creado el ${createdAt.toLocaleDateString('es-ES')} ${createdAt.toLocaleTimeString('es-ES', {
+        hour: '2-digit',
+        minute: '2-digit',
+    })}`;
+
+    doc.setTextColor(255, 255, 255);
+    doc.setFontSize(8);
+    doc.text(createdLabel, pageWidth - margin, 10, { align: 'right' });
+
+    doc.setTextColor(0, 0, 0);
+    doc.setFontSize(10);
+    doc.text(rangeText, margin, 40);
+
+    return { doc, pageWidth, margin, contentStartY: 54 };
+};
 
 export const ReportsView = () => {
     const [selectedPeriod, setSelectedPeriod] = useState<Period>('mes');
@@ -19,7 +107,7 @@ export const ReportsView = () => {
         const today = new Date();
         const firstDay = new Date(today.getFullYear(), today.getMonth(), 1);
         const lastDay = new Date(today.getFullYear(), today.getMonth() + 1, 0);
-        
+
         setStartDate(firstDay.toISOString().split('T')[0]);
         setEndDate(lastDay.toISOString().split('T')[0]);
     }, []);
@@ -27,7 +115,7 @@ export const ReportsView = () => {
     const handlePeriodChange = (period: Period) => {
         setSelectedPeriod(period);
         const today = new Date();
-        
+
         switch (period) {
             case 'hoy': {
                 setStartDate(today.toISOString().split('T')[0]);
@@ -62,35 +150,42 @@ export const ReportsView = () => {
         setLoading(true);
         try {
             const reservations = await adminService.getAllReservations();
-            
-            // Filtrar por período y estado confirmado
-            const filteredReservations = reservations.filter(r => {
-                const reservationDate = new Date(r.reservationDate);
-                const start = new Date(startDate);
-                const end = new Date(endDate);
-                return reservationDate >= start && reservationDate <= end && r.status === 'CONFIRMED';
-            });
 
-            const doc = new jsPDF();
-            
-            // Título
-            doc.setFontSize(18);
-            doc.text('Reporte de Ingresos', 14, 20);
-            
-            // Período
-            doc.setFontSize(11);
-            doc.text(`Período: ${startDate} al ${endDate}`, 14, 30);
-            
-            // Calcular totales
+            // Filtrar por período y estado confirmado
+            const filteredReservations = reservations
+                .filter(r => {
+                    const reservationDate = new Date(r.reservationDate);
+                    const start = new Date(startDate);
+                    const end = new Date(endDate);
+                    return reservationDate >= start && reservationDate <= end && r.status === 'CONFIRMED';
+                })
+                .sort((a, b) => {
+                    const dateDiff = new Date(a.reservationDate).getTime() - new Date(b.reservationDate).getTime();
+                    if (dateDiff !== 0) return dateDiff;
+                    return a.reservationId - b.reservationId;
+                });
+
+            const rangeLabel = formatRangeLabel(startDate, endDate);
+            const { doc, pageWidth, margin, contentStartY } = await createStyledReportDoc('Reporte de Ingresos', rangeLabel);
+
             const totalIngresos = filteredReservations.reduce((sum, r) => sum + r.totalCost, 0);
-            doc.text(`Total de Ingresos: S/ ${totalIngresos.toFixed(2)}`, 14, 38);
-            doc.text(`Total de Reservas: ${filteredReservations.length}`, 14, 44);
-            
-            // Tabla de reservas
+
+            // Título grande y centrado encima de la tabla
+            doc.setFontSize(16);
+            doc.setFont('helvetica', 'bold');
+            doc.text('Reporte de Ingresos', pageWidth / 2, contentStartY, { align: 'center' });
+
+            // Subtítulo con total de reservas debajo del título
+            doc.setFontSize(10);
+            doc.setFont('helvetica', 'normal');
+            const tableStartY = contentStartY + 8;
+            doc.text(`Total de Reservas: ${filteredReservations.length}`, margin, tableStartY - 4);
+
             autoTable(doc, {
-                startY: 52,
-                head: [['Fecha', 'Local', 'Cliente', 'Monto']],
+                startY: tableStartY,
+                head: [['ID Reserva', 'Fecha', 'Local', 'Cliente', 'Monto']],
                 body: filteredReservations.map(r => [
+                    r.reservationId.toString(),
                     new Date(r.reservationDate).toLocaleDateString('es-PE'),
                     r.venueName || '',
                     r.customerName || '',
@@ -99,9 +194,16 @@ export const ReportsView = () => {
                 theme: 'grid',
                 headStyles: { fillColor: [16, 185, 129] }
             });
-            
+
+            // Total inmediatamente debajo de la tabla, alineado a la derecha
+            const finalY = (doc as unknown as { lastAutoTable?: { finalY: number } }).lastAutoTable?.finalY ?? (tableStartY + 10);
+            const totalLabel = `TOTAL INGRESOS: S/ ${totalIngresos.toFixed(2)}`;
+            doc.setFontSize(12);
+            doc.setTextColor(0, 0, 0);
+            doc.text(totalLabel, pageWidth - margin, finalY + 8, { align: 'right' });
+
             doc.save(`reporte-ingresos-${startDate}-${endDate}.pdf`);
-            
+
             await showAlert({
                 title: 'Éxito',
                 text: 'Reporte de ingresos generado correctamente',
@@ -123,7 +225,7 @@ export const ReportsView = () => {
         setLoading(true);
         try {
             const reservations = await adminService.getAllReservations();
-            
+
             // Filtrar por período
             const filteredReservations = reservations.filter(r => {
                 const reservationDate = new Date(r.reservationDate);
@@ -131,43 +233,53 @@ export const ReportsView = () => {
                 const end = new Date(endDate);
                 return reservationDate >= start && reservationDate <= end;
             });
+            const totalReservasMonto = filteredReservations.reduce((sum, r) => sum + r.totalCost, 0);
+            const rangeLabel = formatRangeLabel(startDate, endDate);
+            const { doc, pageWidth, margin, contentStartY } = await createStyledReportDoc('Reporte de Reservas', rangeLabel);
 
-            const doc = new jsPDF();
-            
-            // Título
-            doc.setFontSize(18);
-            doc.text('Reporte de Reservas', 14, 20);
-            
-            // Período
-            doc.setFontSize(11);
-            doc.text(`Período: ${startDate} al ${endDate}`, 14, 30);
-            doc.text(`Total de Reservas: ${filteredReservations.length}`, 14, 38);
-            
-            // Estadísticas por estado
+            // Título grande y centrado
+            doc.setFontSize(16);
+            doc.setFont('helvetica', 'bold');
+            doc.text('Reporte de Reservas', pageWidth / 2, contentStartY, { align: 'center' });
+
+            doc.setFontSize(10);
+            doc.setFont('helvetica', 'normal');
+            const reservasStatsY = contentStartY + 8;
+            doc.text(`Total de Reservas: ${filteredReservations.length}`, margin, reservasStatsY);
+
             const confirmed = filteredReservations.filter(r => r.status === 'CONFIRMED').length;
             const pending = filteredReservations.filter(r => r.status === 'PENDING').length;
             const cancelled = filteredReservations.filter(r => r.status === 'CANCELLED').length;
-            
-            doc.text(`Confirmadas: ${confirmed} | Pendientes: ${pending} | Canceladas: ${cancelled}`, 14, 44);
-            
-            // Tabla de reservas
+
+            doc.text(`Confirmadas: ${confirmed} | Pendientes: ${pending} | Canceladas: ${cancelled}`, margin, reservasStatsY + 8);
+
             autoTable(doc, {
-                startY: 52,
-                head: [['ID', 'Fecha', 'Local', 'Cliente', 'Estado', 'Monto']],
+                startY: reservasStatsY + 16,
+                head: [['ID Reserva', 'Fecha', 'Hora Inicio', 'Hora Fin', 'Local', 'Cliente', 'Invitados', 'Estado', 'Monto']],
                 body: filteredReservations.map(r => [
                     r.reservationId.toString(),
                     new Date(r.reservationDate).toLocaleDateString('es-PE'),
+                    (r.startTime || '').slice(0, 5),
+                    (r.endTime || '').slice(0, 5),
                     r.venueName || '',
                     r.customerName || '',
+                    r.guestCount != null ? r.guestCount.toString() : '-',
                     r.status === 'CONFIRMED' ? 'Confirmada' : r.status === 'PENDING' ? 'Pendiente' : 'Cancelada',
                     `S/ ${r.totalCost.toFixed(2)}`
                 ]),
                 theme: 'grid',
                 headStyles: { fillColor: [59, 130, 246] }
             });
-            
+
+            // Total de monto de reservas inmediatamente debajo de la tabla, alineado a la derecha
+            const finalY = (doc as unknown as { lastAutoTable?: { finalY: number } }).lastAutoTable?.finalY ?? (reservasStatsY + 26);
+            const totalLabel = `TOTAL MONTO RESERVAS: S/ ${totalReservasMonto.toFixed(2)}`;
+            doc.setFontSize(12);
+            doc.setTextColor(0, 0, 0);
+            doc.text(totalLabel, pageWidth - margin, finalY + 8, { align: 'right' });
+
             doc.save(`reporte-reservas-${startDate}-${endDate}.pdf`);
-            
+
             await showAlert({
                 title: 'Éxito',
                 text: 'Reporte de reservas generado correctamente',
@@ -190,12 +302,12 @@ export const ReportsView = () => {
         try {
             const customers = await adminService.getAllCustomers();
             const reservations = await adminService.getAllReservations();
-            
+
             // Calcular estadísticas por cliente
             const clientData = customers.map(customer => {
                 const customerReservations = reservations.filter(r => r.customerName === `${customer.firstName} ${customer.lastName}`);
                 const totalSpent = customerReservations.reduce((sum, r) => sum + r.totalCost, 0);
-                
+
                 return {
                     'ID': customer.userId,
                     'Nombre': customer.firstName,
@@ -204,18 +316,18 @@ export const ReportsView = () => {
                     'Teléfono': customer.phone || 'N/A',
                     'Total Reservas': customerReservations.length,
                     'Monto Total': `S/ ${totalSpent.toFixed(2)}`,
-                    'Última Reserva': customerReservations.length > 0 
+                    'Última Reserva': customerReservations.length > 0
                         ? new Date(customerReservations[customerReservations.length - 1].reservationDate).toLocaleDateString('es-PE')
                         : 'N/A'
                 };
             });
-            
+
             const ws = XLSX.utils.json_to_sheet(clientData);
             const wb = XLSX.utils.book_new();
             XLSX.utils.book_append_sheet(wb, ws, 'Clientes');
-            
+
             XLSX.writeFile(wb, `reporte-clientes-${new Date().toISOString().split('T')[0]}.xlsx`);
-            
+
             await showAlert({
                 title: 'Éxito',
                 text: 'Reporte de clientes generado correctamente',
@@ -238,7 +350,7 @@ export const ReportsView = () => {
         try {
             const venues = await adminService.getAllVenues();
             const reservations = await adminService.getAllReservations();
-            
+
             // Filtrar por período
             const filteredReservations = reservations.filter(r => {
                 const reservationDate = new Date(r.reservationDate);
@@ -246,18 +358,16 @@ export const ReportsView = () => {
                 const end = new Date(endDate);
                 return reservationDate >= start && reservationDate <= end;
             });
+            const rangeLabel = formatRangeLabel(startDate, endDate);
+            const { doc, pageWidth, contentStartY } = await createStyledReportDoc('Reporte de Ocupación', rangeLabel);
 
-            const doc = new jsPDF();
-            
-            // Título
-            doc.setFontSize(18);
-            doc.text('Reporte de Ocupación', 14, 20);
-            
-            // Período
-            doc.setFontSize(11);
-            doc.text(`Período: ${startDate} al ${endDate}`, 14, 30);
-            
-            // Calcular ocupación por local
+            // Título grande y centrado
+            doc.setFontSize(16);
+            doc.setFont('helvetica', 'bold');
+            doc.text('Reporte de Ocupación', pageWidth / 2, contentStartY, { align: 'center' });
+
+            const tableStartY = contentStartY + 8;
+
             const venueOccupancy = venues.map(venue => {
                 const venueReservations = filteredReservations.filter(r => r.venueName === venue.venueName);
                 return {
@@ -266,10 +376,11 @@ export const ReportsView = () => {
                     revenue: venueReservations.reduce((sum, r) => sum + r.totalCost, 0)
                 };
             }).sort((a, b) => b.reservations - a.reservations);
-            
-            // Tabla de ocupación
+
+            const totalRevenue = venueOccupancy.reduce((sum, v) => sum + v.revenue, 0);
+
             autoTable(doc, {
-                startY: 40,
+                startY: tableStartY,
                 head: [['Local', 'Reservas', 'Ingresos']],
                 body: venueOccupancy.map(v => [
                     v.venue,
@@ -279,9 +390,16 @@ export const ReportsView = () => {
                 theme: 'grid',
                 headStyles: { fillColor: [139, 92, 246] }
             });
-            
+
+            // Total de ingresos por ocupación inmediatamente debajo de la tabla, alineado a la derecha
+            const finalY = (doc as unknown as { lastAutoTable?: { finalY: number } }).lastAutoTable?.finalY ?? (tableStartY + 10);
+            const totalLabel = `TOTAL INGRESOS POR OCUPACIÓN: S/ ${totalRevenue.toFixed(2)}`;
+            doc.setFontSize(12);
+            doc.setTextColor(0, 0, 0);
+            doc.text(totalLabel, pageWidth - 14, finalY + 8, { align: 'right' });
+
             doc.save(`reporte-ocupacion-${startDate}-${endDate}.pdf`);
-            
+
             await showAlert({
                 title: 'Éxito',
                 text: 'Reporte de ocupación generado correctamente',
@@ -309,55 +427,50 @@ export const ReportsView = () => {
             {/* Selector de Período - Diseño Minimalista */}
             <div className="bg-white border border-gray-200 rounded-lg p-6 mb-6">
                 <h2 className="text-sm font-medium text-gray-700 uppercase tracking-wide mb-4">Período de Análisis</h2>
-                
+
                 <div className="flex flex-wrap gap-2 mb-4">
                     <button
                         onClick={() => handlePeriodChange('hoy')}
-                        className={`px-4 py-2 text-sm font-medium rounded transition ${
-                            selectedPeriod === 'hoy'
+                        className={`px-4 py-2 text-sm font-medium rounded transition ${selectedPeriod === 'hoy'
                                 ? 'bg-gray-900 text-white'
                                 : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50'
-                        }`}
+                            }`}
                     >
                         Hoy
                     </button>
                     <button
                         onClick={() => handlePeriodChange('semana')}
-                        className={`px-4 py-2 text-sm font-medium rounded transition ${
-                            selectedPeriod === 'semana'
+                        className={`px-4 py-2 text-sm font-medium rounded transition ${selectedPeriod === 'semana'
                                 ? 'bg-gray-900 text-white'
                                 : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50'
-                        }`}
+                            }`}
                     >
                         Última Semana
                     </button>
                     <button
                         onClick={() => handlePeriodChange('mes')}
-                        className={`px-4 py-2 text-sm font-medium rounded transition ${
-                            selectedPeriod === 'mes'
+                        className={`px-4 py-2 text-sm font-medium rounded transition ${selectedPeriod === 'mes'
                                 ? 'bg-gray-900 text-white'
                                 : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50'
-                        }`}
+                            }`}
                     >
                         Este Mes
                     </button>
                     <button
                         onClick={() => handlePeriodChange('año')}
-                        className={`px-4 py-2 text-sm font-medium rounded transition ${
-                            selectedPeriod === 'año'
+                        className={`px-4 py-2 text-sm font-medium rounded transition ${selectedPeriod === 'año'
                                 ? 'bg-gray-900 text-white'
                                 : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50'
-                        }`}
+                            }`}
                     >
                         Este Año
                     </button>
                     <button
                         onClick={() => handlePeriodChange('personalizado')}
-                        className={`px-4 py-2 text-sm font-medium rounded transition ${
-                            selectedPeriod === 'personalizado'
+                        className={`px-4 py-2 text-sm font-medium rounded transition ${selectedPeriod === 'personalizado'
                                 ? 'bg-gray-900 text-white'
                                 : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50'
-                        }`}
+                            }`}
                     >
                         Personalizado
                     </button>

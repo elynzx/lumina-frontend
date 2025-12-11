@@ -99,7 +99,7 @@ export const ReservationDetails = () => {
       <div className="min-h-screen  py-12 px-24">
         <div className="max-w-4xl mx-auto">
           <button
-            onClick={() => navigate("/reservations")}
+            onClick={() => navigate("/reservas")}
             className="flex items-center gap-2 text-blue hover:text-blue/80 font-semibold text-sm mb-4"
           >
             <span>←</span>
@@ -118,7 +118,7 @@ export const ReservationDetails = () => {
       <div className="max-w-5xl mx-auto">
         {/* Back Button */}
         <button
-          onClick={() => navigate("/reservations")}
+          onClick={() => navigate("/reservas")}
           className="flex mt-4 sm:mt-0 items-center gap-2 text-blue hover:text-blue/80 font-semibold text-sm mb-8 sm:mb-6"
         >
           <span>←</span>
