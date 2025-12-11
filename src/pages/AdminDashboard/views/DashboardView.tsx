@@ -14,6 +14,7 @@ export const DashboardView = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [selectedPeriod]);
 
+
     const loadStats = async () => {
         try {
             setLoading(true);
@@ -28,11 +29,6 @@ export const DashboardView = () => {
 
     const formatCurrency = (amount: number) => {
         return `S/ ${amount.toLocaleString('es-PE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
-    };
-
-    const calculateGrowth = (current: number, previous: number) => {
-        if (previous === 0) return 0;
-        return ((current - previous) / previous * 100);
     };
 
     const getTrendIcon = (growth: number) => {
@@ -68,6 +64,15 @@ export const DashboardView = () => {
         );
     }
 
+    const calculateGrowth = (current: number, previous: number) => {
+        if (previous === 0) {
+            if (current === 0) return 0;
+            return 100;
+        }
+        return ((current - previous) / previous) * 100;
+    };
+
+    
     return (
         <div className="p-6">
             {/* Header con período selector */}
